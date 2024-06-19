@@ -1,4 +1,4 @@
-import "@/app/ui/globals.css";
+import "@/styles/globals.css"
 
 export const metadata = {
   title: "KPN Senior Project 1",

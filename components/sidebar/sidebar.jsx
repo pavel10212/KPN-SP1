@@ -26,7 +26,7 @@ const menuItems = [
       },
       {
         title: "Tasks",
-        path: "/dashboard/tasks",
+        path: "/dashboard/task",
         icon: <MdShoppingBag />,
       },
       {
@@ -65,21 +65,21 @@ const Sidebar = async () => {
           height="50"
         />
         <div className="flex flex-col ">
-          <span className="font-medium">Noe Kieffer</span>
-          <span className="text-xs grey">Administrator</span>
+          <span className="font-medium text-[#404040]">Noe Kieffer</span>
+          <span className="text-xs grey text-[#565656]">Administrator</span>
         </div>
       </div>
       <ul className="list-none">
         {menuItems.map((cat) => (
           <li key={cat.title} className="">
-            <span className="grey font-bold text-xs mx-2 ">{cat.title}</span>
+            <span className="text-[#202224] font-bold text-xs mx-2 ">{cat.title}</span>
             {cat.list.map((item) => (
               <MenuLink item={item} key={item.title}/>
             ))}
           </li>
         ))}
       </ul>
-      <button className="p-5 mx-1 flex items-center gap-2.5 cursor-pointer rounded-xl mt-40 w-full hover:bg-slate-700 ">
+      <button className="p-5 mx-1 flex items-center gap-2.5 cursor-pointer rounded-xl mt-40 w-full hover:bg-[#4880FF] ">
         <MdLogout />
         Logout
       </button>

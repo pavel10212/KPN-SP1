@@ -1,14 +1,14 @@
-import Navbar from "../ui/dashboard/navbar/navbar.jsx";
-import Sidebar from "../ui/dashboard/sidebar/sidebar.jsx";
-import Footer from "../ui/dashboard/footer/footer.jsx";
+import Navbar from "@/components/navbar/navbar";
+import Sidebar from "@/components/sidebar/sidebar";
+import Footer from "@/components/footer/footer";
 
 const Layout = ({ children }) => {
   return (
     <div className="flex">
-      <div className="flex bg-green-400 p-5 min-h-screen">
+      <div className="flex bg-white p-5 min-h-screen">
         <Sidebar />
       </div>
-      <div className="flex-4 p-5 mb-5">
+      <div className="flex-4 p-5 mb-5 w-full">
         <Navbar />
         {children}
         <Footer />
