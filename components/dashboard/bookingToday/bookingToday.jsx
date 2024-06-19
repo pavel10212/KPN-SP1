@@ -14,10 +14,10 @@ const BookingToday = ({ bookings }) => {
         <tbody>
           {bookings.map((item) => (
             <tr key={item.id}>
-              <td className="table_data">{item.Room}</td>
-              <td className="table_data">{item.Name}</td>
-              <td className="table_data">{item.CheckIn}</td>
-              <td className="table_data">{item.CheckOut}</td>
+              <td className="table_data py-2">{item.Room}</td>
+              <td className="table_data py-2">{item.Name}</td>
+              <td className="table_data py-2">{item.CheckIn}</td>
+              <td className="table_data py-2">{item.CheckOut}</td>
             </tr>
           ))}
         </tbody>

@@ -55,8 +55,8 @@ const menuItems = [
 
 const Sidebar = async () => {
   return (
-    <div className="sticky top-40">
-      <div className="flex items-center gap-20 mb-20">
+    <div className="sticky top-10">
+      <div className="flex items-center gap-5 mb-5 flex-col">
         <Image
           className="rounded-full object-cover"
           src="/noavatar.png"
@@ -64,7 +64,7 @@ const Sidebar = async () => {
           width="50"
           height="50"
         />
-        <div className="flex flex-col ">
+        <div className="flex flex-col items-center">
           <span className="font-medium text-[#404040]">Noe Kieffer</span>
           <span className="text-xs grey text-[#565656]">Administrator</span>
         </div>
@@ -72,15 +72,17 @@ const Sidebar = async () => {
       <ul className="list-none">
         {menuItems.map((cat) => (
           <li key={cat.title} className="">
-            <span className="text-[#202224] font-bold text-xs mx-2 ">{cat.title}</span>
+            <span className="text-[#202224] font-bold text-xs mx-2 ">
+              {cat.title}
+            </span>
             {cat.list.map((item) => (
-              <MenuLink item={item} key={item.title}/>
+              <MenuLink item={item} key={item.title} />
             ))}
           </li>
         ))}
       </ul>
-      <button className="p-5 mx-1 flex items-center gap-2.5 cursor-pointer rounded-xl mt-40 w-full hover:bg-[#4880FF] ">
-        <MdLogout />
+      <button className="p-5 mx-1 flex items-center gap-2.5 cursor-pointer rounded-xl mt-40 w-full hover:bg-[#4880FF] text-[#202224] font-bold ">
+        <MdLogout className="text-[#202224]" />
         Logout
       </button>
     </div>

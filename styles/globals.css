@@ -87,19 +87,19 @@
 }
 
 body {
-  background-color: #E8E8E8;
+  background-color: #e8e8e8;
   color: var(--text);
 }
 a {
   color: inherit;
-  text-decoration: none; 
+  text-decoration: none;
 }
 
 .table_row {
   color: #202224;
   border-radius: 10px;
   outline: 1px solid gray;
-  background-color: #F1F4F9;
+  background-color: #f1f4f9;
 }
 
 .table_data {
