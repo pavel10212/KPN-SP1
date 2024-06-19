@@ -4,11 +4,11 @@ import Footer from "../ui/dashboard/footer/footer.jsx";
 
 const Layout = ({ children }) => {
   return (
-    <div class="flex">
-      <div class="flex bg-slate-400 p-5 min-h-screen">
+    <div className="flex">
+      <div className="flex bg-green-400 p-5 min-h-screen">
         <Sidebar />
       </div>
-      <div class="flex-4 p-5 mb-5">
+      <div className="flex-4 p-5 mb-5">
         <Navbar />
         {children}
         <Footer />

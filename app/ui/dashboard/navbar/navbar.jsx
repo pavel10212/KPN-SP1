@@ -5,10 +5,10 @@ import { MdNotifications } from "react-icons/md";
 const Navbar = () => {
   const pathname = usePathname();
   return (
-    <div class="p-5 rounded-s-lg bg-slate flex items-center justify-between">
-      <div class="red font-bold capitalize">{pathname.split("/").pop()}</div>
-      <div class="flex items-center gap-20">
-        <div class="flex pr-1">
+    <div className="p-5 rounded-s-lg bg-slate flex items-center justify-between">
+      <div className="red font-bold capitalize">{pathname.split("/").pop()}</div>
+      <div className="flex items-center gap-5">
+        <div className="flex pr-1">
           <MdNotifications size={20} />
         </div>
       </div>
