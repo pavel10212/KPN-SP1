@@ -3,7 +3,7 @@ import React from "react";
 const Homepage = () => {
   return (
     <div>
-      <a href="/dashboard">Go to Dashboard</a>
+      <a href="/login">Go to Dashboard</a>
     </div>
   );
 };
