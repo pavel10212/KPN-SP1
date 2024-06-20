@@ -1,7 +1,7 @@
 const TaskCoHost = ({ tasks }) => {
     return (
       <div className="bg-slate-600 p-5 rounded-xl">
-        <h2 className="mb-5 font-extralight text-[#202224]">Today's Bookings</h2>
+        <h2 className="mb-5 font-extralight text-[#202224]">Today&apos;s Bookings</h2>
         <table className="w-full">
           <thead>
             <tr>
