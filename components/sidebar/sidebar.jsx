@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import {
   MdDashboard,
@@ -9,6 +10,7 @@ import {
   MdLogout,
 } from "react-icons/md";
 import MenuLink from "./menuLink/menuLink";
+import { signOut } from "next-auth/react";
 
 const menuItems = [
   {
@@ -81,9 +83,13 @@ const Sidebar = async () => {
           </li>
         ))}
       </ul>
-      <button className="p-5 mx-1 flex items-center gap-2.5 cursor-pointer rounded-xl mt-40 w-full hover:bg-[#4880FF] hover:text-white text-[#202224] font-bold ">
+      <button
+        className="p-5 mx-1 flex items-center gap-2.5 cursor-pointer rounded-xl mt-40 w-full hover:bg-[#4880FF] hover:text-white text-[#202224] font-bold "
+        onClick={() => signOut()}
+      >
         <MdLogout className="text-[#202224]" />
         Logout
+        
       </button>
     </div>
   );

@@ -9,6 +9,7 @@ const RegisterPage = () => {
     name: "",
     email: "",
     password: "",
+    role: ""
   });
   const registerUser = async (e) => {
     e.preventDefault();

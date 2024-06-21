@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 
 const Dashboard = () => {
   const { data: session, status } = useSession();
+  console.log(session)
   return (
     <div className="flex gap-5 mt-5">
       <div className="flex-3 flex flex-col g-5 w-full">
