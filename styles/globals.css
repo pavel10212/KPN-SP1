@@ -104,4 +104,6 @@ a {
 
 .table_data {
   color: #202224;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
