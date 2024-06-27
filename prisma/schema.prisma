@@ -13,6 +13,8 @@ model User {
   email          String?         @unique
   role           String?
   emailVerified  DateTime?
+  api_key        String?         @unique
+  prop_key       String?         @unique
   image          String?
   hashedPassword String?
   accounts       Account[]

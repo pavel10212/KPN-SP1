@@ -1,17 +1,20 @@
 "use client";
-import Card from "../../components/dashboard/card/card";
-import { cards } from "@/lib/data";
-import BookingToday from "../../components/dashboard/bookingToday/bookingToday";
-import { bookingsToday } from "@/lib/data";
-import TodayTask from "../../components/dashboard/todayTask/todayTask";
-import { tasksToday } from "@/lib/data";
-import { useSession } from "next-auth/react";
 
-// What user logs in
+import { auth } from "@/auth"
+import Card from "../../components/dashboard/card/card"
+import { cards } from "@/lib/data"
+import BookingToday from "../../components/dashboard/bookingToday/bookingToday"
+import { bookingsToday } from "@/lib/data"
+import TodayTask from "../../components/dashboard/todayTask/todayTask"
+import { tasksToday } from "@/lib/data"
 
-const Dashboard = () => {
-  const { data: session, status } = useSession();
+export default async function Dashboard() {
+  const session = await auth()
   console.log(session)
+  if (!session) {
+    return <p>Access Denied</p>
+  }
+
   return (
     <div className="flex gap-5 mt-5">
       <div className="flex-3 flex flex-col g-5 w-full">
@@ -24,7 +27,5 @@ const Dashboard = () => {
         <TodayTask tasks={tasksToday} />
       </div>
     </div>
-  );
-};
-
-export default Dashboard;
+  )
+}
