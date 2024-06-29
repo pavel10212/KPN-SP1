@@ -1,10 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { signInSchema } from "@/lib/zod";
 import { z } from "zod";
-import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -12,29 +12,24 @@ const LoginPage = () => {
   const [userPassword, setUserPassword] = useState("");
   const [error, setError] = useState("");
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-
+    e.preventDefault(); // Prevent default form submission
     try {
       signInSchema.parse({ email: userEmail, password: userPassword });
-      const response = await signIn("credentials", {
+      const result = await signIn("credentials", {
         email: userEmail,
         password: userPassword,
-        redirect: false,
+        redirect: false, // Prevent automatic redirect
       });
-      if (response && !response.error) {
-        console.log("Success");
-        router.push("/dashboard");
+      if (result?.error) {
+        setError(result.error);
       } else {
-        console.log("Failed");
-        setError("Invalid email or password");
+        router.push("/dashboard");
       }
     } catch (err) {
       if (err instanceof z.ZodError) {
         setError(err.errors[0].message);
       } else {
         console.error(err);
-        console.log("Failed");
         setError("An unexpected error occurred");
       }
     }

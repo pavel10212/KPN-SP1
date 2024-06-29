@@ -7,11 +7,13 @@ import { ZodError } from "zod";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET,
+  debug: true,
   session: {
     strategy: "jwt",
   },
   pages: {
-    signIn: "/login",
+    signIn: "/app/login",
+    signOut: "/app/login", // Add this line
   },
   providers: [
     Credentials({
@@ -19,7 +21,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: {
           label: "Email",
           type: "email",
-          placeholder: "jsmith@gmail.com",
         },
         password: { label: "Password", type: "password" },
       },
@@ -28,19 +29,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           const { email, password } = await signInSchema.parseAsync(
             credentials
           );
-
           const user = await prisma.User.findUnique({
             where: {
               email: email,
             },
           });
-
           if (!user) {
             return null;
           }
-
           const passwordCorrect = await compare(password, user.hashedPassword);
-
           if (passwordCorrect) {
             return {
               id: user.id,

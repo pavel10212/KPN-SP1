@@ -1,4 +1,3 @@
-"use client";
 import Image from "next/image";
 import {
   MdDashboard,
@@ -10,7 +9,7 @@ import {
   MdLogout,
 } from "react-icons/md";
 import MenuLink from "./menuLink/menuLink";
-import { signOut } from "next-auth/react";
+import { signOut, auth } from "@/auth.js";
 
 const menuItems = [
   {
@@ -55,7 +54,7 @@ const menuItems = [
   },
 ];
 
-const Sidebar = async () => {
+const Sidebar = () => {
   return (
     <div className="sticky top-10">
       <div className="flex items-center gap-5 mb-5 flex-col">
@@ -83,14 +82,17 @@ const Sidebar = async () => {
           </li>
         ))}
       </ul>
-      <button
-        className="p-5 mx-1 flex items-center gap-2.5 cursor-pointer rounded-xl mt-40 w-full hover:bg-[#4880FF] hover:text-white text-[#202224] font-bold "
-        onClick={() => signOut()}
+      <form
+        action={async () => {
+          "use server";
+          await signOut({ callbackUrl: "/login" }); // Redirect to login page after signout
+        }}
       >
-        <MdLogout className="text-[#202224]" />
-        Logout
-        
-      </button>
+        <button className="p-5 mx-1 flex items-center gap-2.5 cursor-pointer rounded-xl mt-40 w-full hover:bg-[#4880FF] hover:text-white text-[#202224] font-bold ">
+          <MdLogout className="text-[#202224]" />
+          Logout
+        </button>
+      </form>
     </div>
   );
 };

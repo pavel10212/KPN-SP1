@@ -1,18 +1,18 @@
-"use client";
-
-import { auth } from "@/auth"
-import Card from "../../components/dashboard/card/card"
-import { cards } from "@/lib/data"
-import BookingToday from "../../components/dashboard/bookingToday/bookingToday"
-import { bookingsToday } from "@/lib/data"
-import TodayTask from "../../components/dashboard/todayTask/todayTask"
-import { tasksToday } from "@/lib/data"
+import { redirect } from "next/navigation";
+import { auth } from "@/auth.js";
+import Card from "../../components/dashboard/card/card";
+import { cards } from "@/lib/data";
+import BookingToday from "../../components/dashboard/bookingToday/bookingToday";
+import { bookingsToday } from "@/lib/data";
+import TodayTask from "../../components/dashboard/todayTask/todayTask";
+import { tasksToday } from "@/lib/data";
 
 export default async function Dashboard() {
-  const session = await auth()
-  console.log(session)
+  const session = await auth();
+  console.log(session);
+  
   if (!session) {
-    return <p>Access Denied</p>
+    redirect("/login");
   }
 
   return (
@@ -27,5 +27,5 @@ export default async function Dashboard() {
         <TodayTask tasks={tasksToday} />
       </div>
     </div>
-  )
+  );
 }
