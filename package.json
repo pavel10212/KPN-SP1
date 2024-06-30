@@ -10,7 +10,11 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.3.0",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
     "@hookform/resolvers": "^3.6.0",
+    "@mui/material": "^5.15.21",
+    "@mui/x-data-grid": "^7.8.0",
     "@prisma/client": "^5.15.1",
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-slot": "^1.1.0",
