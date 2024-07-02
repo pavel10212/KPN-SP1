@@ -7,6 +7,20 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model Booking {
+  bookId         String   @id @map("_id") @db.ObjectId
+  roomId         String
+  firstNight     DateTime
+  lastNight      DateTime
+  numAdult       Int
+  numChild       Int
+  guestFirstName String
+  guestName      String
+  guestEmail     String
+  guestPhone     String
+  guestNote      String
+}
+
 model User {
   id             String          @id @default(auto()) @map("_id") @db.ObjectId
   name           String?
