@@ -3,14 +3,16 @@ import { auth } from "@/auth.js";
 import Card from "../../components/dashboard/card/card";
 import { cards } from "@/lib/data";
 import BookingToday from "../../components/dashboard/bookingToday/bookingToday";
-import { bookingsToday } from "@/lib/data";
 import TodayTask from "../../components/dashboard/todayTask/todayTask";
 import { tasksToday } from "@/lib/data";
+import { pullFromDatabaseForDash } from "@/lib/actions";
 
 export default async function Dashboard() {
   const session = await auth();
+  const bookingsToday = await pullFromDatabaseForDash();
+  console.log(bookingsToday)
   console.log(session);
-  
+
   if (!session) {
     redirect("/login");
   }

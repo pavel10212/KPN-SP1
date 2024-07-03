@@ -18,10 +18,13 @@ export async function POST(req) {
     }
     const hashedPassword = await hash(password, 10);
     console.log("Hashed password");
-    const user = await prisma.user.create({
-      data: { name, email, hashedPassword },
+    const team = await prisma.team.create({
+      data: { name: `${name}'s Team` },
     });
-    console.log("User created successfully");
+    const user = await prisma.user.create({
+      data: { name, email, hashedPassword: hashedPassword, teamId: team.id },
+    });
+    console.log("Team created successfully");
 
     return NextResponse.json(
       { message: "User created successfully" },
