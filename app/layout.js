@@ -1,4 +1,5 @@
-import "@/styles/globals.css"
+import "@/styles/globals.css";
+import { SessionProvider } from "next-auth/react";
 
 export const metadata = {
   title: "KPN Senior Project 1",
@@ -8,7 +9,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <SessionProvider>{children}</SessionProvider>
+      </body>
     </html>
   );
 }

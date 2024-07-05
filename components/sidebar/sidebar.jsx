@@ -9,6 +9,7 @@ import {
   MdLogout,
 } from "react-icons/md";
 import MenuLink from "./menuLink/menuLink";
+import prisma from "@/app/api/prismaClient";
 import { signOut, auth } from "@/auth.js";
 
 const menuItems = [
@@ -54,7 +55,11 @@ const menuItems = [
   },
 ];
 
-const Sidebar = () => {
+const Sidebar = async () => {
+  const session = await auth();
+  const user = await prisma.user.findFirst({
+    where: { email: session.user.email },
+  });
   return (
     <div className="sticky top-10">
       <div className="flex items-center gap-5 mb-5 flex-col">
@@ -66,8 +71,8 @@ const Sidebar = () => {
           height="50"
         />
         <div className="flex flex-col items-center">
-          <span className="font-medium text-[#404040]">Noe Kieffer</span>
-          <span className="text-xs grey text-[#565656]">Administrator</span>
+          <span className="font-medium text-[#404040]">{user.name}</span>
+          <span className="text-xs grey text-[#565656]">{user.role}</span>
         </div>
       </div>
       <ul className="list-none">
