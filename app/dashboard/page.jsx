@@ -2,9 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth.js";
 import Card from "../../components/dashboard/card/card";
 import BookingToday from "../../components/dashboard/bookingToday/bookingToday";
-import TodayTask from "../../components/dashboard/todayTask/todayTask";
-import { tasksToday } from "@/lib/data";
-import { pullFromDatabaseForDash } from "@/lib/actions";
+import { pullFromDatabase } from "@/lib/actions";
 import prisma from "../api/prismaClient";
 
 export default async function Dashboard() {
@@ -20,17 +18,23 @@ export default async function Dashboard() {
       teamId: teamId,
     },
   });
-  const bookings = await pullFromDatabaseForDash();
+
+  const check_ins = await pullFromDatabase(teamId, "firstNight");
+  const check_outs = await pullFromDatabase(teamId, "lastNight");
   const today = new Date();
-  today.setHours(0, 0, 0, 0); // Set time to 00:00:00.000 to match the format of firstNight
-  const todayISO = today.toISOString();
-  const bookingsStartingToday = bookings.filter(
-    (booking) => booking.firstNight === todayISO
-  );
-  console.log(bookingsStartingToday);
-  const bookingsEndingToday = bookings.filter(
-    (booking) => booking.lastNight === todayISO
-  );
+  today.setHours(0, 0, 0, 0);
+  // Adjust the filtering logic for bookingsStartingToday and bookingsEndingToday
+  const bookingsStartingToday = check_ins.filter((booking) => {
+    const bookingStartDate = new Date(booking.firstNight);
+    bookingStartDate.setHours(0, 0, 0, 0);
+    return bookingStartDate.getTime() === today.getTime();
+  });
+
+  const bookingsEndingToday = check_outs.filter((booking) => {
+    const bookingEndDate = new Date(booking.lastNight);
+    bookingEndDate.setHours(0, 0, 0, 0);
+    return bookingEndDate.getTime() === today.getTime();
+  });
 
   const cards = [
     {
@@ -53,7 +57,6 @@ export default async function Dashboard() {
   if (!session) {
     redirect("/login");
   }
-
   return (
     <div className="flex gap-5 mt-5">
       <div className="flex-3 flex flex-col g-5 w-full">
@@ -62,8 +65,8 @@ export default async function Dashboard() {
             <Card key={card.id} item={card} />
           ))}
         </div>
-        <BookingToday bookings={bookings} />
-        <TodayTask tasks={tasksToday} />
+        <BookingToday bookings={check_ins} checkInOrOut="Check Ins Today" />
+        <BookingToday bookings={check_outs} checkInOrOut="Check Outs Today" />
       </div>
     </div>
   );

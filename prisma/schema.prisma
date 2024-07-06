@@ -8,12 +8,26 @@ generator client {
 }
 
 model Team {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  users     User[]
-  bookings  Booking[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  users    User[]
+  bookings Booking[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CustomTask {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  taskTitle       String
+  guestFirstName  String
+  guestName       String
+  guestPhone      String
+  location        String
+  date            DateTime
+  taskDescription String
+  status          String
+  role            String
 }
 
 model Booking {
@@ -29,6 +43,8 @@ model Booking {
   guestEmail     String
   guestPhone     String
   teamId         String   @db.ObjectId
+  customNotes    String?
+  status         String?  @default("To Arrive")
   team           Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
 }
 
