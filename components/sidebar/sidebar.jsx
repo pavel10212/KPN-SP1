@@ -12,54 +12,60 @@ import MenuLink from "./menuLink/menuLink";
 import prisma from "@/app/api/prismaClient";
 import { signOut, auth } from "@/auth.js";
 
-const menuItems = [
-  {
-    title: "Pages",
-    list: [
-      {
-        title: "Dashboard",
-        path: "/dashboard",
-        icon: <MdDashboard />,
-      },
-      {
-        title: "Users",
-        path: "/dashboard/users",
-        icon: <MdSupervisedUserCircle />,
-      },
-      {
-        title: "Tasks",
-        path: "/dashboard/task",
-        icon: <MdShoppingBag />,
-      },
-      {
-        title: "Bookings",
-        path: "/dashboard/bookings",
-        icon: <MdAttachMoney />,
-      },
-    ],
-  },
-  {
-    title: "User",
-    list: [
-      {
-        title: "Settings",
-        path: "/dashboard/settings",
-        icon: <MdOutlineSettings />,
-      },
-      {
-        title: "Help",
-        path: "/dashboard/help",
-        icon: <MdHelpCenter />,
-      },
-    ],
-  },
-];
-
 const Sidebar = async () => {
   const session = await auth();
   const user = await prisma.user.findFirst({
     where: { email: session.user.email },
   });
+
+  const menuItems = [
+    {
+      title: "Pages",
+      list: [
+        {
+          title: "Dashboard",
+          path: "/dashboard",
+          icon: <MdDashboard />,
+        },
+        {
+          title: "Users",
+          path: "/dashboard/users",
+          icon: <MdSupervisedUserCircle />,
+        },
+        {
+          title: "Tasks",
+          path: "/dashboard/task",
+          icon: <MdShoppingBag />,
+        },
+        // Conditionally include the Bookings menu item
+        ...(user.role !== "Driver" && user.role !== "Maintenance"
+          ? [
+              {
+                title: "Bookings",
+                path: "/dashboard/bookings",
+                icon: <MdAttachMoney />,
+              },
+            ]
+          : []),
+      ],
+    },
+    {
+      title: "User",
+      list: [
+        {
+          title: "Settings",
+          path: "/dashboard/settings",
+          icon: <MdOutlineSettings />,
+        },
+        {
+          title: "Help",
+          path: "/dashboard/help",
+          icon: <MdHelpCenter />,
+        },
+      ],
+    },
+  ];
+
   return (
     <div className="sticky top-10">
       <div className="flex items-center gap-5 mb-5 flex-col">

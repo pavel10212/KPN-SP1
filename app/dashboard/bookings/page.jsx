@@ -10,6 +10,9 @@ const Bookings = async () => {
       email: session.user.email,
     },
   });
+  if (user.role === "Driver" || user.role === "Maintenance") {
+    return <div>You are not authorized to view this page</div>;
+  }
   const teamId = user.teamId;
   const bookings = await pullAllBookings(teamId);
   return (

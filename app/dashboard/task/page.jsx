@@ -1,32 +1,17 @@
 import prisma from "@/app/api/prismaClient";
-import TodayTask from "@/components/todayTask/todayTask";
+import TaskAdmin from "@/components/tasksAdmin/tasksAdmin";
 import { auth } from "@/auth";
-import CustomTask from "@/components/customTaskList/customTask";
+import CustomTaskAdmin from "@/components/customTaskAdmin/customTaskAdmin";
+import MainTasksReadOnly from "@/components/mainTasksReadOnlyComponent/mainTasksReadOnlyComponent";
 
 const Task = async () => {
-  const user = await auth();
-  const userTeam = await prisma.user.findFirst({
+  const session = await auth();
+  const user = await prisma.user.findFirst({
     where: {
-      email: user.user.email,
+      email: session.user.email,
     },
   });
-  const userTeamId = userTeam.teamId;
-  const customTasks = await prisma.customTask.findMany({
-    where: {
-      role: user.role,
-    },
-    select: {
-      id: true,
-      taskTitle: true,
-      guestFirstName: true,
-      guestName: true,
-      guestPhone: true,
-      location: true,
-      taskDescription: true,
-      date: true,
-      status: true,
-    },
-  });
+  const userTeamId = user.teamId;
 
   const tasks = await prisma.booking.findMany({
     where: {
@@ -43,12 +28,67 @@ const Task = async () => {
       status: true,
     },
   });
-  return (
-    <div>
-      <TodayTask tasks={tasks} />
-      <CustomTask tasks={customTasks} />
-    </div>
-  );
+
+  let customTasks;
+  if (user.role === "admin") {
+    // Fetch all custom tasks for admin
+    customTasks = await prisma.customTask.findMany({
+      select: {
+        id: true,
+        taskTitle: true,
+        guestFirstName: true,
+        guestName: true,
+        guestPhone: true,
+        location: true,
+        taskDescription: true,
+        date: true,
+        status: true,
+        role: true,
+      },
+    });
+  } else {
+    // Fetch only role-specific tasks for other users
+    customTasks = await prisma.customTask.findMany({
+      where: {
+        role: user.role,
+      },
+      select: {
+        id: true,
+        taskTitle: true,
+        guestFirstName: true,
+        guestName: true,
+        guestPhone: true,
+        location: true,
+        taskDescription: true,
+        date: true,
+        status: true,
+        role: true,
+      },
+    });
+  }
+
+  if (user.role === "admin") {
+    return (
+      <div>
+        <TaskAdmin tasks={tasks} />
+        <CustomTaskAdmin tasks={customTasks} isAdmin={true} />
+      </div>
+    );
+  } else if (user.role === "Maid" || user.role === "Co-Host") {
+    return (
+      <div>
+        <MainTasksReadOnly tasks={tasks} canEditStatus={true} />
+      </div>
+    );
+  } else if (user.role === "Driver" || user.role === "Maintenance") {
+    return (
+      <div>
+        <CustomTaskAdmin tasks={customTasks} readOnly={true} />
+      </div>
+    );
+  } else {
+    return <div>Access Denied</div>;
+  }
 };
 
 export default Task;

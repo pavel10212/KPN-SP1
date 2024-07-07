@@ -3,20 +3,28 @@ import prisma from "../prismaClient";
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { id, newStatus, customNotes } = body;
-    const updateData = {
-      status: newStatus,
-    };
-
-    if (customNotes !== undefined) {
-      updateData.customNotes = customNotes;
-    }
+    const {
+      id,
+      roomId,
+      guestName,
+      firstNight,
+      lastNight,
+      customNotes,
+      status,
+    } = body;
 
     const updatedBooking = await prisma.booking.update({
       where: {
         id: id,
       },
-      data: updateData,
+      data: {
+        roomId,
+        guestName,
+        firstNight: new Date(firstNight),
+        lastNight: new Date(lastNight),
+        customNotes,
+        status,
+      },
     });
 
     return new Response(

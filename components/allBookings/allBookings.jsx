@@ -6,7 +6,7 @@ const AllBookings = ({ bookings }) => {
     { field: "roomId", headerName: "Room", width: 150 },
     { field: "guestFirstName", headerName: "Name", width: 200 },
     { field: "firstNight", headerName: "Check-in Date", width: 200 },
-    { field: "lastNight", headerName: "Check-out Date", width: 150 },
+    { field: "lastNight", headerName: "Check-out Date", width: 200 },
     { field: "status", headerName: "Status", width: 150 },
   ];
 

@@ -4,8 +4,6 @@ import * as ReactHookForm from "react-hook-form";
 import { Button } from "../ui/button";
 import * as React from "react";
 import dayjs from "dayjs";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
@@ -29,12 +27,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-//! First field is what role is this task for: Driver or Maintenance
-//! For driver the fields will be: Notes, Date, Time, Location, Name
-//! For the maintenance the fields will be: Notes, Date, Time, Location, Name
-
 const CustomTaskForm = () => {
-  const [position, setPosition] = React.useState("bottom");
+  const [submitStatus, setSubmitStatus] = React.useState(null);
+
   const form = ReactHookForm.useForm({
     defaultValues: {
       taskTitle: "",
@@ -49,24 +44,25 @@ const CustomTaskForm = () => {
   });
 
   const onSubmit = async (data) => {
-    const response = await fetch("/api/addCustomtask", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        data: {
-          role: data.role,
-          taskTitle: data.taskTitle,
-          taskDescription: data.taskDescription,
-          guestFirstName: data.guestFirstName,
-          guestName: data.guestName,
-          location: data.location,
-          guestPhone: data.guestPhone,
-          date: data.date,
+    try {
+      const response = await fetch("/api/addCustomtask", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      }),
-    });
+        body: JSON.stringify({ data }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit the form");
+      }
+
+      setSubmitStatus("success");
+      form.reset();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setSubmitStatus("error");
+    }
   };
 
   return (
@@ -80,17 +76,16 @@ const CustomTaskForm = () => {
               <FormLabel>Role</FormLabel>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline">Open</Button>
+                  <Button variant="outline">
+                    {field.value || "Select Role"}
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56">
                   <DropdownMenuLabel>Panel Position</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuRadioGroup
                     value={field.value}
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      setPosition(value);
-                    }}
+                    onValueChange={field.onChange}
                   >
                     <DropdownMenuRadioItem value="Driver">
                       Driver

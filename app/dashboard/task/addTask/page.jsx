@@ -1,11 +1,9 @@
 import React from 'react'
-import Customtask from '@/components/customTask/customTask'
-
-
+import CustomTaskForm from '@/components/customTaskForm/customTaskForm'
 const AddTask = () => {
   return (
     <div>
-        <Customtask />
+        <CustomTaskForm />
     </div>
   )
 }

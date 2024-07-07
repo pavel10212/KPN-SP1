@@ -2,11 +2,16 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth.js";
 import Card from "../../components/dashboard/card/card";
 import BookingToday from "../../components/dashboard/bookingToday/bookingToday";
-import { pullFromDatabase } from "@/lib/actions";
+import { pullFromDatabase, pullCustomBookings } from "@/lib/actions";
 import prisma from "../api/prismaClient";
+import DriverMaintenanceTasks from "@/components/driverMaintenanceTasks/driverMaintenanceTasks";
 
 export default async function Dashboard() {
   const session = await auth();
+  if (!session) {
+    redirect("/login");
+  }
+
   const teamMember = await prisma.user.findFirst({
     where: {
       email: session.user.email,
@@ -21,9 +26,10 @@ export default async function Dashboard() {
 
   const check_ins = await pullFromDatabase(teamId, "firstNight");
   const check_outs = await pullFromDatabase(teamId, "lastNight");
+  const userTasks = await pullCustomBookings(teamMember.role);
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  // Adjust the filtering logic for bookingsStartingToday and bookingsEndingToday
   const bookingsStartingToday = check_ins.filter((booking) => {
     const bookingStartDate = new Date(booking.firstNight);
     bookingStartDate.setHours(0, 0, 0, 0);
@@ -54,20 +60,38 @@ export default async function Dashboard() {
     },
   ];
 
-  if (!session) {
-    redirect("/login");
-  }
-  return (
-    <div className="flex gap-5 mt-5">
-      <div className="flex-3 flex flex-col g-5 w-full">
-        <div className="flex gap-5 mb-10 w-[40%]">
-          {cards.map((card) => (
-            <Card key={card.id} item={card} />
-          ))}
+  if (
+    teamMember.role === "admin" ||
+    teamMember.role === "Maid" ||
+    teamMember.role === "Co-Host"
+  ) {
+    return (
+      <>
+        <div className="flex gap-5 mt-5">
+          <div className="flex-3 flex flex-col g-5 w-full">
+            <div className="flex gap-5 mb-10 w-[40%]">
+              {cards.map((card) => (
+                <Card key={card.id} item={card} />
+              ))}
+            </div>
+          </div>
         </div>
-        <BookingToday bookings={check_ins} checkInOrOut="Check Ins Today" />
-        <BookingToday bookings={check_outs} checkInOrOut="Check Outs Today" />
+        <div>
+          <BookingToday bookings={check_ins} checkInOrOut="Check Ins Today" />
+          <BookingToday bookings={check_outs} checkInOrOut="Check Outs Today" />
+        </div>
+      </>
+    );
+  } else if (
+    teamMember.role === "Driver" ||
+    teamMember.role === "Maintenance"
+  ) {
+    return (
+      <div className="mt-5">
+        <DriverMaintenanceTasks user={teamMember} userTasks={userTasks} />
       </div>
-    </div>
-  );
+    );
+  }
+
+  return <div>Access Denied</div>;
 }
