@@ -74,7 +74,7 @@ const Task = async () => {
       <div>
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">Tasks</h1>
-          <Link href="/app/dashboard/task/addTask/page.jsx">
+          <Link href="/dashboard/task/addTask/page.jsx">
             <Button>Add Custom Task</Button>
           </Link>
         </div>
