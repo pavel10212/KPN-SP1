@@ -1,4 +1,3 @@
-// middleware.js
 import { auth } from "./auth";
 import { NextResponse } from "next/server";
 
@@ -6,11 +5,11 @@ export default async function middleware(request) {
   const session = await auth();
   const { pathname } = request.nextUrl;
 
+  // List of public routes
+  const publicRoutes = ["/login", "/register", "/"]; // Add other public routes as needed
+
   // Allow public routes
-  if (pathname === "/login" || pathname === "/register") {
-    if (session) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
+  if (publicRoutes.includes(pathname)) {
     return NextResponse.next();
   }
 
