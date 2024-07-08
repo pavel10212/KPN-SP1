@@ -7,6 +7,7 @@ import {
   MdOutlineSettings,
   MdHelpCenter,
   MdLogout,
+  MdChat ,
 } from "react-icons/md";
 import MenuLink from "./menuLink/menuLink";
 import prisma from "@/app/api/prismaClient";
@@ -31,6 +32,11 @@ const Sidebar = async () => {
           title: "Users",
           path: "/dashboard/users",
           icon: <MdSupervisedUserCircle />,
+        },
+        {
+          title: "Chat",
+          path: "/dashboard/chat",
+          icon: <MdChat  />,
         },
         {
           title: "Tasks",

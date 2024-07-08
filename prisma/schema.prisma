@@ -8,13 +8,13 @@ generator client {
 }
 
 model Team {
-  id       String    @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  users    User[]
-  bookings Booking[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  users        User[]
+  bookings     Booking[]
+  chatEngineId String? // Add this line
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }
 
 model CustomTask {
@@ -49,21 +49,22 @@ model Booking {
 }
 
 model User {
-  id             String    @id @default(auto()) @map("_id") @db.ObjectId
-  name           String?
-  email          String?   @unique
-  role           String    @default("admin")
-  emailVerified  DateTime?
-  api_key        String?   @unique
-  prop_key       String?   @unique
-  image          String?
-  hashedPassword String?
-  accounts       Account[]
-  sessions       Session[]
-  teamId         String    @db.ObjectId
-  team           Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  id                 String    @id @default(auto()) @map("_id") @db.ObjectId
+  name               String?
+  email              String?   @unique
+  role               String    @default("admin")
+  emailVerified      DateTime?
+  api_key            String?   @unique
+  prop_key           String?   @unique
+  image              String?
+  hashedPassword     String?
+  accounts           Account[]
+  chatEnginePassword String?
+  sessions           Session[]
+  teamId             String    @db.ObjectId
+  team               Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 }
 
 model Account {
