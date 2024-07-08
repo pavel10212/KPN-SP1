@@ -3,6 +3,8 @@ import TaskAdmin from "@/components/tasksAdmin/tasksAdmin";
 import { auth } from "@/auth";
 import CustomTaskAdmin from "@/components/customTaskAdmin/customTaskAdmin";
 import MainTasksReadOnly from "@/components/mainTasksReadOnlyComponent/mainTasksReadOnlyComponent";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const Task = async () => {
   const session = await auth();
@@ -70,6 +72,12 @@ const Task = async () => {
   if (user.role === "admin") {
     return (
       <div>
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-bold">Tasks</h1>
+          <Link href="/app/dashboard/task/addTask/page.jsx">
+            <Button>Add Custom Task</Button>
+          </Link>
+        </div>
         <TaskAdmin tasks={tasks} />
         <CustomTaskAdmin tasks={customTasks} isAdmin={true} />
       </div>

@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { z } from "zod";
 import { useSession } from "next-auth/react";
 import { registerSchema } from "@/lib/zod";
-import prisma from "@/app/api/prismaClient";
 
 const AddMemberPage = () => {
   const { data: session, status } = useSession();
