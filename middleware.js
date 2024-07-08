@@ -6,6 +6,7 @@ export default async function middleware(request) {
   const session = await auth();
   const { pathname } = request.nextUrl;
 
+  // Allow public routes
   if (pathname === "/login" || pathname === "/register") {
     if (session) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
@@ -13,6 +14,7 @@ export default async function middleware(request) {
     return NextResponse.next();
   }
 
+  // Protect private routes
   if (!session) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
