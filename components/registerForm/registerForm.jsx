@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { z } from "zod";
 import { registerSchema } from "@/lib/zod";
+import Image from "next/image";
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
