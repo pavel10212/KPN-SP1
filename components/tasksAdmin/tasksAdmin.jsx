@@ -154,7 +154,7 @@ const TaskAdmin = ({ tasks }) => {
       className="bg-white p-5 rounded-xl mt-5"
       style={{ height: 600, width: "100%" }}
     >
-      <h2 className="mb-5 font-bold text-[#202224]">Today's Tasks</h2>
+      <h2 className="mb-5 font-bold text-[#202224]">Today&apos;s Tasks</h2>
       <DataGrid
         rows={rows}
         columns={columns}
