@@ -23,8 +23,8 @@ export default async function ChatPage() {
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <div className="container mx-auto py-8">
+    <div className="bg-gray-100 min-h-screen rounded-lg">
+      <div className="container mx-auto py-8 m-5 rounded-lg">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <ChatComponent
             userName={user.name.replace(/\s+/g, "_").toLowerCase()}
