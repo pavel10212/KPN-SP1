@@ -7,17 +7,28 @@ import {
   MdOutlineSettings,
   MdHelpCenter,
   MdLogout,
-  MdChat ,
+  MdChat,
 } from "react-icons/md";
 import MenuLink from "./menuLink/menuLink";
 import prisma from "@/app/api/prismaClient";
 import { signOut, auth } from "@/auth.js";
+import { redirect } from "next/navigation";
 
 const Sidebar = async () => {
   const session = await auth();
+
+  if (!session) {
+    redirect("/login");
+  }
+
   const user = await prisma.user.findFirst({
     where: { email: session.user.email },
   });
+
+  if (!user) {
+    console.error("User not found in the database");
+    redirect("/login");
+  }
 
   const menuItems = [
     {
@@ -36,7 +47,7 @@ const Sidebar = async () => {
         {
           title: "Chat",
           path: "/dashboard/chat",
-          icon: <MdChat  />,
+          icon: <MdChat />,
         },
         {
           title: "Tasks",
