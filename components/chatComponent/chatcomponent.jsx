@@ -24,12 +24,14 @@ export default function ChatComponent({ userName, userSecret }) {
   if (!showChat) return <div>Loading...</div>;
 
   return (
-    <ChatEngine
-      height="75vh"
-      projectID={process.env.NEXT_PUBLIC_CHAT_ENGINE_PROJECT_ID}
-      userName={userName}
-      userSecret={userSecret}
-      renderNewMessageForm={() => <MessageFormSocial />}
-    />
+    <div>
+      <ChatEngine
+        height="75vh"
+        projectID={process.env.NEXT_PUBLIC_CHAT_ENGINE_PROJECT_ID}
+        userName={userName}
+        userSecret={userSecret}
+        renderNewMessageForm={() => <MessageFormSocial />}
+      />
+    </div>
   );
 }

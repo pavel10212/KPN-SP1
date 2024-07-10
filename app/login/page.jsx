@@ -41,13 +41,13 @@ const LoginPage = () => {
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <Image
-            className="mx-auto h-10 w-auto"
+            className="mx-auto h-25 w-auto"
             width={40}
             height={40}
-            src="/@/app/img/logo.jpg"
+            src="/logo2.svg"
             alt="Your Company"
           />
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+          <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Sign in to your account
           </h2>
         </div>
@@ -83,14 +83,6 @@ const LoginPage = () => {
                 >
                   Password
                 </label>
-                <div className="text-sm">
-                  <a
-                    href="#"
-                    className="font-semibold text-indigo-600 hover:text-indigo-500"
-                  >
-                    Forgot password?
-                  </a>
-                </div>
               </div>
               <div className="mt-2">
                 <input
@@ -111,7 +103,7 @@ const LoginPage = () => {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full justify-center rounded-md bg-[#5fb9e6] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:text-[#3a8ab7] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3a8ab7]"
               >
                 Sign in
               </button>
@@ -122,9 +114,9 @@ const LoginPage = () => {
             Not a member?{" "}
             <a
               href="#"
-              className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+              className="font-semibold leading-6 text-[#5fb9e6] hover:text-[#3a8ab7]"
             >
-              Start a 14 day free trial
+              Register
             </a>
           </p>
         </div>
