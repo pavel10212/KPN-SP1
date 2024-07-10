@@ -21,10 +21,15 @@ export default function ChatComponent({ userName, userSecret }) {
     }
   }, []);
 
-  if (!showChat) return <div>Loading...</div>;
+  if (!showChat)
+    return (
+      <div className="flex justify-center items-center h-[75vh]">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-indigo-500"></div>
+      </div>
+    );
 
   return (
-    <div>
+    <div className="chat-container">
       <ChatEngine
         height="75vh"
         projectID={process.env.NEXT_PUBLIC_CHAT_ENGINE_PROJECT_ID}
@@ -32,6 +37,58 @@ export default function ChatComponent({ userName, userSecret }) {
         userSecret={userSecret}
         renderNewMessageForm={() => <MessageFormSocial />}
       />
+      <style jsx global>{`
+        .chat-container {
+          font-family: "Inter", sans-serif;
+        }
+        .ce-chat-list {
+          background-color: #f3f4f6 !important;
+        }
+        .ce-chats-container {
+          background-color: #f3f4f6 !important;
+          border-right: 1px solid #e5e7eb;
+        }
+        .ce-active-chat-card {
+          background-color: #ffffff !important;
+          border: 1px solid #e5e7eb !important;
+        }
+        .ce-chat-title-text {
+          color: #1f2937 !important;
+        }
+        .ce-chat-subtitle-text {
+          color: #6b7280 !important;
+        }
+        .ce-chat-form-container {
+          background-color: #ffffff !important;
+          border-top: 1px solid #e5e7eb;
+        }
+        #ce-send-message-button {
+          background-color: #4f46e5 !important;
+        }
+        .ce-my-message-bubble {
+          background-color: #4f46e5 !important;
+        }
+        .ce-my-message-sinding-bubble {
+          background-color: #818cf8 !important;
+        }
+        .ce-their-message-bubble {
+          background-color: #e5e7eb !important;
+          color: #1f2937 !important;
+        }
+        #ce-send-message-button {
+          background-color: #4f46e5 !important;
+        }
+        .ce-autocomplete-input {
+          border-radius: 6px !important;
+          border: 1px solid #e5e7eb;
+        }
+        .ce-danger-button {
+          background-color: #ef4444 !important;
+        }
+        .ce-primary-button {
+          background-color: #4f46e5 !important;
+        }
+      `}</style>
     </div>
   );
 }

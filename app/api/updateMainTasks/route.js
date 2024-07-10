@@ -3,28 +3,46 @@ import prisma from "../prismaClient";
 export async function POST(req) {
   try {
     const body = await req.json();
-    const {
-      id,
-      roomId,
-      guestName,
-      firstNight,
-      lastNight,
-      customNotes,
-      status,
-    } = body;
+    const { id, status } = body;
+
+    if (!id) {
+      return new Response(
+        JSON.stringify({
+          message: "Booking ID is required",
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const updateData = {};
+
+    if (status) {
+      updateData.status = status;
+    }
+
+    // Only include other fields if they are provided and valid
+    ["roomId", "guestName", "customNotes"].forEach((field) => {
+      if (body[field] !== undefined) {
+        updateData[field] = body[field];
+      }
+    });
+
+    // Handle date fields separately
+    ["firstNight", "lastNight"].forEach((field) => {
+      if (body[field]) {
+        const date = new Date(body[field]);
+        if (!isNaN(date.getTime())) {
+          updateData[field] = date;
+        }
+      }
+    });
 
     const updatedBooking = await prisma.booking.update({
-      where: {
-        id: id,
-      },
-      data: {
-        roomId,
-        guestName,
-        firstNight: new Date(firstNight),
-        lastNight: new Date(lastNight),
-        customNotes,
-        status,
-      },
+      where: { id },
+      data: updateData,
     });
 
     return new Response(

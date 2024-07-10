@@ -47,16 +47,19 @@ export default async function Dashboard() {
       id: 1,
       title: "Total Team Members",
       number: teamCount.length,
+      icon: "👥",
     },
     {
       id: 2,
-      title: "Total Check-ins Today",
+      title: "Check-ins Today",
       number: bookingsStartingToday.length,
+      icon: "🛎️",
     },
     {
       id: 3,
-      title: "Total Check-outs Today",
+      title: "Check-outs Today",
       number: bookingsEndingToday.length,
+      icon: "🔑",
     },
   ];
 
@@ -66,32 +69,39 @@ export default async function Dashboard() {
     teamMember.role === "Co-Host"
   ) {
     return (
-      <>
-        <div className="flex gap-5 mt-5">
-          <div className="flex-3 flex flex-col g-5 w-full">
-            <div className="flex gap-5 mb-10 w-[40%]">
-              {cards.map((card) => (
-                <Card key={card.id} item={card} />
-              ))}
-            </div>
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+        <h1 className="text-3xl font-bold text-gray-800 mb-8">Dashboard</h1>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {cards.map((card) => (
+            <Card key={card.id} item={card} />
+          ))}
         </div>
-        <div>
-          <BookingToday bookings={check_ins} checkInOrOut="Check Ins Today" />
-          <BookingToday bookings={check_outs} checkInOrOut="Check Outs Today" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <BookingToday bookings={check_ins} checkInOrOut="Today's Check-ins" />
+          <BookingToday
+            bookings={check_outs}
+            checkInOrOut="Today's Check-outs"
+          />
         </div>
-      </>
+      </div>
     );
   } else if (
     teamMember.role === "Driver" ||
     teamMember.role === "Maintenance"
   ) {
     return (
-      <div className="mt-5">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+        <h1 className="text-3xl font-bold text-gray-800 mb-8">
+          Task Dashboard
+        </h1>
         <DriverMaintenanceTasks user={teamMember} userTasks={userTasks} />
       </div>
     );
   }
 
-  return <div>Access Denied</div>;
+  return (
+    <div className="min-h-screen flex items-center justify-center text-2xl font-bold text-red-600">
+      Access Denied
+    </div>
+  );
 }

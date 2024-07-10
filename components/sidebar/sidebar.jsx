@@ -32,27 +32,27 @@ const Sidebar = async () => {
 
   const menuItems = [
     {
-      title: "Pages",
+      title: "Menu",
       list: [
         {
           title: "Dashboard",
           path: "/dashboard",
-          icon: <MdDashboard />,
+          icon: <MdDashboard className="text-2xl" />,
         },
         {
           title: "Users",
           path: "/dashboard/users",
-          icon: <MdSupervisedUserCircle />,
+          icon: <MdSupervisedUserCircle className="text-2xl" />,
         },
         {
           title: "Chat",
           path: "/dashboard/chat",
-          icon: <MdChat />,
+          icon: <MdChat className="text-2xl" />,
         },
         {
           title: "Tasks",
           path: "/dashboard/task",
-          icon: <MdShoppingBag />,
+          icon: <MdShoppingBag className="text-2xl" />,
         },
         // Conditionally include the Bookings menu item
         ...(user.role !== "Driver" && user.role !== "Maintenance"
@@ -60,7 +60,7 @@ const Sidebar = async () => {
               {
                 title: "Bookings",
                 path: "/dashboard/bookings",
-                icon: <MdAttachMoney />,
+                icon: <MdAttachMoney className="text-2xl" />,
               },
             ]
           : []),
@@ -72,55 +72,60 @@ const Sidebar = async () => {
         {
           title: "Settings",
           path: "/dashboard/settings",
-          icon: <MdOutlineSettings />,
+          icon: <MdOutlineSettings className="text-2xl" />,
         },
         {
           title: "Help",
           path: "/dashboard/help",
-          icon: <MdHelpCenter />,
+          icon: <MdHelpCenter className="text-2xl" />,
         },
       ],
     },
   ];
 
   return (
-    <div className="sticky top-10">
-      <div className="flex items-center gap-5 mb-5 flex-col">
+    <div className="w-80 h-screen bg-white shadow-lg flex flex-col">
+      <div className="p-8 flex flex-col items-center border-b border-gray-200">
         <Image
-          className="rounded-full object-cover"
+          className="rounded-full object-cover w-24 h-24 mb-4 border-2 border-indigo-500"
           src="/noavatar.png"
           alt=""
-          width="50"
-          height="50"
+          width="96"
+          height="96"
         />
-        <div className="flex flex-col items-center">
-          <span className="font-medium text-[#404040]">{user.name}</span>
-          <span className="text-xs grey text-[#565656]">{user.role}</span>
-        </div>
+        <span className="font-semibold text-gray-800 text-xl">{user.name}</span>
+        <span className="text-sm text-indigo-600 font-medium mt-1">
+          {user.role}
+        </span>
       </div>
-      <ul className="list-none">
+      <nav className="flex-grow overflow-y-auto py-6">
         {menuItems.map((cat) => (
-          <li key={cat.title} className="">
-            <span className="text-[#202224] font-bold text-xs mx-2 ">
+          <div key={cat.title} className="mb-8">
+            <span className="text-sm font-bold text-gray-400 uppercase px-8 mb-2 block">
               {cat.title}
             </span>
-            {cat.list.map((item) => (
-              <MenuLink item={item} key={item.title} />
-            ))}
-          </li>
+            <ul className="list-none">
+              {cat.list.map((item) => (
+                <MenuLink item={item} key={item.title} />
+              ))}
+            </ul>
+          </div>
         ))}
-      </ul>
-      <form
-        action={async () => {
-          "use server";
-          await signOut({ callbackUrl: "/login" }); // Redirect to login page after signout
-        }}
-      >
-        <button className="p-5 mx-1 flex items-center gap-2.5 cursor-pointer rounded-xl mt-40 w-full hover:bg-[#4880FF] hover:text-white text-[#202224] font-bold ">
-          <MdLogout className="text-[#202224]" />
-          Logout
-        </button>
-      </form>
+      </nav>
+      <div className="mt-auto border-t border-gray-200">
+        <form
+          action={async () => {
+            "use server";
+            await signOut({ callbackUrl: "/login" });
+          }}
+          className="p-6"
+        >
+          <button className="w-full py-3 px-4 bg-red-500 text-white rounded-lg flex items-center justify-center gap-2 hover:bg-red-600 transition duration-300 text-lg">
+            <MdLogout className="text-2xl" />
+            Logout
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

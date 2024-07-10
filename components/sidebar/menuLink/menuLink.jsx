@@ -1,19 +1,22 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const MenuLink = ({ item }) => {
   const pathname = usePathname();
+  const isActive = pathname === item.path;
 
   return (
     <Link
       href={item.path}
-      className={`${"p-5 flex text-[#202224] items-center gap-2.5 mt-4 mx-1 rounded-xl hover:bg-[#4880FF] hover:text-white"} ${
-        pathname === item.path && "bg-[#4880FF] text-white"
+      className={`flex items-center py-3 px-8 text-base font-medium transition-colors duration-200 ${
+        isActive
+          ? "text-indigo-600 bg-indigo-50"
+          : "text-gray-600 hover:text-indigo-600 hover:bg-indigo-50"
       }`}
     >
-      {item.icon}
+      <span className="mr-4">{item.icon}</span>
       {item.title}
     </Link>
   );
