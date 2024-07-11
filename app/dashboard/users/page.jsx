@@ -16,7 +16,7 @@ const Users = async () => {
     },
   });
 
-  return <ClientUsers users={allUsers} />;
+  return <ClientUsers users={allUsers} user={user} />;
 };
 
 export default Users;

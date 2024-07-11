@@ -5,7 +5,7 @@ import Link from "next/link";
 import { DataGrid } from "@mui/x-data-grid";
 import { MdAdd } from "react-icons/md";
 
-const ClientUsers = ({ users }) => {
+const ClientUsers = ({ users, user }) => {
   const [allUsers] = useState(users);
 
   const columns = [
@@ -62,12 +62,14 @@ const ClientUsers = ({ users }) => {
             <h2 className="text-2xl font-semibold text-gray-800">
               Your Teammates
             </h2>
-            <Link href="/dashboard/users/add">
-              <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg flex items-center transition duration-300">
-                <MdAdd className="mr-2" />
-                Add New
-              </button>
-            </Link>
+            {user.role === "Admin" && (
+              <Link href="/dashboard/users/add">
+                <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg flex items-center transition duration-300">
+                  <MdAdd className="mr-2" />
+                  Add New
+                </button>
+              </Link>
+            )}
           </div>
           <div style={{ height: 400, width: "100%" }}>
             <DataGrid

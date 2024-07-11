@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 
 const BookingToday = ({ bookings, checkInOrOut }) => {
@@ -9,37 +9,44 @@ const BookingToday = ({ bookings, checkInOrOut }) => {
     return date.toLocaleString();
   };
 
-  const columns = [
-    { field: "roomId", headerName: "Room", width: 100 },
-    { field: "guestFirstName", headerName: "Name", width: 150 },
-    {
-      field: "firstNight",
-      headerName: "Check-in",
-      width: 180,
-      renderCell: (params) => formatDate(params.value),
-    },
-    {
-      field: "lastNight",
-      headerName: "Check-out",
-      width: 180,
-      renderCell: (params) => formatDate(params.value),
-    },
-    { field: "status", headerName: "Status", width: 120 },
-  ];
+  const columns = useMemo(
+    () => [
+      { field: "roomId", headerName: "Room", flex: 0.5, minWidth: 70 },
+      { field: "guestFirstName", headerName: "Name", flex: 1, minWidth: 120 },
+      {
+        field: "firstNight",
+        headerName: "Check-in",
+        flex: 1,
+        minWidth: 160,
+        renderCell: (params) => formatDate(params.value),
+      },
+      {
+        field: "lastNight",
+        headerName: "Check-out",
+        flex: 1,
+        minWidth: 160,
+        renderCell: (params) => formatDate(params.value),
+      },
+      { field: "status", headerName: "Status", flex: 0.8, minWidth: 100 },
+    ],
+    []
+  );
 
-  const [rows] = useState(
-    bookings.map((booking, index) => ({
-      ...booking,
-      id: index,
-    }))
+  const rows = useMemo(
+    () =>
+      bookings.map((booking, index) => ({
+        ...booking,
+        id: index,
+      })),
+    [bookings]
   );
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6">
+    <div className="bg-white rounded-xl shadow-lg p-6 h-auto flex flex-col">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
         {checkInOrOut}
       </h2>
-      <div style={{ height: 400, width: "100%" }}>
+      <div className="flex-grow">
         <DataGrid
           columns={columns}
           rows={rows}
@@ -48,6 +55,8 @@ const BookingToday = ({ bookings, checkInOrOut }) => {
           disableSelectionOnClick
           checkboxSelection={false}
           className="border-none"
+          autoHeight
+          density="compact"
         />
       </div>
     </div>

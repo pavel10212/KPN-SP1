@@ -76,12 +76,9 @@ export default async function Dashboard() {
             <Card key={card.id} item={card} />
           ))}
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="space-y-6">
           <BookingToday bookings={check_ins} checkInOrOut="Today's Check-ins" />
-          <BookingToday
-            bookings={check_outs}
-            checkInOrOut="Today's Check-outs"
-          />
+          <BookingToday bookings={check_outs} checkInOrOut="Today's Check-outs" />
         </div>
       </div>
     );

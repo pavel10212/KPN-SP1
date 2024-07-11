@@ -19,13 +19,13 @@ model Team {
 
 model CustomTask {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  taskTitle       String
+  taskTitle       String?
   guestFirstName  String
   guestName       String
   guestPhone      String
   location        String
   date            DateTime
-  taskDescription String
+  taskDescription String?
   status          String
   role            String
 }

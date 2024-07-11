@@ -19,10 +19,6 @@ RUN npx prisma generate
 
 RUN npm run build
 
-
-
-ENV NODE_ENV=production
-
 # Expose the port the app will run on
 EXPOSE 8080
 
