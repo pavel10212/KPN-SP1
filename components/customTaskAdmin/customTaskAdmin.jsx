@@ -127,7 +127,7 @@ const CustomTaskAdmin = ({ tasks, readOnly = false, isAdmin = false }) => {
   ];
 
   return (
-    <div className="bg-white p-5 rounded-xl mt-5">
+    <div className="bg-white p-5 rounded-xl mt-1">
       <div style={{ height: 400, width: "100%" }}>
         <DataGrid
           rows={rows}
