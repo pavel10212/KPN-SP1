@@ -72,12 +72,12 @@ const Task = async () => {
     if (user.role === "admin") {
       return (
         <>
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Main Tasks</h2>
+          <div className="mb-5 bg-white shadow-lg rounded-xl">
+            <h2 className="text-xl font-semibold pl-5 pt-5">Main Tasks</h2>
             <TaskAdmin tasks={tasks} />
           </div>
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Custom Tasks</h2>
+          <div className="bg-white shadow-lg rounded-xl">
+            <h2 className="text-xl font-semibold pl-5 pt-5">Custom Tasks</h2>
             <CustomTaskAdmin tasks={customTasks} isAdmin={true} />
           </div>
         </>
@@ -94,7 +94,7 @@ const Task = async () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="rounded-xl min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-800">Tasks</h1>
@@ -107,9 +107,7 @@ const Task = async () => {
             </Link>
           )}
         </div>
-        <div className="bg-white shadow-md rounded-lg p-6">
-          {renderContent()}
-        </div>
+        <div className="p-4">{renderContent()}</div>
       </div>
     </div>
   );

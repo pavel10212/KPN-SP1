@@ -151,8 +151,8 @@ const TaskAdmin = ({ tasks }) => {
 
   return (
     <div
-      className="bg-white p-5 rounded-xl mt-5"
-      style={{ height: 600, width: "100%" }}
+      className="bg-white p-5 rounded-xl mt-1"
+      style={{ height: 550, width: "100%" }}
     >
       <DataGrid
         rows={rows}
