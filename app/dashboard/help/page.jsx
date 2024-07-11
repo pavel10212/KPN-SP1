@@ -27,7 +27,8 @@ const faqs = [
       "Navigate to the 'Bookings' page, find the booking you want to update, and click on the edit icon. Make your changes in the form that appears and save your updates.",
   },
   {
-    question: "What's the difference between a Driver and a Maintenance role?",
+    question:
+      "What&apos;s the difference between a Driver and a Maintenance role?",
     answer:
       "The Driver role is responsible for guest transportation tasks, while the Maintenance role handles property upkeep and repairs. Each role has access to specific tasks and information relevant to their responsibilities.",
   },
@@ -101,8 +102,8 @@ const HelpPage = () => {
           <CardHeader>
             <CardTitle>Contact Support</CardTitle>
             <CardDescription>
-              If you can't find the answer you're looking for, our support team
-              is here to help:
+              If you can&apos;t find the answer you&apos;re looking for, our
+              support team is here to help:
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
