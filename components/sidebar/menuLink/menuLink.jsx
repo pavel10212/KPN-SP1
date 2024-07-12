@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const MenuLink = ({ item }) => {
+const MenuLink = ({ item, onClick }) => {
   const pathname = usePathname();
   const isActive = pathname === item.path;
 
@@ -15,6 +15,7 @@ const MenuLink = ({ item }) => {
           ? "text-indigo-600 bg-indigo-50"
           : "text-gray-600 hover:text-indigo-600 hover:bg-indigo-50"
       }`}
+      onClick={onClick}
     >
       <span className="mr-4">{item.icon}</span>
       {item.title}

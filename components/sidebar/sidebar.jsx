@@ -13,8 +13,9 @@ import MenuLink from "./menuLink/menuLink";
 import prisma from "@/app/api/prismaClient";
 import { signOut, auth } from "@/auth.js";
 import { redirect } from "next/navigation";
+import SidebarToggle from "/components/sidebar/sidebarToggle/sidebarToggle";
 
-const Sidebar = async () => {
+const Sidebar = async ({ className }) => {
   const session = await auth();
 
   if (!session) {
@@ -83,25 +84,25 @@ const Sidebar = async () => {
     },
   ];
 
-  return (
-    <div className="w-80 h-screen bg-white shadow-lg flex flex-col">
-      <div className="p-8 flex flex-col items-center border-b border-gray-200">
+  const sidebarContent = (
+    <div className="flex flex-col h-full bg-white shadow-md">
+      <div className="p-6 flex flex-col items-center border-b border-gray-200">
         <Image
-          className="rounded-full object-cover w-24 h-24 mb-4 border-2 border-indigo-500"
+          className="rounded-full object-cover w-20 h-20 mb-3 border-2 border-indigo-500"
           src="/noavatar.png"
           alt=""
-          width="96"
-          height="96"
+          width="80"
+          height="80"
         />
-        <span className="font-semibold text-gray-800 text-xl">{user.name}</span>
+        <span className="font-semibold text-gray-800 text-lg">{user.name}</span>
         <span className="text-sm text-indigo-600 font-medium mt-1">
           {user.role}
         </span>
       </div>
-      <nav className="flex-grow overflow-y-auto py-6">
+      <nav className="flex-grow overflow-y-auto py-4">
         {menuItems.map((cat) => (
-          <div key={cat.title} className="mb-8">
-            <span className="text-sm font-bold text-gray-400 uppercase px-8 mb-2 block">
+          <div key={cat.title} className="mb-6">
+            <span className="text-xs font-bold text-gray-400 uppercase px-6 mb-2 block">
               {cat.title}
             </span>
             <ul className="list-none">
@@ -112,22 +113,23 @@ const Sidebar = async () => {
           </div>
         ))}
       </nav>
-      <div className="mt-auto border-t border-gray-200">
+      <div className="border-t border-gray-200 p-4">
         <form
           action={async () => {
             "use server";
             await signOut({ callbackUrl: "/login" });
           }}
-          className="p-6"
         >
-          <button className="w-full py-3 px-4 bg-red-500 text-white rounded-lg flex items-center justify-center gap-2 hover:bg-red-600 transition duration-300 text-lg">
-            <MdLogout className="text-2xl" />
+          <button className="w-full py-2 px-4 bg-red-500 text-white rounded-lg flex items-center justify-center gap-2 hover:bg-red-600 transition duration-300 text-sm">
+            <MdLogout className="text-xl" />
             Logout
           </button>
         </form>
       </div>
     </div>
   );
+
+  return <SidebarToggle className={className}>{sidebarContent}</SidebarToggle>;
 };
 
 export default Sidebar;
