@@ -7,7 +7,7 @@ export default async function ChatPage() {
 
   if (!session) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-100">
+      <div className="flex items-center justify-center h-full bg-gray-100">
         <div className="bg-white p-8 rounded-lg shadow-md">
           <p className="text-xl font-semibold text-gray-800">
             Please log in to access the chat.
@@ -27,7 +27,7 @@ export default async function ChatPage() {
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-100">
+      <div className="flex items-center justify-center h-full bg-gray-100">
         <div className="bg-white p-8 rounded-lg shadow-md">
           <p className="text-xl font-semibold text-gray-800">User not found.</p>
         </div>
@@ -36,12 +36,12 @@ export default async function ChatPage() {
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          <div className="bg-indigo-600 p-4">
-            <h1 className="text-2xl font-semibold text-white">Team Chat</h1>
-          </div>
+    <div className="flex flex-col h-full bg-gray-100">
+      <div className="flex-grow flex flex-col bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-indigo-600 p-4">
+          <h1 className="text-2xl font-semibold text-white">Team Chat</h1>
+        </div>
+        <div className="flex-grow overflow-hidden">
           <ChatComponent
             userName={user.name.replace(/\s+/g, "_").toLowerCase()}
             userSecret={user.chatEnginePassword}

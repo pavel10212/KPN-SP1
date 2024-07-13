@@ -127,7 +127,7 @@ const AllBookings = ({ bookings }) => {
         </div>
       </div>
 
-      <div className="h-[600px] w-full">
+      <div className="h-[400px] w-full">
         <DataGrid
           columns={columns}
           rows={filteredRows}

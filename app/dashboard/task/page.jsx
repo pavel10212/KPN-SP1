@@ -72,42 +72,58 @@ const Task = async () => {
     if (user.role === "admin") {
       return (
         <>
-          <div className="mb-5 bg-white shadow-lg rounded-xl">
-            <h2 className="text-xl font-semibold pl-5 pt-5">Main Tasks</h2>
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+              Main Tasks
+            </h2>
             <TaskAdmin tasks={tasks} />
           </div>
-          <div className="bg-white shadow-lg rounded-xl">
-            <h2 className="text-xl font-semibold pl-5 pt-5">Custom Tasks</h2>
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+              Custom Tasks
+            </h2>
             <CustomTaskAdmin tasks={customTasks} isAdmin={true} />
           </div>
         </>
       );
     } else if (user.role === "Maid" || user.role === "Co-Host") {
-      return <MainTasksReadOnly tasks={tasks} canEditStatus={true} />;
+      return (
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Tasks</h2>
+          <MainTasksReadOnly tasks={tasks} canEditStatus={true} />
+        </div>
+      );
     } else if (user.role === "Driver" || user.role === "Maintenance") {
-      return <CustomTaskAdmin tasks={customTasks} readOnly={true} />;
+      return (
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Tasks</h2>
+          <CustomTaskAdmin tasks={customTasks} readOnly={true} />
+        </div>
+      );
     } else {
       return (
-        <div className="text-red-600 font-semibold text-lg">Access Denied</div>
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <p className="text-red-600 font-semibold text-lg">Access Denied</p>
+        </div>
       );
     }
   };
 
   return (
-    <div className="rounded-xl min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="container mx-auto px-4 py-8">
+    <div className="bg-gray-100 min-h-screen">
+      <div className="mx-auto px-4 sm:px-6 py-8 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl ">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-800">Tasks</h1>
           {user.role === "admin" && (
             <Link href="/dashboard/task/addTask">
-              <Button className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg flex items-center">
+              <Button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg flex items-center transition duration-300">
                 <MdAdd className="mr-2" />
                 Add Custom Task
               </Button>
             </Link>
           )}
         </div>
-        <div className="p-4">{renderContent()}</div>
+        {renderContent()}
       </div>
     </div>
   );

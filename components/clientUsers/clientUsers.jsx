@@ -1,12 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { DataGrid } from "@mui/x-data-grid";
 import { MdAdd } from "react-icons/md";
 
 const ClientUsers = ({ users, user }) => {
   const [allUsers] = useState(users);
+  const [gridHeight, setGridHeight] = useState("400px");
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (containerRef.current) {
+        const windowHeight = window.innerHeight;
+        const containerTop = containerRef.current.getBoundingClientRect().top;
+        const footerHeight = 200; // Adjust based on your footer height
+        const newHeight = windowHeight - containerTop - footerHeight;
+        setGridHeight(`${Math.max(400, newHeight)}px`);
+      }
+    };
+
+    handleResize(); // Initial call
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const columns = [
     { field: "name", headerName: "Name", flex: 1, minWidth: 150 },
@@ -39,7 +57,7 @@ const ClientUsers = ({ users, user }) => {
 
   const getRoleColor = (role) => {
     switch (role) {
-      case "Admin":
+      case "admin":
         return "bg-red-100 text-red-800";
       case "Co-Host":
         return "bg-blue-100 text-blue-800";
@@ -55,40 +73,42 @@ const ClientUsers = ({ users, user }) => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen p-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-semibold text-gray-800">
-              Your Teammates
-            </h2>
-            {user.role === "Admin" && (
-              <Link href="/dashboard/users/add">
-                <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg flex items-center transition duration-300">
-                  <MdAdd className="mr-2" />
-                  Add New
-                </button>
-              </Link>
-            )}
-          </div>
-          <div style={{ height: 400, width: "100%" }}>
-            <DataGrid
-              columns={columns}
-              rows={allUsers}
-              pageSize={5}
-              rowsPerPageOptions={[5, 10, 20]}
-              disableSelectionOnClick
-              className="border-none"
-              sx={{
-                "& .MuiDataGrid-cell:focus": {
-                  outline: "none",
-                },
-                "& .MuiDataGrid-row:hover": {
-                  backgroundColor: "#f3f4f6",
-                },
-              }}
-            />
-          </div>
+    <div className="rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+      <h1 className="text-3xl font-bold text-gray-800 mb-8">Users</h1>
+      <div className="bg-white rounded-lg shadow-md p-6" ref={containerRef}>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-semibold text-gray-800">
+            Your Teammates
+          </h2>
+          {user.role === "admin" && (
+            <Link href="/dashboard/users/add">
+              <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg flex items-center transition duration-300">
+                <MdAdd className="mr-2" />
+                Add New
+              </button>
+            </Link>
+          )}
+        </div>
+        <div style={{ height: gridHeight, width: "100%" }}>
+          <DataGrid
+            columns={columns}
+            rows={allUsers}
+            pageSize={5}
+            rowsPerPageOptions={[5, 10, 20]}
+            disableSelectionOnClick
+            className="border-none"
+            sx={{
+              "& .MuiDataGrid-cell:focus": {
+                outline: "none",
+              },
+              "& .MuiDataGrid-row:hover": {
+                backgroundColor: "#f3f4f6",
+              },
+              "& .MuiDataGrid-virtualScroller": {
+                overflowY: "auto",
+              },
+            }}
+          />
         </div>
       </div>
     </div>

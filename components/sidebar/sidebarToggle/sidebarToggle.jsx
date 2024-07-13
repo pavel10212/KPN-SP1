@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { MdMenu, MdClose } from "react-icons/md";
 
 const SidebarToggle = ({ children, className }) => {
@@ -9,6 +9,37 @@ const SidebarToggle = ({ children, className }) => {
   const toggleSidebar = useCallback(() => {
     setIsSidebarOpen((prev) => !prev);
   }, []);
+
+  const closeSidebar = useCallback(() => {
+    setIsSidebarOpen(false);
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsSidebarOpen(true);
+      } else {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const handleLinkClick = (e) => {
+      if (window.innerWidth < 1024 && e.target.closest("a")) {
+        closeSidebar();
+      }
+    };
+
+    document.addEventListener("click", handleLinkClick);
+
+    return () => document.removeEventListener("click", handleLinkClick);
+  }, [closeSidebar]);
 
   return (
     <>

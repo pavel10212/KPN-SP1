@@ -14,8 +14,8 @@ const Bookings = async () => {
 
   if (user.role === "Driver" || user.role === "Maintenance") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="bg-white p-8 rounded-xl shadow-lg text-center">
+      <div className="min-h-screen rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+        <div className="bg-white rounded-xl shadow-lg text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">
             Access Denied
           </h1>
@@ -37,12 +37,10 @@ const Bookings = async () => {
   ).length;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+      <div className="mx-auto">
         <header className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">
-            Booking Dashboard
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-4">Bookings</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-blue-50 rounded-lg p-4 flex items-center">
               <Hotel className="text-blue-500 mr-4" style={{ fontSize: 40 }} />
