@@ -36,17 +36,15 @@ export default async function ChatPage() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-gray-100">
-      <div className="flex-grow flex flex-col bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="bg-indigo-600 p-4">
-          <h1 className="text-2xl font-semibold text-white">Team Chat</h1>
-        </div>
-        <div className="flex-grow overflow-hidden">
-          <ChatComponent
-            userName={user.name.replace(/\s+/g, "_").toLowerCase()}
-            userSecret={user.chatEnginePassword}
-          />
-        </div>
+    <div className="flex-grow flex flex-col bg-white rounded-lg shadow-lg overflow-hidden">
+      <div className="bg-indigo-600 p-4">
+        <h1 className="text-2xl font-semibold text-white">Team Chat</h1>
+      </div>
+      <div className="flex-grow overflow-hidden">
+        <ChatComponent
+          userName={user.name.replace(/\s+/g, "_").toLowerCase()}
+          userSecret={user.chatEnginePassword}
+        />
       </div>
     </div>
   );

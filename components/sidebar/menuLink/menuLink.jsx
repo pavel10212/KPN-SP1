@@ -3,15 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const MenuLink = ({ item, closeSidebar }) => {
+const MenuLink = ({ item }) => {
   const pathname = usePathname();
   const isActive = pathname === item.path;
-
-  const handleClick = () => {
-    if (typeof window !== "undefined" && window.innerWidth < 1024) {
-      closeSidebar();
-    }
-  };
 
   return (
     <Link
@@ -21,7 +15,6 @@ const MenuLink = ({ item, closeSidebar }) => {
           ? "text-indigo-600 bg-indigo-50"
           : "text-gray-600 hover:text-indigo-600 hover:bg-indigo-50"
       }`}
-      onClick={handleClick}
     >
       <span className="mr-4">{item.icon}</span>
       {item.title}

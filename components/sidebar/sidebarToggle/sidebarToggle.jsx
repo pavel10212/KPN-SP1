@@ -10,10 +10,6 @@ const SidebarToggle = ({ children, className }) => {
     setIsSidebarOpen((prev) => !prev);
   }, []);
 
-  const closeSidebar = useCallback(() => {
-    setIsSidebarOpen(false);
-  }, []);
-
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
@@ -32,14 +28,14 @@ const SidebarToggle = ({ children, className }) => {
   useEffect(() => {
     const handleLinkClick = (e) => {
       if (window.innerWidth < 1024 && e.target.closest("a")) {
-        closeSidebar();
+        setIsSidebarOpen(false);
       }
     };
 
     document.addEventListener("click", handleLinkClick);
 
     return () => document.removeEventListener("click", handleLinkClick);
-  }, [closeSidebar]);
+  }, []);
 
   return (
     <>

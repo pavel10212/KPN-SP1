@@ -55,7 +55,6 @@ const Sidebar = async ({ className }) => {
           path: "/dashboard/task",
           icon: <MdShoppingBag className="text-2xl" />,
         },
-        // Conditionally include the Bookings menu item
         ...(user.role !== "Driver" && user.role !== "Maintenance"
           ? [
               {
