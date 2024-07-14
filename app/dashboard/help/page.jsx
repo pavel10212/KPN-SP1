@@ -46,7 +46,7 @@ const faqs = [
 
 const HelpPage = () => {
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
       <h1 className="text-3xl font-bold mb-6">Help Center</h1>
 
       <div className="mb-8">
