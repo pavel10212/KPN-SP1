@@ -61,6 +61,8 @@ export default function ChatComponent({ userName, userSecret }) {
         .ce-chat-form-container {
           background-color: #ffffff !important;
           border-top: 1px solid #e5e7eb;
+          font-family: sans-serif;
+          font-size: 10px;
         }
         #ce-send-message-button {
           background-color: #4f46e5 !important;
@@ -87,6 +89,14 @@ export default function ChatComponent({ userName, userSecret }) {
         }
         .ce-primary-button {
           background-color: #4f46e5 !important;
+        }
+        .ce-settings-container {
+          font-family: sans-serif;
+          font-weight: 200;
+          font-size: 10px;
+        }
+        .ce-chat-card {
+          font-family: sans-serif;
         }
       `}</style>
     </div>

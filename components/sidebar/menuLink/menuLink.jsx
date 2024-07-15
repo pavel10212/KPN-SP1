@@ -2,10 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLoading } from "@/components/loading/loadingWrapper";
 
 const MenuLink = ({ item }) => {
   const pathname = usePathname();
   const isActive = pathname === item.path;
+  const { setIsLoading } = useLoading();
+
+  const handleClick = () => {
+    setIsLoading(true);
+  };
 
   return (
     <Link
@@ -15,6 +21,7 @@ const MenuLink = ({ item }) => {
           ? "text-indigo-600 bg-indigo-50"
           : "text-gray-600 hover:text-indigo-600 hover:bg-indigo-50"
       }`}
+      onClick={handleClick}
     >
       <span className="mr-4">{item.icon}</span>
       {item.title}
