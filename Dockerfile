@@ -1,5 +1,6 @@
 # Use the official Node.js image as the base image
-FROM node:latest
+# FROM node:latest
+FROM node:slim
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -13,6 +14,8 @@ RUN npm i
 # Copy the app source code to the container
 COPY . .
 
+
+RUN apt-get update -y && apt-get install -y openssl
 
 RUN npx prisma generate
 # Build the app
