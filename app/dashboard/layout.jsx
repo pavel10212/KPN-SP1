@@ -2,7 +2,7 @@
 import Navbar from "@/components/navbar/navbar";
 import Sidebar from "@/components/sidebar/sidebar";
 import Footer from "@/components/footer/footer";
-import { LoadingWrapper } from "@/components/LoadingWrapper";
+import { LoadingWrapper } from "@/components/loading/loadingWrapper";
 
 const DashboardLayout = ({ children }) => {
   return (

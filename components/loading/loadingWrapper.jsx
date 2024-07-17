@@ -1,4 +1,4 @@
-// components/LoadingWrapper.jsx
+// components/loadingWrapper.jsx
 "use client";
 
 import {
