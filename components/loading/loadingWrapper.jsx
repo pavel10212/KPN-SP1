@@ -1,4 +1,3 @@
-// components/loadingWrapper.jsx
 "use client";
 
 import {
@@ -18,7 +17,6 @@ export const useLoading = () => useContext(LoadingContext);
 export const LoadingWrapper = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     const handleStart = () => setIsLoading(true);
@@ -35,7 +33,7 @@ export const LoadingWrapper = ({ children }) => {
 
   useEffect(() => {
     setIsLoading(false);
-  }, [pathname, searchParams]);
+  }, [pathname]);
 
   return (
     <LoadingContext.Provider value={{ isLoading, setIsLoading }}>
