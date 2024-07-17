@@ -1,9 +1,10 @@
+// app/dashboard/layout.js
 import Navbar from "@/components/navbar/navbar";
 import Sidebar from "@/components/sidebar/sidebar";
 import Footer from "@/components/footer/footer";
-import { LoadingWrapper } from "@/components/loading/loadingWrapper";
+import { LoadingWrapper } from "@/components/LoadingWrapper";
 
-const Layout = ({ children }) => {
+const DashboardLayout = ({ children }) => {
   return (
     <LoadingWrapper>
       <div className="flex min-h-screen bg-gray-100">
@@ -20,4 +21,4 @@ const Layout = ({ children }) => {
   );
 };
 
-export default Layout;
+export default DashboardLayout;

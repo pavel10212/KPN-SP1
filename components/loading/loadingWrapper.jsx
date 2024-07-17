@@ -1,7 +1,13 @@
 // components/LoadingWrapper.jsx
 "use client";
 
-import { useState, createContext, useContext, useEffect } from "react";
+import {
+  useState,
+  createContext,
+  useContext,
+  useEffect,
+  Suspense,
+} from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Loading from "./loading";
 
@@ -33,8 +39,10 @@ export const LoadingWrapper = ({ children }) => {
 
   return (
     <LoadingContext.Provider value={{ isLoading, setIsLoading }}>
-      {isLoading && <Loading />}
-      {children}
+      <Suspense fallback={<Loading />}>
+        {isLoading && <Loading />}
+        {children}
+      </Suspense>
     </LoadingContext.Provider>
   );
 };
