@@ -7,22 +7,25 @@ import { useState, useEffect } from "react";
 const Navbar = ({ className }) => {
   const pathname = usePathname();
   const pageName = pathname.split("/").pop();
-  const [dateTime, setDateTime] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
-    const timer = setInterval(() => setDateTime(new Date()), 1000);
+    // Update date once per day at midnight
+    const timer = setInterval(() => {
+      const now = new Date();
+      if (now.getDate() !== currentDate.getDate()) {
+        setCurrentDate(now);
+      }
+    }, 60000); // Check every minute
     return () => clearInterval(timer);
-  }, []);
+  }, [currentDate]);
 
-  const formatDateTime = (date) => {
+  const formatDate = (date) => {
     return date.toLocaleString("en-US", {
       weekday: "short",
       year: "numeric",
       month: "short",
       day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
     });
   };
 
@@ -47,7 +50,7 @@ const Navbar = ({ className }) => {
           </div>
           <div className="flex items-center">
             <div className="text-sm text-gray-600 mr-4">
-              {formatDateTime(dateTime)}
+              {formatDate(currentDate)}
             </div>
             <button className="p-2 text-gray-500 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 rounded-full">
               <MdNotifications size={24} />

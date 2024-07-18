@@ -7,6 +7,7 @@ import { signInSchema } from "@/lib/zod";
 import Image from "next/image";
 import { z } from "zod";
 import { MdError } from "react-icons/md";
+import { toast } from "sonner";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -26,6 +27,7 @@ const LoginPage = () => {
       if (result?.error) {
         setErrors({ general: result.error });
       } else {
+        toast.success("Login successful");
         router.push("/dashboard");
       }
     } catch (err) {

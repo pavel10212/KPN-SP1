@@ -5,8 +5,11 @@ import { z } from "zod";
 import { registerSchema } from "@/lib/zod";
 import Image from "next/image";
 import { MdError } from "react-icons/md";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function RegisterForm() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -20,15 +23,15 @@ export default function RegisterForm() {
     e.preventDefault();
     try {
       registerSchema.parse(formData);
-      // Send registration data to the server
       const response = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
       if (response.ok) {
-        // Handle successful registration
         console.log("Registration successful");
+        toast.success("Registration successful");
+        router.push("/login");
       } else {
         // Handle registration error
         console.error("Registration failed");
@@ -46,7 +49,6 @@ export default function RegisterForm() {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    // Clear error when user starts typing
     if (errors[e.target.name]) {
       setErrors({ ...errors, [e.target.name]: "" });
     }

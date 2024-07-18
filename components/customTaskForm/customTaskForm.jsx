@@ -74,7 +74,7 @@ const CustomTaskForm = () => {
       <div className="w-full max-w-3xl">
         <div className="rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 p-6 shadow-lg relative">
           <button
-            onClick={() => router.back()}
+            onClick={() => router.push("/dashboard/task")}
             className="absolute top-2 right-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 flex items-center"
           >
             <MdArrowBack className="mr-2" />

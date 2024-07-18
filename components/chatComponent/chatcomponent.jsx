@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { requestForToken, onMessageListener } from "../firebaseConfig";
 
 const ChatEngine = dynamic(() =>
   import("react-chat-engine").then((module) => module.ChatEngine)
@@ -14,26 +13,11 @@ const MessageFormSocial = dynamic(() =>
 
 export default function ChatComponent({ userName, userSecret }) {
   const [showChat, setShowChat] = useState(false);
-  const [notification, setNotification] = useState({ title: "", body: "" });
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       setShowChat(true);
-      requestForToken();
     }
-  }, []);
-
-  useEffect(() => {
-    const unsubscribe = onMessageListener().then((payload) => {
-      setNotification({
-        title: payload?.notification?.title,
-        body: payload?.notification?.body,
-      });
-    });
-
-    return () => {
-      unsubscribe.catch((err) => console.log("failed: ", err));
-    };
   }, []);
 
   if (!showChat)
@@ -45,12 +29,6 @@ export default function ChatComponent({ userName, userSecret }) {
 
   return (
     <div className="chat-container">
-      {notification?.title && (
-        <div className="notification bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4">
-          <h2 className="font-bold">{notification?.title}</h2>
-          <p>{notification?.body}</p>
-        </div>
-      )}
       <ChatEngine
         height="75vh"
         projectID={process.env.NEXT_PUBLIC_CHAT_ENGINE_PROJECT_ID}
@@ -58,7 +36,6 @@ export default function ChatComponent({ userName, userSecret }) {
         userSecret={userSecret}
         renderNewMessageForm={() => <MessageFormSocial />}
       />
-      {/* Your existing styles */}
       <style jsx global>{`
         .chat-container {
           font-family: "Inter", sans-serif;

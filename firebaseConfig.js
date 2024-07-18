@@ -12,20 +12,23 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
 
 export const requestForToken = async () => {
   try {
-    const currentToken = await getToken(messaging, {
-      vapidKey: "YOUR_VAPID_KEY",
-    });
-    if (currentToken) {
-      console.log("current token for client: ", currentToken);
-      return currentToken;
-    } else {
-      console.log(
-        "No registration token available. Request permission to generate one."
-      );
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      const messaging = getMessaging(app);
+      const currentToken = await getToken(messaging, {
+        vapidKey:
+          "BJAjNpxIdLvuaf5RvFBdLrpZz-2CBOsqZLV7TfyYUs4Hp5TWSBxiKUFIHnIPFxNyGXFRzd62DlsxIAj024hpSqo",
+      });
+      if (currentToken) {
+        console.log("current token for client: ", currentToken);
+        return currentToken;
+      } else {
+        console.log(
+          "No registration token available. Request permission to generate one."
+        );
+      }
     }
   } catch (err) {
     console.log("An error occurred while retrieving token. ", err);
@@ -34,8 +37,11 @@ export const requestForToken = async () => {
 
 export const onMessageListener = () =>
   new Promise((resolve) => {
-    onMessage(messaging, (payload) => {
-      console.log("payload", payload);
-      resolve(payload);
-    });
+    if (typeof window !== "undefined") {
+      const messaging = getMessaging(app);
+      onMessage(messaging, (payload) => {
+        console.log("payload", payload);
+        resolve(payload);
+      });
+    }
   });
