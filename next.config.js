@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["localhost", "your-production-domain.com"],
+    domains: ["localhost", "www.taskspro.live"],
   },
   webpack: (config) => {
     config.resolve.fallback = { fs: false, path: false };

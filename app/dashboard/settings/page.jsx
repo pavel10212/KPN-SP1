@@ -31,8 +31,9 @@ import { Label } from "@/components/ui/label";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Image from "next/image";
+import { toast } from "sonner";
 
-const MAX_FILE_SIZE = 5000000; // 5MB
+const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const profileSchema = z.object({
@@ -40,13 +41,16 @@ const profileSchema = z.object({
   email: z.string().email("Invalid email address"),
   image: z
     .any()
-    .refine((files) => files?.length == 1, "Image is required.")
     .refine(
-      (files) => files?.[0]?.size <= MAX_FILE_SIZE,
+      (files) =>
+        !files || files?.length == 0 || files?.[0]?.size <= MAX_FILE_SIZE,
       `Max file size is 5MB.`
     )
     .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
+      (files) =>
+        !files ||
+        files?.length == 0 ||
+        ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
       ".jpg, .jpeg, .png and .webp files are accepted."
     )
     .optional(),
@@ -109,7 +113,7 @@ const SettingsPage = () => {
       const formData = new FormData();
       formData.append("name", data.name);
       formData.append("email", data.email);
-      if (data.image) {
+      if (data.image && data.image[0]) {
         formData.append("image", data.image[0]);
       }
 
@@ -119,13 +123,12 @@ const SettingsPage = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update profile");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to update profile");
       }
 
       const result = await response.json();
-      console.log("Profile update:", result);
 
-      // Update the session with the new user data
       await update({
         ...session,
         user: {
@@ -135,13 +138,16 @@ const SettingsPage = () => {
           image: result.image,
         },
       });
-
+      toast.success("Profile updated successfully");
+      router.refresh();
       setIsLoading(false);
+      setPreviewImage(null);
     } catch (error) {
-      setError("Failed to update profile. Please try again.");
+      setError(error.message || "Failed to update profile. Please try again.");
       setIsLoading(false);
     }
   };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -157,9 +163,7 @@ const SettingsPage = () => {
     setIsLoading(true);
     setError("");
     try {
-      // API call to change password
       console.log("Password change:", data);
-      // Simulated API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setIsLoading(false);
       securityForm.reset();

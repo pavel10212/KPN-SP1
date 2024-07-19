@@ -44,6 +44,7 @@ export default async function ChatPage() {
         <ChatComponent
           userName={user.name.replace(/\s+/g, "_").toLowerCase()}
           userSecret={user.chatEnginePassword}
+          user={user}
         />
       </div>
     </div>

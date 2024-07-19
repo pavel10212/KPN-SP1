@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth.js";
-import { Suspense } from 'react';
 import Card from "../../components/dashboard/card/card";
 import BookingToday from "../../components/dashboard/bookingToday/bookingToday";
 import { pullFromDatabase, pullCustomBookings } from "@/lib/actions";

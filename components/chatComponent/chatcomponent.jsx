@@ -2,16 +2,21 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { Avatar } from "react-chat-engine";
 
-const ChatEngine = dynamic(() =>
-  import("react-chat-engine").then((module) => module.ChatEngine)
+const ChatEngine = dynamic(
+  () => import("react-chat-engine").then((module) => module.ChatEngine),
+  {
+    ssr: false,
+    loading: () => <p>Loading Chat...</p>,
+  }
 );
 
 const MessageFormSocial = dynamic(() =>
   import("react-chat-engine").then((module) => module.MessageFormSocial)
 );
 
-export default function ChatComponent({ userName, userSecret }) {
+export default function ChatComponent({ userName, userSecret, user }) {
   const [showChat, setShowChat] = useState(false);
 
   useEffect(() => {
@@ -35,6 +40,7 @@ export default function ChatComponent({ userName, userSecret }) {
         userName={userName}
         userSecret={userSecret}
         renderNewMessageForm={() => <MessageFormSocial />}
+        renderAvatar={() => <Avatar username={userName} avatar={user.image} />}
       />
       <style jsx global>{`
         .chat-container {

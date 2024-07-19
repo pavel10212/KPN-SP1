@@ -88,10 +88,10 @@ const Sidebar = async ({ className }) => {
       <div className="p-6 flex flex-col items-center border-b border-gray-200">
         <Image
           className="rounded-full object-cover w-20 h-20 mb-3 border-2 border-indigo-500"
-          src="/noavatar.png"
-          alt=""
-          width="80"
-          height="80"
+          src={user.image || "/noavatar.png"}
+          alt={user.name}
+          width={100}
+          height={100}
         />
         <span className="font-semibold text-gray-800 text-lg">{user.name}</span>
         <span className="text-sm text-indigo-600 font-medium mt-1">

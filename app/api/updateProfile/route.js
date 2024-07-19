@@ -1,58 +1,70 @@
-// app/api/updateProfile/route.js
-import { NextResponse } from "next/server";
+import { writeFile, mkdir } from "fs/promises";
+import { join, dirname } from "path";
 import prisma from "@/app/api/prismaClient";
 import { auth } from "@/auth";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { NextResponse } from "next/server";
 
-export async function POST(req) {
+export async function POST(request) {
   try {
     const session = await auth();
     if (!session || !session.user) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+      console.log("Unauthorized: No valid session");
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     const userId = session.user.id;
     if (!userId) {
-      return NextResponse.json({ error: "User ID not found" }, { status: 400 });
+      console.log("Unauthorized: No user ID in session");
+      return NextResponse.json(
+        { message: "Unauthorized: Invalid user session" },
+        { status: 401 }
+      );
     }
 
-    const formData = await req.formData();
+    const formData = await request.formData();
     const name = formData.get("name");
     const email = formData.get("email");
     const image = formData.get("image");
 
     let imageUrl = session.user.image;
 
-    if (image && image.name) {
+    if (image) {
       const bytes = await image.arrayBuffer();
       const buffer = Buffer.from(bytes);
 
-      // Ensure the uploads directory exists
-      const uploadsDir = path.join(process.cwd(), "public", "uploads");
-      await mkdir(uploadsDir, { recursive: true });
+      const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+      const filename = `${userId}-${uniqueSuffix}.${image.name
+        .split(".")
+        .pop()}`;
 
-      // Save the file
-      const fileName = `${userId}-${Date.now()}${path.extname(image.name)}`;
-      const filePath = path.join(uploadsDir, fileName);
+      const uploadDir = join(process.cwd(), "public", "uploads");
+      const filePath = join(uploadDir, filename);
+
+      await mkdir(dirname(filePath), { recursive: true });
+
       await writeFile(filePath, buffer);
-      imageUrl = `/uploads/${fileName}`;
+      imageUrl = `/uploads/${filename}`;
     }
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },
-      data: {
-        name,
-        email,
-        image: imageUrl,
-      },
+      data: { name, email, image: imageUrl },
     });
 
-    return NextResponse.json(updatedUser);
+    console.log("User updated successfully:", updatedUser.id);
+
+    return NextResponse.json(
+      {
+        name: updatedUser.name,
+        email: updatedUser.email,
+        image: updatedUser.image,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Profile update error:", error);
     return NextResponse.json(
-      { error: "Failed to update profile", details: error.message },
+      { message: "Failed to update profile", error: error.message },
       { status: 500 }
     );
   }

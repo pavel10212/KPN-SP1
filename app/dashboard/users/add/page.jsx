@@ -76,16 +76,16 @@ const AddMemberPage = () => {
             <MdArrowBack className="mr-2" />
             Back
           </button>
-          <h1 className="text-2xl font-semibold text-gray-800">
-            Add New <br />
+          <h1 className="text-2xl font-bold text-gray-800 mb-1">Add New</h1>
+          <h2 className="text-xl font-semibold text-gray-600 mb-6">
             Team Member
-          </h1>
-          <div className="bg-white rounded-lg shadow-md p-6 mt-3">
-            <form onSubmit={handleSubmit} className="space-y-4">
+          </h2>
+          <div className="bg-white rounded-lg shadow-md p-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label
                   htmlFor="name"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Full Name
                 </label>
@@ -96,16 +96,16 @@ const AddMemberPage = () => {
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
                 />
                 {errors.name && (
-                  <p className="mt-1 text-xs text-red-600">{errors.name}</p>
+                  <p className="mt-1 text-sm text-red-600">{errors.name}</p>
                 )}
               </div>
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Email
                 </label>
@@ -116,16 +116,16 @@ const AddMemberPage = () => {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
                 />
                 {errors.email && (
-                  <p className="mt-1 text-xs text-red-600">{errors.email}</p>
+                  <p className="mt-1 text-sm text-red-600">{errors.email}</p>
                 )}
               </div>
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Password
                 </label>
@@ -136,16 +136,16 @@ const AddMemberPage = () => {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
                 />
                 {errors.password && (
-                  <p className="mt-1 text-xs text-red-600">{errors.password}</p>
+                  <p className="mt-1 text-sm text-red-600">{errors.password}</p>
                 )}
               </div>
               <div>
                 <label
                   htmlFor="role"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Role
                 </label>
@@ -155,7 +155,7 @@ const AddMemberPage = () => {
                   required
                   value={formData.role}
                   onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-200"
                 >
                   <option value="Co-Host">Co-Host</option>
                   <option value="Maid">Maid</option>
@@ -165,7 +165,7 @@ const AddMemberPage = () => {
               </div>
               <button
                 type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300"
               >
                 Add Team Member
               </button>
@@ -176,9 +176,9 @@ const AddMemberPage = () => {
                 className="mt-6"
               >
                 {submitStatus === "success" ? (
-                  <MdCheckCircle className="h-4 w-4" />
+                  <MdCheckCircle className="h-5 w-5" />
                 ) : (
-                  <MdError className="h-4 w-4" />
+                  <MdError className="h-5 w-5" />
                 )}
                 <AlertTitle>
                   {submitStatus === "success" ? "Success!" : "Error!"}
