@@ -90,7 +90,6 @@ const SettingsPage = () => {
     }, [status, router]);
 
     useEffect(() => {
-        // Clear error when switching tabs
         setError("");
     }, [activeTab]);
 
@@ -197,7 +196,6 @@ const SettingsPage = () => {
         setIsSecurityLoading(true);
         setError("");
         try {
-            // Implement actual password change logic here
             const response = await fetch("/api/changePassword", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
