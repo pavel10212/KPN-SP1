@@ -6,6 +6,7 @@ export default function Page() {
 
   if (status === "loading") {
     return <p>Loading...</p>;
+    
   }
 
   if (session?.user.role === "admin") {
