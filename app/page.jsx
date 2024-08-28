@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default async function HomePage() {
-  //Force pushing chages
   const session = await auth();
 
   if (session) {

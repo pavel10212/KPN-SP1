@@ -1,4 +1,3 @@
-import Image from "next/image";
 import {
     MdDashboard,
     MdSupervisedUserCircle,
@@ -14,8 +13,7 @@ import prisma from "@/app/api/prismaClient";
 import {signOut, auth} from "@/auth.js";
 import {redirect} from "next/navigation";
 import SidebarToggle from "/components/sidebar/sidebarToggle/sidebarToggle";
-import {storage} from '@/lib/firebase/firebaseConfig';
-import {ref, getDownloadURL} from "firebase/storage";
+import ClientSideImage from "@/components/clientSideImage/ClientSideImage";
 
 const Sidebar = async ({className}) => {
     const session = await auth();
@@ -32,9 +30,6 @@ const Sidebar = async ({className}) => {
         console.error("User not found in the database");
         redirect("/login");
     }
-
-    const storageRef = ref(storage, `profile-images/${user.id}.png`);
-    const imageUrl = await getDownloadURL(storageRef);
 
     const menuItems = [
         {
@@ -91,13 +86,7 @@ const Sidebar = async ({className}) => {
     const sidebarContent = (
         <div className="flex flex-col h-full bg-white shadow-md">
             <div className="p-6 flex flex-col items-center border-b border-gray-200">
-                <Image
-                    className="rounded-full object-cover w-20 h-20 mb-3 border-2 border-indigo-500"
-                    src={imageUrl}
-                    alt={user.name}
-                    width={100}
-                    height={100}
-                />
+                <ClientSideImage userId={user.id} userName={user.name} />
                 <span className="font-semibold text-gray-800 text-lg">{user.name}</span>
                 <span className="text-sm text-indigo-600 font-medium mt-1">
           {user.role}

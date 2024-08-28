@@ -65,6 +65,8 @@ model User {
   team               Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
+  FCMpreferences     Boolean?  @default(false)
+  FCMToken           String?   @unique
 }
 
 model Account {

@@ -14,7 +14,7 @@ import { MdEdit } from "react-icons/md";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
 
-const MainTasksReadOnly = ({ tasks, canEditStatus }) => {
+const MainTasks = ({ tasks, canEditStatus }) => {
   const [rows, setRows] = useState(tasks);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -202,4 +202,4 @@ const MainTasksReadOnly = ({ tasks, canEditStatus }) => {
   );
 };
 
-export default MainTasksReadOnly;
+export default MainTasks;

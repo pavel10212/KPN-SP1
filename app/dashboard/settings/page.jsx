@@ -3,6 +3,7 @@
 import {useState, useEffect, useCallback} from "react";
 import {useSession} from "next-auth/react";
 import {useRouter} from "next/navigation";
+import {useFCM} from "@/lib/hooks/useFCM";
 import {z} from "zod";
 import {Button} from "@/components/ui/button";
 import {
@@ -70,11 +71,12 @@ const securitySchema = z
     });
 
 const SettingsPage = () => {
+    const [fcmEnabled, setFcmEnabled] = useState(false);
+    const {fcmToken, messages} = useFCM(fcmEnabled);
     const {data: session, status, update} = useSession();
     const router = useRouter();
     const [notifications, setNotifications] = useState({
-        email: false,
-        push: false,
+        fcm: false,
     });
     const [isProfileLoading, setIsProfileLoading] = useState(false);
     const [isSecurityLoading, setIsSecurityLoading] = useState(false);
@@ -82,6 +84,35 @@ const SettingsPage = () => {
     const [error, setError] = useState("");
     const [previewImage, setPreviewImage] = useState(null);
     const [activeTab, setActiveTab] = useState("profile");
+    const [isNotificationPermissionGranted, setIsNotificationPermissionGranted] = useState(false);
+
+    const checkNotificationPermission = useCallback(() => {
+        if (typeof window !== 'undefined' && 'Notification' in window) {
+            if (Notification.permission === 'granted') {
+                setIsNotificationPermissionGranted(true);
+                return true;
+            }
+        }
+        setIsNotificationPermissionGranted(false);
+        return false;
+    }, []);
+
+    const requestNotificationPermission = useCallback(async () => {
+        if (typeof window !== 'undefined' && 'Notification' in window) {
+            if (Notification.permission !== 'denied') {
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    setIsNotificationPermissionGranted(true);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }, []);
+
+    useEffect(() => {
+        checkNotificationPermission();
+    }, [checkNotificationPermission]);
 
     useEffect(() => {
         if (status === "unauthenticated") {
@@ -89,9 +120,19 @@ const SettingsPage = () => {
         }
     }, [status, router]);
 
+
     useEffect(() => {
         setError("");
     }, [activeTab]);
+
+    useEffect(() => {
+        if (fcmEnabled && messages) {
+            console.log('Received message:', messages);
+            toast.success(messages.notification.title, {
+                description: messages.notification.body,
+            });
+        }
+    }, [fcmEnabled, messages]);
 
     const profileForm = useForm({
         resolver: zodResolver(profileSchema),
@@ -216,25 +257,78 @@ const SettingsPage = () => {
         }
     };
 
-    const handleNotificationChange = useCallback((type) => {
-        setNotifications((prev) => ({
-            ...prev,
-            [type]: !prev[type],
-        }));
-    }, []);
+
+    const handleNotificationChange = useCallback(async () => {
+        if (!notifications.fcm) {
+            if (!isNotificationPermissionGranted) {
+                const permissionGranted = await requestNotificationPermission();
+                if (permissionGranted) {
+                    setFcmEnabled(true);
+                    setNotifications((prev) => ({
+                        ...prev,
+                        fcm: true,
+                    }));
+                } else {
+                    toast.error("Notification permission denied. Please enable notifications in your browser settings.");
+                    return;
+                }
+            } else {
+                setFcmEnabled(true);
+                setNotifications((prev) => ({
+                    ...prev,
+                    fcm: true,
+                }));
+            }
+        } else {
+            setFcmEnabled(false);
+            setNotifications((prev) => ({
+                ...prev,
+                fcm: false,
+            }));
+        }
+    }, [notifications.fcm, isNotificationPermissionGranted, requestNotificationPermission]);
 
     const saveNotificationPreferences = async () => {
         setIsNotificationLoading(true);
         try {
-            // Implement API call to save notification preferences
-            await fetch("/api/saveNotificationPreferences", {
+            const response = await fetch("/api/saveNotificationPreferences", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(notifications),
+                body: JSON.stringify({
+                    fcm: notifications.fcm,
+                    fcmToken: notifications.fcm ? fcmToken : null
+                }),
             });
-            toast.success("Notification preferences saved");
+            console.log(response)
+            if (!response.ok) {
+                throw new Error("Failed to save notification preferences");
+            }
+
+            const result = await response.json();
+            console.log(result);
+
+            if (result.fcmEnabled && fcmToken) {
+                const topic = result.user.role === "admin"
+                    ? `team-${result.user.teamId}_admin`
+                    : `team-${result.user.teamId}_${result.user.role}`;
+
+                const subscribeResponse = await fetch('/api/subscribeTopic', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({fcmToken, topic}),
+                });
+
+                if (!subscribeResponse.ok) {
+                    throw new Error('Failed to subscribe to topic');
+                }
+
+                console.log(`Subscribed to topic: ${topic}`);
+            }
+
+            toast.success("Notification preferences saved successfully");
         } catch (error) {
             setError("Failed to save notification preferences");
+            console.error(error);
         } finally {
             setIsNotificationLoading(false);
         }
@@ -410,23 +504,25 @@ const SettingsPage = () => {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="flex items-center justify-between">
-                                <Label htmlFor="email-notifications">Email Notifications</Label>
+                                <Label htmlFor="fcm-notifications">Firebase Push Notifications</Label>
                                 <Switch
-                                    id="email-notifications"
-                                    checked={notifications.email}
-                                    onCheckedChange={() => handleNotificationChange("email")}
-                                    aria-label="Email Notifications"
+                                    id="fcm-notifications"
+                                    checked={notifications.fcm || isNotificationPermissionGranted}
+                                    onCheckedChange={handleNotificationChange}
+                                    aria-label="Firebase Push Notifications"
                                 />
                             </div>
-                            <div className="flex items-center justify-between">
-                                <Label htmlFor="push-notifications">Push Notifications</Label>
-                                <Switch
-                                    id="push-notifications"
-                                    checked={notifications.push}
-                                    onCheckedChange={() => handleNotificationChange("push")}
-                                    aria-label="Push Notifications"
-                                />
-                            </div>
+                            {isNotificationPermissionGranted && (
+                                <p className="text-sm text-green-500">
+                                    Notification access has already been granted.
+                                </p>
+                            )}
+                            {!isNotificationPermissionGranted && notifications.fcm && (
+                                <p className="text-sm text-red-500">
+                                    Notification permission is required. Please enable notifications in your browser
+                                    settings.
+                                </p>
+                            )}
                         </CardContent>
                         <CardFooter>
                             <Button
@@ -439,7 +535,6 @@ const SettingsPage = () => {
                     </Card>
                 </TabsContent>
             </Tabs>
-
             {error && (
                 <Alert variant="destructive" className="mt-4">
                     <AlertCircle className="h-4 w-4"/>

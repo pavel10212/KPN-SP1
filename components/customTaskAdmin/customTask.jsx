@@ -21,7 +21,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import dayjs from "dayjs";
 
-const CustomTaskAdmin = ({ tasks, readOnly = false, isAdmin = false }) => {
+const CustomTask = ({ tasks, readOnly = false, isAdmin = false }) => {
   const [rows, setRows] = useState(
     tasks.map((task) => ({
       ...task,
@@ -241,4 +241,4 @@ const CustomTaskAdmin = ({ tasks, readOnly = false, isAdmin = false }) => {
   );
 };
 
-export default CustomTaskAdmin;
+export default CustomTask;

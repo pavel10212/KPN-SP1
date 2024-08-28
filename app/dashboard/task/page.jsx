@@ -1,8 +1,8 @@
 import prisma from "@/app/api/prismaClient";
 import TaskAdmin from "@/components/tasksAdmin/tasksAdmin";
 import { auth } from "@/auth";
-import CustomTaskAdmin from "@/components/customTaskAdmin/customTaskAdmin";
-import MainTasksReadOnly from "@/components/mainTasksReadOnlyComponent/mainTasksReadOnlyComponent";
+import CustomTask from "@/components/customTaskAdmin/customTask";
+import MainTasks from "@/components/mainTasksReadOnlyComponent/mainTasksReadOnlyComponent";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { MdAdd } from "react-icons/md";
@@ -82,7 +82,7 @@ const Task = async () => {
             <h2 className="text-2xl font-semibold text-gray-800 mb-6">
               Custom Tasks
             </h2>
-            <CustomTaskAdmin tasks={customTasks} isAdmin={true} />
+            <CustomTask tasks={customTasks} isAdmin={true} />
           </div>
         </>
       );
@@ -90,14 +90,14 @@ const Task = async () => {
       return (
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-semibold text-gray-800 mb-6">Tasks</h2>
-          <MainTasksReadOnly tasks={tasks} canEditStatus={true} />
+          <MainTasks tasks={tasks} canEditStatus={true} />
         </div>
       );
     } else if (user.role === "Driver" || user.role === "Maintenance") {
       return (
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-semibold text-gray-800 mb-6">Tasks</h2>
-          <CustomTaskAdmin tasks={customTasks} readOnly={true} />
+          <CustomTask tasks={customTasks} readOnly={true} />
         </div>
       );
     } else {
