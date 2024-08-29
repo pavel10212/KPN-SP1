@@ -2,7 +2,7 @@ import {NextResponse} from 'next/server';
 import admin from 'firebase-admin';
 
 if (!admin.apps.length) {
-    const serviceAccount = require('@/service_key.json');
+    const serviceAccount = require('@/public/service_key.json');
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
     });

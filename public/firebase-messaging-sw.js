@@ -9,7 +9,6 @@ const firebaseConfig = {
     messagingSenderId: "476752964670",
     appId: "1:476752964670:web:0dfc4c596f2a255030b56f",
     measurementId: "G-GX9PS8J79Q"
-
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -19,12 +18,11 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
     console.log("[firebase-messaging-sw.js] Received background message ", payload);
 
-
     const link = payload.fcmOptions?.link || payload.data?.link;
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification.body,
-        icon: "./logo.jpg",
+        icon: "/logo.jpg",
         data: {url: link},
     }
     self.registration.showNotification(notificationTitle, notificationOptions);

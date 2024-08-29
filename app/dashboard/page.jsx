@@ -70,7 +70,6 @@ export default async function Dashboard() {
   ) {
     return (
       <div className="min-h-screen rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">Dashboard</h1>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {cards.map((card) => (
             <Card key={card.id} item={card} />

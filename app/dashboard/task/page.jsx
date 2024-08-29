@@ -89,14 +89,12 @@ const Task = async () => {
     } else if (user.role === "Maid" || user.role === "Co-Host") {
       return (
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Tasks</h2>
           <MainTasks tasks={tasks} canEditStatus={true} />
         </div>
       );
     } else if (user.role === "Driver" || user.role === "Maintenance") {
       return (
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Tasks</h2>
           <CustomTask tasks={customTasks} readOnly={true} />
         </div>
       );
@@ -113,7 +111,6 @@ const Task = async () => {
     <div className="bg-gray-100 min-h-screen">
       <div className="mx-auto px-4 sm:px-6 py-8 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl ">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Tasks</h1>
           {user.role === "admin" && (
             <Link href="/dashboard/task/addTask">
               <Button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg flex items-center transition duration-300">

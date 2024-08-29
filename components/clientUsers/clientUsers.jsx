@@ -74,7 +74,6 @@ const ClientUsers = ({ users, user }) => {
 
   return (
     <div className="rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">Users</h1>
       <div className="bg-white rounded-lg shadow-md p-6" ref={containerRef}>
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold text-gray-800">
