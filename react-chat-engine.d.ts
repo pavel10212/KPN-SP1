@@ -13,5 +13,4 @@ declare module "react-chat-engine" {
 
   export const MessageFormSocial: React.FC;
 
-  // Add other exports from react-chat-engine as needed
 }

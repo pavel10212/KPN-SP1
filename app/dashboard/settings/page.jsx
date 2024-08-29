@@ -99,12 +99,17 @@ const SettingsPage = () => {
 
     const requestNotificationPermission = useCallback(async () => {
         if (typeof window !== 'undefined' && 'Notification' in window) {
-            if (Notification.permission !== 'denied') {
+            try {
                 const permission = await Notification.requestPermission();
                 if (permission === 'granted') {
                     setIsNotificationPermissionGranted(true);
                     return true;
+                } else {
+                    toast.error("Notification permission denied. Please enable notifications in your browser settings.");
                 }
+            } catch (error) {
+                console.error("Error requesting notification permission:", error);
+                toast.error("Failed to request notification permission.");
             }
         }
         return false;

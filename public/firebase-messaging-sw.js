@@ -1,5 +1,5 @@
-importScripts("https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js");
-importScripts("https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js");
+importScripts("https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js");
 
 const firebaseConfig = {
     apiKey: "AIzaSyDH-HoB3a61oXMt8raCm1uCpFp04Bxk-Ic",
@@ -18,15 +18,15 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
     console.log("[firebase-messaging-sw.js] Received background message ", payload);
 
-    const link = payload.fcmOptions?.link || payload.data?.link;
+    const link = payload.fcmOptions?.link || payload.data?.link || '';
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification.body,
         icon: "/logo.jpg",
         data: {url: link},
-    }
+    };
     self.registration.showNotification(notificationTitle, notificationOptions);
-})
+});
 
 self.addEventListener("notificationclick", function (event) {
     console.log("[firebase-messaging-sw.js] Notification click Received.", event.notification.data.url);
@@ -46,9 +46,9 @@ self.addEventListener("notificationclick", function (event) {
                 }
 
                 if (clients.openWindow) {
-                    console.log("Openwindow on client")
+                    console.log("Openwindow on client");
                     return clients.openWindow(url);
                 }
             })
-    )
-})
+    );
+});

@@ -1,26 +1,28 @@
 import "@/styles/globals.css";
-import { SessionProvider } from "next-auth/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { LoadingWrapper } from "@/components/loading/loadingWrapper";
-import { Toaster } from "sonner";
+import {SessionProvider} from "next-auth/react";
+import {SpeedInsights} from "@vercel/speed-insights/next";
+import {LoadingWrapper} from "@/components/loading/loadingWrapper";
+import {Toaster} from "sonner";
+import {ServiceWorkerRegistration} from "@/lib/ServiceWorkerRegistration";
 
 export const metadata = {
-  manifest: "/manifest.json",
+    manifest: "/manifest.json",
 };
 
-export default function RootLayout({ children }) {
-  return (
-    <html lang="en">
-      <head>
-        <link rel="manifest" href="/manifest.json" />
-      </head>
-      <body>
+export default function RootLayout({children}) {
+    return (
+        <html lang="en">
+        <head>
+            <link rel="manifest" href="/manifest.json"/>
+        </head>
+        <body>
         <SessionProvider>
-          <LoadingWrapper>{children}</LoadingWrapper>
+            <LoadingWrapper>{children}</LoadingWrapper>
         </SessionProvider>
-        <Toaster />
-        <SpeedInsights />
-      </body>
-    </html>
-  );
+        <Toaster/>
+        <SpeedInsights/>
+        <ServiceWorkerRegistration/>
+        </body>
+        </html>
+    );
 }

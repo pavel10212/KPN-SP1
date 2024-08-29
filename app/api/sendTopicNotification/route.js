@@ -38,7 +38,7 @@ export async function POST(request) {
         }
 
         const teamId = user.teamId;
-        const roles = ['Maid', 'Co-Host'];
+        const roles = ['Maid'];
 
         const sendNotificationToRole = async (role) => {
             const topic = `team-${teamId}_${role}`;
