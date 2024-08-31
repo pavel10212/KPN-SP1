@@ -19,9 +19,9 @@ messaging.onBackgroundMessage((payload) => {
     console.log("[firebase-messaging-sw.js] Received background message ", payload);
 
     const link = payload.fcmOptions?.link || payload.data?.link || '';
-    const notificationTitle = payload.notification.title;
+    const notificationTitle = payload.data.title;
     const notificationOptions = {
-        body: payload.notification.body,
+        body: payload.data.body,
         icon: "/logo.jpg",
         data: {url: link},
     };

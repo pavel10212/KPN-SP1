@@ -38,7 +38,7 @@ export async function POST(request) {
         }
 
         const teamId = user.teamId;
-        const roles = ['Maid'];
+        const roles = ['Maid', 'Co-Host'];
 
         const sendNotificationToRole = async (role) => {
             const topic = `team-${teamId}_${role}`;
@@ -48,8 +48,12 @@ export async function POST(request) {
 
             const message = {
                 notification: {
+                    title: "",
+                    body: "",
+                },
+                data: {
                     title: sentTitle,
-                    body: sentMsg
+                    body: sentMsg,
                 },
                 topic: topic
             };

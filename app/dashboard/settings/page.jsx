@@ -72,7 +72,7 @@ const securitySchema = z
 
 const SettingsPage = () => {
     const [fcmEnabled, setFcmEnabled] = useState(false);
-    const {fcmToken, messages} = useFCM(fcmEnabled);
+    const {fcmToken, messages, isTokenLoading} = useFCM(fcmEnabled);
     const {data: session, status, update} = useSession();
     const router = useRouter();
     const [notifications, setNotifications] = useState({
@@ -130,11 +130,13 @@ const SettingsPage = () => {
         setError("");
     }, [activeTab]);
 
+
+
     useEffect(() => {
         if (fcmEnabled && messages) {
             console.log('Received message:', messages);
-            toast.success(messages.notification.title, {
-                description: messages.notification.body,
+            toast.success(messages.data.title, {
+                description: messages.data.body,
             });
         }
     }, [fcmEnabled, messages]);
@@ -532,7 +534,7 @@ const SettingsPage = () => {
                         <CardFooter>
                             <Button
                                 onClick={saveNotificationPreferences}
-                                disabled={isNotificationLoading}
+                                disabled={isNotificationLoading  || isTokenLoading}
                             >
                                 {isNotificationLoading ? "Saving..." : "Save Preferences"}
                             </Button>

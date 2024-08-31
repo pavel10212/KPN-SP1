@@ -14,6 +14,7 @@ import {signOut, auth} from "@/auth.js";
 import {redirect} from "next/navigation";
 import SidebarToggle from "/components/sidebar/sidebarToggle/sidebarToggle";
 import ClientSideImage from "@/components/clientSideImage/ClientSideImage";
+import {findUserByEmail} from "@/lib/utils";
 
 const Sidebar = async ({className}) => {
     const session = await auth();
@@ -22,9 +23,7 @@ const Sidebar = async ({className}) => {
         redirect("/login");
     }
 
-    const user = await prisma.user.findFirst({
-        where: {email: session.user.email},
-    });
+    const user = await findUserByEmail(session.user.email);
 
     if (!user) {
         console.error("User not found in the database");

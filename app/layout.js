@@ -3,7 +3,7 @@ import {SessionProvider} from "next-auth/react";
 import {SpeedInsights} from "@vercel/speed-insights/next";
 import {LoadingWrapper} from "@/components/loading/loadingWrapper";
 import {Toaster} from "sonner";
-import {ServiceWorkerRegistration} from "@/lib/ServiceWorkerRegistration";
+
 
 export const metadata = {
     manifest: "/manifest.json",
@@ -21,7 +21,6 @@ export default function RootLayout({children}) {
         </SessionProvider>
         <Toaster/>
         <SpeedInsights/>
-        <ServiceWorkerRegistration/>
         </body>
         </html>
     );

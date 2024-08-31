@@ -6,14 +6,11 @@ import MainTasks from "@/components/mainTasksReadOnlyComponent/mainTasksReadOnly
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { MdAdd } from "react-icons/md";
+import {findUserByEmail} from "@/lib/utils";
 
 const Task = async () => {
   const session = await auth();
-  const user = await prisma.user.findFirst({
-    where: {
-      email: session.user.email,
-    },
-  });
+  const user = await findUserByEmail(session.user.email);
   const userTeamId = user.teamId;
 
   const tasks = await prisma.booking.findMany({
