@@ -6,7 +6,7 @@ import { signInSchema } from "@/lib/zod";
 import { ZodError } from "zod";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.AUTH_SECRET,
   debug: process.env.NODE_ENV === "development",
   session: {
     strategy: "jwt",
@@ -14,7 +14,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/login",
     signOut: "/login",
-    error: "/login",
+    error: "/login", // Error code passed in query string as ?error=
   },
   providers: [
     Credentials({
