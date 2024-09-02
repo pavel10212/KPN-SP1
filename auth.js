@@ -13,9 +13,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   pages: {
     signIn: "/login",
-    signOut: "/login",
-    error: "/login", // Error code passed in query string as ?error=
   },
+
   providers: [
     Credentials({
       name: "Credentials",
