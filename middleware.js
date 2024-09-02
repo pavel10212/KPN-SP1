@@ -1,27 +1,30 @@
-// middleware.js
-import { auth } from "./auth";
-import { NextResponse } from "next/server";
+import {auth} from "./auth";
+import {NextResponse} from "next/server";
 
 export default async function middleware(request) {
-  const session = await auth();
-  const { pathname } = request.nextUrl;
+    try {
 
-  // List of public routes
-  const publicRoutes = ["/login", "/register", "/"]; // Add other public routes as needed
+        const session = await auth();
+        console.log("session", session)
+        const {pathname} = request.nextUrl;
 
-  // Allow public routes
-  if (publicRoutes.includes(pathname)) {
-    return NextResponse.next();
-  }
+        const publicRoutes = ["/login", "/register", "/"];
 
-  // Protect private routes
-  if (!session) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
+        if (publicRoutes.includes(pathname)) {
+            return NextResponse.next();
+        }
 
-  return NextResponse.next();
+        if (!session || !session.user) {
+            return NextResponse.redirect(new URL("/login", request.url));
+        }
+
+        return NextResponse.next();
+    }  catch (error) {
+        console.log("Middleware error", error);
+        return NextResponse.redirect(new URL("/login", request.url));
+    }
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+    matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
