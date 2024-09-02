@@ -1,9 +1,9 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { compare } from "bcryptjs";
 import prisma from "./app/api/prismaClient";
 import { signInSchema } from "@/lib/zod";
 import { ZodError } from "zod";
+import { compare } from 'bcryptjs'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET,
