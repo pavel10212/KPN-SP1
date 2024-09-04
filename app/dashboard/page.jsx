@@ -69,7 +69,7 @@ export default async function Dashboard() {
     teamMember.role === "Co-Host"
   ) {
     return (
-      <div className="min-h-screen rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+      <div className="min-h-screen p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {cards.map((card) => (
             <Card key={card.id} item={card} />

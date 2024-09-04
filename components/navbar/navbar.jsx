@@ -52,9 +52,7 @@ const Navbar = ({ className }) => {
             <div className="text-sm text-gray-600 mr-4">
               {formatDate(currentDate)}
             </div>
-            <button className="p-2 text-gray-500 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 rounded-full">
-              <MdNotifications size={24} />
-            </button>
+
           </div>
         </div>
       </div>

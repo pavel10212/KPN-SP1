@@ -69,14 +69,14 @@ const Task = async () => {
     if (user.role === "admin") {
       return (
         <>
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+          <div className="bg-white rounded-xl shadow-md p-4 mb-6">
+            <h2 className="text-2xl font-semibold text-gray-800">
               Main Tasks
             </h2>
             <TaskAdmin tasks={tasks} />
           </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+          <div className="bg-white rounded-xl shadow-md p-4 mb-6">
+            <h2 className="text-2xl font-semibold text-gray-800">
               Custom Tasks
             </h2>
             <CustomTask tasks={customTasks} isAdmin={true} />
@@ -85,19 +85,19 @@ const Task = async () => {
       );
     } else if (user.role === "Maid" || user.role === "Co-Host") {
       return (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-xl shadow-md ">
           <MainTasks tasks={tasks} canEditStatus={true} />
         </div>
       );
     } else if (user.role === "Driver" || user.role === "Maintenance") {
       return (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-xl shadow-md">
           <CustomTask tasks={customTasks} readOnly={true} />
         </div>
       );
     } else {
       return (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-xl shadow-md p-6">
           <p className="text-red-600 font-semibold text-lg">Access Denied</p>
         </div>
       );
@@ -105,8 +105,8 @@ const Task = async () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <div className="mx-auto px-4 sm:px-6 py-8 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl ">
+    <div className="min-h-screen ">
+      <div className="mx-auto px-4 sm:px-6">
         <div className="flex justify-between items-center mb-6">
           {user.role === "admin" && (
             <Link href="/dashboard/task/addTask">
@@ -124,4 +124,3 @@ const Task = async () => {
 };
 
 export default Task;
-  

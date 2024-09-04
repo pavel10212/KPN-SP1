@@ -36,7 +36,7 @@ export default async function ChatPage() {
   }
 
   return (
-    <div className="flex-grow flex flex-col bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="p-6">
       <div className="bg-indigo-600 p-4">
         <h1 className="text-2xl font-semibold text-white">Team Chat</h1>
       </div>

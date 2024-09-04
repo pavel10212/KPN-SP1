@@ -14,7 +14,7 @@ const Bookings = async () => {
 
   if (user.role === "Driver" || user.role === "Maintenance") {
     return (
-      <div className="min-h-screen rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+      <div className="min-h-screen p-6">
         <div className="bg-white rounded-xl shadow-lg text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">
             Access Denied
@@ -37,7 +37,7 @@ const Bookings = async () => {
   ).length;
 
   return (
-    <div className="rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 p-6 px-5">
+    <div className="p-6 px-5">
       <div className="mx-auto">
         <header className="bg-white rounded-xl shadow-lg p-6 mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-4">Bookings</h1>

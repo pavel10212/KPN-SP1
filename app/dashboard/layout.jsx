@@ -17,7 +17,7 @@ const DashboardLayout = async ({children}) => {
                 <div className="flex-1 flex flex-col min-w-0 lg:pl-64">
                     <Navbar className="sticky top-0 z-40"/>
                     <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
-                        <div className="mx-auto pt-5 pb-2 px-4 sm:px-0">{children}</div>
+                        <div className="mx-auto bg-gradient-to-br from-blue-100 to-indigo-200 pt-5 pb-2 px-4 sm:px-0">{children}</div>
                     </main>
                     <Footer/>
                 </div>
