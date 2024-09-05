@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const template = fs.readFileSync(path.join(__dirname, 'firebase-messaging-sw.js.template.template'), 'utf8');
+const template = fs.readFileSync(path.join(__dirname, 'firebase-messaging-sw.js.template'), 'utf8');
 
 const result = template.replace(/NEXT_PUBLIC_FIREBASE_API_KEY/g, process.env.NEXT_PUBLIC_FIREBASE_API_KEY)
     .replace(/NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN/g, process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN)
