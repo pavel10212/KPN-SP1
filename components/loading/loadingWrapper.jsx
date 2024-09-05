@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useState,
-  createContext,
-  useContext,
-  useEffect,
-  Suspense,
-} from "react";
+import { useState, createContext, useContext, useEffect, Suspense } from "react";
 import { usePathname } from "next/navigation";
 import Loading from "./loading";
 
@@ -18,8 +12,15 @@ export const LoadingWrapper = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const pathname = usePathname();
 
+  // List of routes to exclude from showing the loading spinner
+  const excludedRoutes = ["/login"];
+
   useEffect(() => {
-    const handleStart = () => setIsLoading(true);
+    const handleStart = () => {
+      if (!excludedRoutes.includes(pathname)) {
+        setIsLoading(true);
+      }
+    };
     const handleComplete = () => setIsLoading(false);
 
     window.addEventListener("beforeunload", handleStart);
@@ -29,10 +30,12 @@ export const LoadingWrapper = ({ children }) => {
       window.removeEventListener("beforeunload", handleStart);
       window.removeEventListener("load", handleComplete);
     };
-  }, []);
+  }, [pathname]);
 
   useEffect(() => {
-    setIsLoading(false);
+    if (!excludedRoutes.includes(pathname)) {
+      setIsLoading(false);
+    }
   }, [pathname]);
 
   return (

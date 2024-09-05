@@ -51,13 +51,13 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <Image
-                    className="mx-auto h-25 w-auto"
-                    width={40}
-                    height={40}
-                    src="/logo2.svg"
+                    className="mx-auto"
+                    width={180}
+                    height={180}
+                    src="/logo5.png"
                     alt="Your Company"
                 />
                 <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -66,7 +66,7 @@ const LoginPage = () => {
             </div>
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-                <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+                <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 rounded-xl">
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         <div>
                             <label
