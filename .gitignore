@@ -44,3 +44,5 @@ next-env.d.ts
 prismaScheme.txt
 
 certificates
+# Sentry Config File
+.env.sentry-build-plugin
