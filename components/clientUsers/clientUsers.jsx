@@ -4,6 +4,7 @@ import {useState, useEffect, useRef} from "react";
 import Link from "next/link";
 import {DataGrid} from "@mui/x-data-grid";
 import {MdAdd} from "react-icons/md";
+import {toast} from "sonner"
 
 const ClientUsers = ({users, user}) => {
     const [allUsers, setAllUsers] = useState(users);
@@ -26,7 +27,12 @@ const ClientUsers = ({users, user}) => {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    const columns = [
+
+    useEffect(() => {
+        setAllUsers(users);
+    }, [users])
+ const columns = [
+
         {field: "name", headerName: "Name", flex: 1, minWidth: 150},
         {field: "email", headerName: "Email", flex: 1, minWidth: 200},
         {
@@ -103,6 +109,7 @@ const ClientUsers = ({users, user}) => {
             setAllUsers(updatedUsers);
         } else {
             console.error('Failed to delete')
+            toast.error('Failed to delete user')
         }
     }
 
