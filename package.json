@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev --experimental-https",
-    "build": "next build",
+    "build": "next build && node build-sw.js",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "vercel-build": "npm install && npm run build"
+    "vercel-build": "npm install && npm run build "
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.3.0",

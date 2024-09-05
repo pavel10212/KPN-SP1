@@ -9,7 +9,6 @@ import {
     MdChat,
 } from "react-icons/md";
 import MenuLink from "./menuLink/menuLink";
-import prisma from "@/app/api/prismaClient";
 import {signOut, auth} from "@/auth.js";
 import {redirect} from "next/navigation";
 import SidebarToggle from "/components/sidebar/sidebarToggle/sidebarToggle";

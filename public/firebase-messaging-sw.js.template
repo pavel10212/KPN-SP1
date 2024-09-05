@@ -2,13 +2,13 @@ importScripts("https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js")
 importScripts("https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js");
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDH-HoB3a61oXMt8raCm1uCpFp04Bxk-Ic",
-    authDomain: "taskspro-200e3.firebaseapp.com",
-    projectId: "taskspro-200e3",
-    storageBucket: "taskspro-200e3.appspot.com",
-    messagingSenderId: "476752964670",
-    appId: "1:476752964670:web:0dfc4c596f2a255030b56f",
-    measurementId: "G-GX9PS8J79Q"
+    apiKey: "NEXT_PUBLIC_FIREBASE_API_KEY",
+    authDomain: "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN",
+    projectId: "NEXT_PUBLIC_FIREBASE_PROJECT_ID",
+    storageBucket: "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET",
+    messagingSenderId: "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID",
+    appId: "NEXT_PUBLIC_FIREBASE_APP_ID",
+    measurementId: "NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID"
 };
 
 firebase.initializeApp(firebaseConfig);

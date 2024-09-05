@@ -4,11 +4,11 @@ import { auth }  from '@/auth';
 import prismaClient from "@/app/api/prismaClient";
 
 if (!admin.apps.length) {
-    const serviceAccount = require('@/public/service_key.json')
     admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
+        credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY)),
     });
 }
+
 export async function POST(request) {
     try {
         const body = await request.json();
