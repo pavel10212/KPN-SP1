@@ -14,7 +14,7 @@ export default function RootLayout({children}) {
         <html lang="en">
         <head>
             <link rel="manifest" href="/manifest.json"/>
-            <link rel="icon" href="/logo2.svg"/>
+            <link rel="icon" href="/logo5.png"/>
         </head>
         <body>
         <SessionProvider>
