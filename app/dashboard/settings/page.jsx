@@ -116,10 +116,6 @@ const SettingsPage = () => {
     }, []);
 
     useEffect(() => {
-        checkNotificationPermission();
-    }, [checkNotificationPermission]);
-
-    useEffect(() => {
         if (status === "unauthenticated") {
             router.push("/login");
         }
@@ -129,7 +125,6 @@ const SettingsPage = () => {
     useEffect(() => {
         setError("");
     }, [activeTab]);
-
 
 
     useEffect(() => {
@@ -265,8 +260,8 @@ const SettingsPage = () => {
     };
 
 
-    const handleNotificationChange = useCallback(async () => {
-        if (!notifications.fcm) {
+    const handleNotificationChange = useCallback(async (checked) => {
+        if (checked) {
             if (!isNotificationPermissionGranted) {
                 const permissionGranted = await requestNotificationPermission();
                 if (permissionGranted) {
@@ -277,7 +272,10 @@ const SettingsPage = () => {
                     }));
                 } else {
                     toast.error("Notification permission denied. Please enable notifications in your browser settings.");
-                    return;
+                    setNotifications((prev) => ({
+                        ...prev,
+                        fcm: false,
+                    }));
                 }
             } else {
                 setFcmEnabled(true);
@@ -293,7 +291,7 @@ const SettingsPage = () => {
                 fcm: false,
             }));
         }
-    }, [notifications.fcm, isNotificationPermissionGranted, requestNotificationPermission]);
+    }, [isNotificationPermissionGranted, requestNotificationPermission]);
 
     const saveNotificationPreferences = async () => {
         setIsNotificationLoading(true);
@@ -512,7 +510,7 @@ const SettingsPage = () => {
                                 <Label htmlFor="fcm-notifications">Firebase Push Notifications</Label>
                                 <Switch
                                     id="fcm-notifications"
-                                    checked={notifications.fcm || isNotificationPermissionGranted}
+                                    checked={notifications.fcm}
                                     onCheckedChange={handleNotificationChange}
                                     aria-label="Firebase Push Notifications"
                                 />
@@ -532,7 +530,7 @@ const SettingsPage = () => {
                         <CardFooter>
                             <Button
                                 onClick={saveNotificationPreferences}
-                                disabled={isNotificationLoading  || isTokenLoading}
+                                disabled={isNotificationLoading || isTokenLoading}
                             >
                                 {isNotificationLoading ? "Saving..." : "Save Preferences"}
                             </Button>
