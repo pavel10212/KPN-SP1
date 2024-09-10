@@ -46,5 +46,3 @@ certificates
 # Sentry Config File
 .env.sentry-build-plugin
 
-# Firebase service worker
-public/firebase-messaging-sw.js
