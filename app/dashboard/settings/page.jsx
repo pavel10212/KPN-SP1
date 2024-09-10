@@ -1,12 +1,12 @@
 "use client";
 
 
-import {useState, useEffect, useCallback} from "react";
-import {useSession} from "next-auth/react";
-import {useRouter} from "next/navigation";
-import {useFCM} from "@/lib/hooks/useFCM";
-import {z} from "zod";
-import {Button} from "@/components/ui/button";
+import { useState, useEffect, useCallback } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useFCM } from "@/lib/hooks/useFCM";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
 import {
     Form,
     FormControl,
@@ -15,11 +15,11 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import {Input} from "@/components/ui/input";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {Switch} from "@/components/ui/switch";
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
     Card,
     CardContent,
@@ -28,11 +28,11 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import {Label} from "@/components/ui/label";
-import {AlertCircle} from "lucide-react";
-import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
+import { Label } from "@/components/ui/label";
+import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Image from "next/image";
-import {toast} from "sonner";
+import { toast } from "sonner";
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -73,8 +73,8 @@ const securitySchema = z
 
 const SettingsPage = () => {
     const [fcmEnabled, setFcmEnabled] = useState(false);
-    const {fcmToken, messages, isTokenLoading} = useFCM(fcmEnabled);
-    const {data: session, status, update} = useSession();
+    const { fcmToken, messages, isTokenLoading } = useFCM(fcmEnabled);
+    const { data: session, status, update } = useSession();
     const router = useRouter();
     const [notifications, setNotifications] = useState({
         fcm: false,
@@ -134,6 +134,18 @@ const SettingsPage = () => {
             });
         }
     }, [fcmEnabled, messages]);
+
+    useEffect(() => {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/firebase-messaging-sw.js', {type: 'module'})
+                .then((registration) => {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                })
+                .catch((error) => {
+                    console.error('Service Worker registration failed:', error);
+                });
+        }
+    }, []);
 
     const profileForm = useForm({
         resolver: zodResolver(profileSchema),
@@ -240,7 +252,7 @@ const SettingsPage = () => {
         try {
             const response = await fetch("/api/changePassword", {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
             });
 
@@ -296,7 +308,7 @@ const SettingsPage = () => {
         try {
             const response = await fetch("/api/saveNotificationPreferences", {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     fcm: notifications.fcm,
                     fcmToken: notifications.fcm ? fcmToken : null
@@ -317,8 +329,8 @@ const SettingsPage = () => {
 
                 const subscribeResponse = await fetch('/api/subscribeTopic', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({fcmToken, topic}),
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fcmToken, topic }),
                 });
 
                 if (!subscribeResponse.ok) {
@@ -367,33 +379,33 @@ const SettingsPage = () => {
                                     <FormField
                                         control={profileForm.control}
                                         name="name"
-                                        render={({field}) => (
+                                        render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>Name</FormLabel>
                                                 <FormControl>
-                                                    <Input {...field} aria-label="Name"/>
+                                                    <Input {...field} aria-label="Name" />
                                                 </FormControl>
-                                                <FormMessage/>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
                                     <FormField
                                         control={profileForm.control}
                                         name="email"
-                                        render={({field}) => (
+                                        render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>Email</FormLabel>
                                                 <FormControl>
-                                                    <Input {...field} aria-label="Email"/>
+                                                    <Input {...field} aria-label="Email" />
                                                 </FormControl>
-                                                <FormMessage/>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
                                     <FormField
                                         control={profileForm.control}
                                         name="image"
-                                        render={({field}) => (
+                                        render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>Profile Picture</FormLabel>
                                                 <FormControl>
@@ -407,7 +419,7 @@ const SettingsPage = () => {
                                                         aria-label="Profile Picture"
                                                     />
                                                 </FormControl>
-                                                <FormMessage/>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
@@ -449,40 +461,40 @@ const SettingsPage = () => {
                                     <FormField
                                         control={securityForm.control}
                                         name="currentPassword"
-                                        render={({field}) => (
+                                        render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>Current Password</FormLabel>
                                                 <FormControl>
-                                                    <Input type="password" {...field} aria-label="Current Password"/>
+                                                    <Input type="password" {...field} aria-label="Current Password" />
                                                 </FormControl>
-                                                <FormMessage/>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
                                     <FormField
                                         control={securityForm.control}
                                         name="newPassword"
-                                        render={({field}) => (
+                                        render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>New Password</FormLabel>
                                                 <FormControl>
-                                                    <Input type="password" {...field} aria-label="New Password"/>
+                                                    <Input type="password" {...field} aria-label="New Password" />
                                                 </FormControl>
-                                                <FormMessage/>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
                                     <FormField
                                         control={securityForm.control}
                                         name="confirmPassword"
-                                        render={({field}) => (
+                                        render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>Confirm New Password</FormLabel>
                                                 <FormControl>
                                                     <Input type="password" {...field}
-                                                           aria-label="Confirm New Password"/>
+                                                        aria-label="Confirm New Password" />
                                                 </FormControl>
-                                                <FormMessage/>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
@@ -538,7 +550,7 @@ const SettingsPage = () => {
             </Tabs>
             {error && (
                 <Alert variant="destructive" className="mt-4">
-                    <AlertCircle className="h-4 w-4"/>
+                    <AlertCircle className="h-4 w-4" />
                     <AlertTitle>Error</AlertTitle>
                     <AlertDescription>{error}</AlertDescription>
                 </Alert>
