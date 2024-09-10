@@ -4,11 +4,5 @@
       "path": "/api/cron",
       "schedule": "0 21 * * 4"
     }
-  ],
-  "routes": [
-    {
-      "src": "/firebase-messaging-sw.js",
-      "dest": "/firebase-messaging-sw.js"
-    }
   ]
 }
