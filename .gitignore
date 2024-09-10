@@ -48,3 +48,7 @@ certificates
 
 # Firebase service worker
 public/firebase-messaging-sw.js
+
+# Qodana
+!/qodana.yaml
+!/qodana.sarif.json
