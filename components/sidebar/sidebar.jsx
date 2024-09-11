@@ -1,15 +1,15 @@
 import {
-    MdDashboard,
-    MdSupervisedUserCircle,
-    MdShoppingBag,
     MdAttachMoney,
-    MdOutlineSettings,
+    MdChat,
+    MdDashboard,
     MdHelpCenter,
     MdLogout,
-    MdChat,
+    MdOutlineSettings,
+    MdShoppingBag,
+    MdSupervisedUserCircle,
 } from "react-icons/md";
 import MenuLink from "./menuLink/menuLink";
-import {signOut, auth} from "@/auth.js";
+import {auth, signOut} from "@/auth.js";
 import {redirect} from "next/navigation";
 import SidebarToggle from "/components/sidebar/sidebarToggle/sidebarToggle";
 import ClientSideImage from "@/components/clientSideImage/ClientSideImage";

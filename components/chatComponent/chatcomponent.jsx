@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import dynamic from "next/dynamic";
-import { Avatar } from "react-chat-engine";
+import {Avatar} from "react-chat-engine";
 
 const ChatEngine = dynamic(
   () => import("react-chat-engine").then((module) => module.ChatEngine),

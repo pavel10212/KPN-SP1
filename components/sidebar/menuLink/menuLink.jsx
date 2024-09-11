@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useLoading } from "@/components/loading/loadingWrapper";
-import { useEffect } from "react";
+import {usePathname} from "next/navigation";
+import {useLoading} from "@/components/loading/loadingWrapper";
+import {useEffect} from "react";
 
 const MenuLink = ({ item }) => {
   const pathname = usePathname();

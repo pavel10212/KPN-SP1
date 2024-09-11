@@ -1,6 +1,6 @@
 import {NextResponse} from 'next/server';
 import admin from 'firebase-admin';
-import { auth }  from '@/auth';
+import {auth} from '@/auth';
 import prismaClient from "@/app/api/prismaClient";
 
 if (!admin.apps.length) {
@@ -12,7 +12,7 @@ if (!admin.apps.length) {
 export async function POST(request) {
     try {
         const body = await request.json();
-        const { sentTopic, sentTitle, sentMsg } = body;
+        const {sentTopic, sentTitle, sentMsg} = body;
         console.log('sentTopic:', sentTopic);
         console.log('sentTitle:', sentTitle);
         console.log('sentMsg:', sentMsg);

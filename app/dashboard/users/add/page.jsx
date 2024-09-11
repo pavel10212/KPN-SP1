@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { z } from "zod";
-import { useSession } from "next-auth/react";
-import { registerSchema } from "@/lib/zod";
-import { useRouter } from "next/navigation";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { MdCheckCircle, MdError, MdArrowBack } from "react-icons/md";
+import {useEffect, useState} from "react";
+import {z} from "zod";
+import {useSession} from "next-auth/react";
+import {registerSchema} from "@/lib/zod";
+import {useRouter} from "next/navigation";
+import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
+import {MdArrowBack, MdCheckCircle, MdError} from "react-icons/md";
 
 const AddMemberPage = () => {
-  const { data: session, status } = useSession();
+  const { data: session} = useSession();
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",

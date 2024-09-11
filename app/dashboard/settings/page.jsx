@@ -1,38 +1,24 @@
 "use client";
 
 
-import { useState, useEffect, useCallback } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useFCM } from "@/lib/hooks/useFCM";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { AlertCircle } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {useCallback, useEffect, useState} from "react";
+import {useSession} from "next-auth/react";
+import {useRouter} from "next/navigation";
+import {useFCM} from "@/lib/hooks/useFCM";
+import {z} from "zod";
+import {Button} from "@/components/ui/button";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form";
+import {Input} from "@/components/ui/input";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {Switch} from "@/components/ui/switch";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle,} from "@/components/ui/card";
+import {Label} from "@/components/ui/label";
+import {AlertCircle} from "lucide-react";
+import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 import Image from "next/image";
-import { toast } from "sonner";
+import {toast} from "sonner";
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -43,13 +29,13 @@ const profileSchema = z.object({
     image: z
         .any()
         .refine(
-            (files) => !files || files?.length == 0 || files?.[0]?.size <= MAX_FILE_SIZE,
+            (files) => !files || files?.length === 0 || files?.[0]?.size <= MAX_FILE_SIZE,
             `Max file size is 5MB.`
         )
         .refine(
             (files) =>
                 !files ||
-                files?.length == 0 ||
+                files?.length === 0 ||
                 ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
             ".jpg, .jpeg, .png and .webp files are accepted."
         )
@@ -86,8 +72,7 @@ const SettingsPage = () => {
     const [previewImage, setPreviewImage] = useState(null);
     const [activeTab, setActiveTab] = useState("profile");
     const [isNotificationPermissionGranted, setIsNotificationPermissionGranted] = useState(false);
-
-    const checkNotificationPermission = useCallback(() => {
+    useCallback(() => {
         if (typeof window !== 'undefined' && 'Notification' in window) {
             if (Notification.permission === 'granted') {
                 setIsNotificationPermissionGranted(true);
@@ -97,7 +82,6 @@ const SettingsPage = () => {
         setIsNotificationPermissionGranted(false);
         return false;
     }, []);
-
     const requestNotificationPermission = useCallback(async () => {
         if (typeof window !== 'undefined' && 'Notification' in window) {
             try {

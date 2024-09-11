@@ -46,3 +46,5 @@ certificates
 # Sentry Config File
 .env.sentry-build-plugin
 
+# Qodana Config File
+!/qodana.yaml

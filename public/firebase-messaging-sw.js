@@ -26,7 +26,7 @@ messaging.onBackgroundMessage((payload) => {
         icon: "/logo.jpg",
         data: {url: link},
     };
-    self.registration.showNotification(notificationTitle, notificationOptions);
+    self.registration.showNotification(notificationTitle, notificationOptions).then(r => console.log("Notification shown:", r));
 });
 
 self.addEventListener("notificationclick", function (event) {

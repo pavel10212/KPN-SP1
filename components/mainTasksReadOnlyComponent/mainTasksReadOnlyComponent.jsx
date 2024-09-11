@@ -1,18 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Select,
-  MenuItem,
-} from "@mui/material";
-import { MdEdit } from "react-icons/md";
+import React, {useState} from "react";
+import {DataGrid} from "@mui/x-data-grid";
+import {Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Select,} from "@mui/material";
+import {MdEdit} from "react-icons/md";
 import dayjs from "dayjs";
-import { Button } from "@/components/ui/button";
+import {Button} from "@/components/ui/button";
 
 const MainTasks = ({ tasks, canEditStatus }) => {
   const [rows, setRows] = useState(tasks);
@@ -46,10 +39,8 @@ const MainTasks = ({ tasks, canEditStatus }) => {
       });
 
       if (!response.ok) throw new Error("Failed to update task status");
-
-      const updatedTask = await response.json();
-
-      // Update the local state immediately
+      await response.json();
+// Update the local state immediately
       setRows((prevRows) =>
         prevRows.map((row) =>
           row.id === selectedTask.id ? { ...row, status: newStatus } : row

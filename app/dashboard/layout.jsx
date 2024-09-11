@@ -3,7 +3,7 @@ import Sidebar from "@/components/sidebar/sidebar";
 import Footer from "@/components/footer/footer";
 import {LoadingWrapper} from "@/components/loading/loadingWrapper";
 import ClientFCMHandler from "@/lib/ServiceWorkerRegistration";
-import { auth } from "@/auth"
+import {auth} from "@/auth"
 import {findUserByEmail} from "@/lib/utils";
 
 const DashboardLayout = async ({children}) => {

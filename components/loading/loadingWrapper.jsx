@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, createContext, useContext, useEffect, Suspense } from "react";
-import { usePathname } from "next/navigation";
+import {createContext, Suspense, useContext, useEffect, useState} from "react";
+import {usePathname} from "next/navigation";
 import Loading from "./loading";
 
 const LoadingContext = createContext();
@@ -13,6 +13,7 @@ export const LoadingWrapper = ({ children }) => {
   const pathname = usePathname();
 
   // List of routes to exclude from showing the loading spinner
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const excludedRoutes = ["/login"];
 
   useEffect(() => {
@@ -30,13 +31,13 @@ export const LoadingWrapper = ({ children }) => {
       window.removeEventListener("beforeunload", handleStart);
       window.removeEventListener("load", handleComplete);
     };
-  }, [pathname]);
+  }, [excludedRoutes, pathname]);
 
   useEffect(() => {
     if (!excludedRoutes.includes(pathname)) {
       setIsLoading(false);
     }
-  }, [pathname]);
+  }, [excludedRoutes, pathname]);
 
   return (
     <LoadingContext.Provider value={{ isLoading, setIsLoading }}>

@@ -1,19 +1,8 @@
 import React from "react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Mail, Phone, MessageCircle } from "lucide-react";
+import {Accordion, AccordionContent, AccordionItem, AccordionTrigger,} from "@/components/ui/accordion";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card";
+import {Button} from "@/components/ui/button";
+import {Mail, MessageCircle, Phone} from "lucide-react";
 
 const faqs = [
   {
@@ -85,6 +74,7 @@ const HelpPage = () => {
           <CardHeader>
             <CardTitle className="text-2xl">Contact Support</CardTitle>
             <CardDescription className="text-gray-600">
+              {/* eslint-disable-next-line react/no-unescaped-entities */}
               If you can't find the answer you're looking for, our support team is here to help:
             </CardDescription>
           </CardHeader>

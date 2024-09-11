@@ -1,8 +1,8 @@
-import { pullAllBookings } from "@/lib/actions";
+import {pullAllBookings} from "@/lib/actions";
 import AllBookings from "@/components/allBookings/allBookings";
-import { auth } from "@/auth";
+import {auth} from "@/auth";
 import prisma from "@/app/api/prismaClient";
-import { Hotel, TrendingUp } from "@mui/icons-material";
+import {Hotel, TrendingUp} from "@mui/icons-material";
 
 const Bookings = async () => {
   const session = await auth();

@@ -1,6 +1,6 @@
 "use client";
 
-import {useState, useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import Link from "next/link";
 import {DataGrid} from "@mui/x-data-grid";
 import {MdAdd} from "react-icons/md";
@@ -96,7 +96,7 @@ const ClientUsers = ({users, user}) => {
     };
 
     const handleDelete = async (id) => {
-        const sure = confirm("Are you sure you want to delete this user?");
+        confirm("Are you sure you want to delete this user?");
         const response = await fetch('/api/deleteUser', {
             method: 'POST',
             body: JSON.stringify({id}),

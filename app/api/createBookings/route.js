@@ -1,6 +1,6 @@
 import prisma from "@/app/api/prismaClient";
-import { NextResponse } from "next/server";
-import { auth } from "@/auth.js";
+import {NextResponse} from "next/server";
+import {auth} from "@/auth.js";
 
 export async function POST(request) {
   const session = await auth();

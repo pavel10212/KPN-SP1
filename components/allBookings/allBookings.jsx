@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { DataGrid } from "@mui/x-data-grid";
-import { Search, CalendarToday, Hotel, CheckCircle } from "@mui/icons-material";
+import React, {useMemo, useState} from "react";
+import {DataGrid} from "@mui/x-data-grid";
+import {CalendarToday, CheckCircle, Search} from "@mui/icons-material";
 
 const AllBookings = ({ bookings }) => {
   const [searchTerm, setSearchTerm] = useState("");

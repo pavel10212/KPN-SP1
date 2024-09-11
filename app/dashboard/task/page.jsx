@@ -1,11 +1,11 @@
 import prisma from "@/app/api/prismaClient";
 import TaskAdmin from "@/components/tasksAdmin/tasksAdmin";
-import { auth } from "@/auth";
+import {auth} from "@/auth";
 import CustomTask from "@/components/customTaskAdmin/customTask";
 import MainTasks from "@/components/mainTasksReadOnlyComponent/mainTasksReadOnlyComponent";
-import { Button } from "@/components/ui/button";
+import {Button} from "@/components/ui/button";
 import Link from "next/link";
-import { MdAdd } from "react-icons/md";
+import {MdAdd} from "react-icons/md";
 import {findUserByEmail} from "@/lib/utils";
 
 const Task = async () => {

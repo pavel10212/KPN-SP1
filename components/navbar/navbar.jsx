@@ -1,8 +1,8 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import { MdNotifications, MdMenu } from "react-icons/md";
-import { useState, useEffect } from "react";
+import {usePathname} from "next/navigation";
+import {MdMenu} from "react-icons/md";
+import {useEffect, useState} from "react";
 
 const Navbar = ({ className }) => {
   const pathname = usePathname();

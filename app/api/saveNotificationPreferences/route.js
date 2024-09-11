@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import {auth} from "@/auth";
 import prismaClient from "@/app/api/prismaClient";
 import {NextResponse} from "next/server";
 

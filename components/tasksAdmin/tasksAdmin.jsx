@@ -1,17 +1,17 @@
 "use client";
 
-import {useState, useCallback} from "react";
+import {useCallback, useState} from "react";
 import {DataGrid} from "@mui/x-data-grid";
 import {
     Button,
-    IconButton,
     Dialog,
-    DialogTitle,
-    DialogContent,
     DialogActions,
-    TextField,
-    Select,
+    DialogContent,
+    DialogTitle,
+    IconButton,
     MenuItem,
+    Select,
+    TextField,
 } from "@mui/material";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
@@ -82,7 +82,7 @@ const TaskAdmin = ({tasks}) => {
     const sendNotification = async (task) => {
         console.log("Sending notification for task:", task);
         try {
-            const response = await fetch("/api/sendTopicNotification", {
+            const response = await fetch("/api/sendTopicNotificationMain", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({

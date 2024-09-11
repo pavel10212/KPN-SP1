@@ -1,7 +1,7 @@
 declare module "react-chat-engine" {
-  import React from "react";
+    import React from "react";
 
-  export interface ChatEngineProps {
+    export interface ChatEngineProps {
     projectID: string;
     userName: string;
     userSecret: string;

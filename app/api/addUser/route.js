@@ -1,8 +1,8 @@
-import { z } from "zod";
-import { NextResponse } from "next/server";
+import {z} from "zod";
+import {NextResponse} from "next/server";
 import prisma from "../prismaClient";
-import { hash } from "bcrypt";
-import { registerSchema } from "@/lib/zod";
+import {hash} from "bcrypt";
+import {registerSchema} from "@/lib/zod";
 import crypto from "crypto";
 
 export async function POST(req) {
@@ -32,8 +32,7 @@ export async function POST(req) {
 
     const hashedPassword = await hash(password, 10);
     const chatEngineSecret = crypto.randomBytes(16).toString("hex");
-
-    const newUser = await prisma.user.create({
+    await prisma.user.create({
       data: {
         name,
         email,
@@ -43,7 +42,6 @@ export async function POST(req) {
         team: { connect: { id: teamId } },
       },
     });
-
     console.log("User created successfully");
 
     // Create user in Chat Engine

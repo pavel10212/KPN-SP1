@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import {auth} from "@/auth";
 import prisma from "@/app/api/prismaClient";
 import ClientUsers from "@/components/clientUsers/clientUsers";
 

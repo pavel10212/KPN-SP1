@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 
 const Page = () => {
   const [data, setData] = useState(null);
@@ -36,7 +36,9 @@ const Page = () => {
       }
     };
 
-    fetchData();
+    fetchData().then(r =>
+        console.log("Data fetched and bookings created:", r)
+    );
   }, []);
 
   return (

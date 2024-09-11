@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
-import { MdMenu, MdClose } from "react-icons/md";
+import React, {useCallback, useEffect, useState} from "react";
+import {MdClose, MdMenu} from "react-icons/md";
 
 const SidebarToggle = ({ children, className }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

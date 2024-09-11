@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
+import {NextResponse} from "next/server";
 import prisma from "../prismaClient";
-import { hash } from "bcrypt";
-import { z } from "zod";
-import { registerSchema } from "@/lib/zod";
+import {hash} from "bcrypt";
+import {z} from "zod";
+import {registerSchema} from "@/lib/zod";
 import crypto from "crypto";
 
 export async function POST(req) {
@@ -23,7 +23,7 @@ export async function POST(req) {
     const team = await prisma.team.create({
       data: { name: `${name}'s Team` },
     });
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
         name,
         email,

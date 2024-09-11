@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
-import { auth } from "@/auth";
+import {redirect} from "next/navigation";
+import {auth} from "@/auth";
 import Image from "next/image";
 import Link from "next/link";
 

@@ -1,11 +1,11 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import prisma from "./app/api/prismaClient";
-import { signInSchema } from "@/lib/zod";
-import { ZodError } from "zod";
-import { compare } from 'bcryptjs'
+import {signInSchema} from "@/lib/zod";
+import {ZodError} from "zod";
+import {compare} from 'bcryptjs'
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const { handlers, auth, signOut } = NextAuth({
   secret: process.env.NEXT_PUBLIC_AUTH_SECRET,
   debug: process.env.NODE_ENV === "development",
   session: {

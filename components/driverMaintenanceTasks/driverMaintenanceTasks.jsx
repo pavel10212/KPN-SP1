@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
+import React, {useState} from "react";
+import {DataGrid} from "@mui/x-data-grid";
 import dayjs from "dayjs";
 
 const DriverMaintenanceTasks = ({ user, userTasks }) => {
-  const [rows, setRows] = useState(
+  const [rows] = useState(
     userTasks.map((task) => ({
       ...task,
       id: task.id,

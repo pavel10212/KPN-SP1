@@ -1,8 +1,8 @@
-import { redirect } from "next/navigation";
-import { auth } from "@/auth.js";
+import {redirect} from "next/navigation";
+import {auth} from "@/auth.js";
 import Card from "../../components/dashboard/card/card";
 import BookingToday from "../../components/dashboard/bookingToday/bookingToday";
-import { pullFromDatabase, pullCustomBookings } from "@/lib/actions";
+import {pullCustomBookings, pullFromDatabase} from "@/lib/actions";
 import prisma from "../api/prismaClient";
 import DriverMaintenanceTasks from "@/components/driverMaintenanceTasks/driverMaintenanceTasks";
 

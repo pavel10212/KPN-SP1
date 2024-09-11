@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import {useEffect, useState} from 'react';
 import Image from 'next/image';
-import { storage } from '@/lib/firebase/firebaseConfig';
-import { ref, getDownloadURL } from "firebase/storage";
+import {storage} from '@/lib/firebase/firebaseConfig';
+import {getDownloadURL, ref} from "firebase/storage";
 
 const ClientSideImage = ({ userId, userName }) => {
     const [imageUrl, setImageUrl] = useState('/noavatar.png');
@@ -20,7 +20,7 @@ const ClientSideImage = ({ userId, userName }) => {
             }
         };
 
-        loadImage();
+        loadImage().then(r => console.log("Image loaded:", r));
     }, [userId]);
 
     return (

@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import {auth} from "@/auth";
 import ChatComponent from "@/components/chatComponent/chatcomponent";
 import prisma from "@/app/api/prismaClient";
 
