@@ -2,7 +2,7 @@ import prismaClient from "@/app/api/prismaClient";
 import {NextResponse} from "next/server";
 import {auth} from "@/auth.js";
 
-export async function POST() {
+export async function GET() {
     try {
         const user = await auth();
 
