@@ -1,23 +1,66 @@
 import {NextResponse} from "next/server";
+import prisma from "../prismaClient";
 
-// Variable to store fetched data
+export async function POST(req) {
+    try {
+        const body = await req.json();
+        console.log("body", body);
 
-export async function GET() {
-  const response = await fetch("https://api.beds24.com/json/getBookings", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      authentication: {
-        apiKey: process.env.API_KEY,
-        propKey: process.env.PROP_KEY,
-      },
-      includeInvoice: false,
-      includeInfoItems: false,
-    }),
-  });
+        const user = await prisma.user.findFirst({
+            where: {
+                id: body,
+            },
+        });
 
-  const data = await response.json();
-  return NextResponse.json(data);
+        if (!user) {
+            return NextResponse.json({error: "User not found"}, {status: 404});
+        }
+
+        const teamId = user.teamId;
+
+        const team = await prisma.team.findFirst({
+            where: {id: teamId},
+        });
+
+        if (!team) {
+            return NextResponse.json({error: "Team not found"}, {status: 404});
+        }
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+        try {
+            const response = await fetch("https://api.beds24.com/json/getBookings", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    authentication: {
+                        apiKey: team.api_key,
+                        propKey: team.prop_key,
+                    },
+                    includeInvoice: false,
+                    includeInfoItems: false,
+                }),
+                signal: controller.signal,
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return NextResponse.json(data);
+        } finally {
+            clearTimeout(timeoutId);
+        }
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            console.error("Request timed out after 30 seconds");
+            return NextResponse.json({error: "Request timed out after 30 seconds"}, {status: 504});
+        }
+        console.error("Error processing request:", error);
+        return NextResponse.json({error: error.message}, {status: 500});
+    }
 }

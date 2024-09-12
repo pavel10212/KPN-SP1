@@ -1,22 +1,15 @@
-import prismaClient from "@/app/api/prismaClient";
+import prisma from "@/app/api/prismaClient";
 import {NextResponse} from "next/server";
-import {auth} from "@/auth.js";
 
 export async function GET() {
     try {
-        const user = await auth();
-
-        if (!user) {
-            return NextResponse.json({error: "Unauthorized"}, {status: 401});
-        }
-
-        const teamUser = await prismaClient.user.findFirst({
-            where: {email: user.email},
-            select: {teamId: true},
+        const teams = await prisma.team.findMany({
+            select: {id: true, teamId: true},
         });
 
-        if (!teamUser) {
-            return NextResponse.json({error: "User not found"}, {status: 404});
+        if (!teams) {
+            console.error("No teams found");
+            return NextResponse.json({error: "No teams found"}, {status: 404});
         }
 
         const response = await fetch("https://api.beds24.com/json/getBookings", {
@@ -46,7 +39,7 @@ export async function GET() {
         const results = await Promise.allSettled(
             data.map(async (booking) => {
                 try {
-                    return await prismaClient.booking.upsert({
+                    return await prisma.booking.upsert({
                         where: {bookId: booking.bookId},
                         update: {
                             roomId: booking.roomId,

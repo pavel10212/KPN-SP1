@@ -1,5 +1,5 @@
 import {auth} from "@/auth";
-import prismaClient from "@/app/api/prismaClient";
+import prisma from "@/app/api/prismaClient";
 import {NextResponse} from "next/server";
 
 export async function POST(req) {
@@ -8,7 +8,7 @@ export async function POST(req) {
         const session = await auth()
 
         if (!session || !session.user) {
-            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+            return NextResponse.json({message: "Unauthorized"}, {status: 401});
         }
 
         const userId = session.user.id
@@ -20,7 +20,7 @@ export async function POST(req) {
             updateData.FCMToken = body.fcmToken;
         }
 
-        const updatedUser = await prismaClient.user.update({
+        const updatedUser = await prisma.user.update({
             where: {id: userId},
             data: updateData,
         });

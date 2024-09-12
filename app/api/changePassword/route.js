@@ -1,4 +1,4 @@
-import prismaClient from "@/app/api/prismaClient";
+import prisma from "@/app/api/prismaClient";
 import {auth} from "@/auth";
 import {NextResponse} from "next/server";
 import bcrypt from "bcrypt";
@@ -13,7 +13,7 @@ export async function POST(request) {
             return NextResponse.json({message: "Unauthorized"}, {status: 401});
         }
 
-        const user = await prismaClient.user.findUnique({
+        const user = await prisma.user.findUnique({
             where: {id: session.user.id}
         });
         const userPassword = user.hashedPassword;
@@ -31,7 +31,7 @@ export async function POST(request) {
                 }
             );
             const hashedPassword = await bcrypt.hash(body.newPassword, 10);
-            await prismaClient.user.update({
+            await prisma.user.update({
                 where: {id: session.user.id},
                 data: {hashedPassword}
             });

@@ -1,7 +1,7 @@
 import {NextResponse} from "next/server";
 import admin from "firebase-admin";
 import {auth} from "@/auth";
-import prismaClient from "@/app/api/prismaClient";
+import prisma from "@/app/api/prismaClient";
 
 if (!admin.apps.length) {
     admin.initializeApp({
@@ -29,7 +29,7 @@ export async function POST(req) {
 
         const userId = session.user.id;
 
-        const user = await prismaClient.user.findUnique({
+        const user = await prisma.user.findUnique({
             where: {id: userId},
         });
 

@@ -12,9 +12,11 @@ model Team {
   name         String
   users        User[]
   bookings     Booking[]
-  chatEngineId String? // Add this line
+  chatEngineId String?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+  api_key      String?
+  prop_key     String?
 }
 
 model CustomTask {
@@ -54,8 +56,6 @@ model User {
   email              String?   @unique
   role               String    @default("admin")
   emailVerified      DateTime?
-  api_key            String?   @unique
-  prop_key           String?   @unique
   image              String?
   hashedPassword     String?
   accounts           Account[]
