@@ -1,8 +1,8 @@
-import {pullAllBookings} from "@/lib/actions";
+import { pullAllBookings } from "@/lib/actions";
 import AllBookings from "@/components/allBookings/allBookings";
-import {auth} from "@/auth";
+import { auth } from "@/auth";
 import prisma from "@/app/api/prismaClient";
-import {Hotel, TrendingUp} from "@mui/icons-material";
+import { Hotel, TrendingUp, Refresh } from "@mui/icons-material";
 
 const Bookings = async () => {
   const session = await auth();
@@ -40,7 +40,13 @@ const Bookings = async () => {
     <div className="p-6 px-5">
       <div className="mx-auto">
         <header className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">Bookings</h1>
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold text-gray-800">Bookings</h1>
+            <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg flex items-center transition duration-300">
+              <Refresh className="mr-2" />
+              Pull Bookings
+            </button>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-blue-50 rounded-lg p-4 flex items-center">
               <Hotel className="text-blue-500 mr-4" style={{ fontSize: 40 }} />
