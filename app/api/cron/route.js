@@ -1,13 +1,21 @@
 import prisma from "@/app/api/prismaClient";
 import {NextResponse} from "next/server";
 
-export async function GET() {
+const CRON_SECRET = process.env.CRON_SECRET;
+
+export async function GET(request) {
+    // Check for the secret token
+    const authHeader = request.headers.get('authorization');
+    if (authHeader !== `Bearer ${CRON_SECRET}`) {
+        return NextResponse.json({error: 'Unauthorized'}, {status: 401});
+    }
+
     try {
         const teams = await prisma.team.findMany({
             select: {id: true, teamId: true},
         });
 
-        if (!teams) {
+        if (!teams || teams.length === 0) {
             console.error("No teams found");
             return NextResponse.json({error: "No teams found"}, {status: 404});
         }
@@ -37,41 +45,43 @@ export async function GET() {
         }
 
         const results = await Promise.allSettled(
-            data.map(async (booking) => {
-                try {
-                    return await prisma.booking.upsert({
-                        where: {bookId: booking.bookId},
-                        update: {
-                            roomId: booking.roomId,
-                            firstNight: new Date(booking.firstNight),
-                            lastNight: new Date(booking.lastNight),
-                            numAdult: booking.numAdult,
-                            numChild: booking.numChild,
-                            guestFirstName: booking.guestFirstName,
-                            guestName: booking.guestName,
-                            guestEmail: booking.guestEmail,
-                            guestPhone: booking.guestPhone,
-                            teamId: teamUser.teamId,
-                        },
-                        create: {
-                            bookId: booking.bookId,
-                            roomId: booking.roomId,
-                            firstNight: new Date(booking.firstNight),
-                            lastNight: new Date(booking.lastNight),
-                            numAdult: booking.numAdult,
-                            numChild: booking.numChild,
-                            guestFirstName: booking.guestFirstName,
-                            guestName: booking.guestName,
-                            guestEmail: booking.guestEmail,
-                            guestPhone: booking.guestPhone,
-                            teamId: teamUser.teamId,
-                        },
-                    });
-                } catch (error) {
-                    console.error("Error upserting booking:", error);
-                    return {error: error.message, bookId: booking.bookId};
-                }
-            })
+            data.flatMap(booking =>
+                teams.map(async (team) => {
+                    try {
+                        return await prisma.booking.upsert({
+                            where: {bookId: booking.bookId},
+                            update: {
+                                roomId: booking.roomId,
+                                firstNight: new Date(booking.firstNight),
+                                lastNight: new Date(booking.lastNight),
+                                numAdult: booking.numAdult,
+                                numChild: booking.numChild,
+                                guestFirstName: booking.guestFirstName,
+                                guestName: booking.guestName,
+                                guestEmail: booking.guestEmail,
+                                guestPhone: booking.guestPhone,
+                                teamId: team.teamId,
+                            },
+                            create: {
+                                bookId: booking.bookId,
+                                roomId: booking.roomId,
+                                firstNight: new Date(booking.firstNight),
+                                lastNight: new Date(booking.lastNight),
+                                numAdult: booking.numAdult,
+                                numChild: booking.numChild,
+                                guestFirstName: booking.guestFirstName,
+                                guestName: booking.guestName,
+                                guestEmail: booking.guestEmail,
+                                guestPhone: booking.guestPhone,
+                                teamId: team.teamId,
+                            },
+                        });
+                    } catch (error) {
+                        console.error("Error upserting booking:", error);
+                        return {error: error.message, bookId: booking.bookId, teamId: team.teamId};
+                    }
+                })
+            )
         );
 
         const successfulBookings = results.filter(r => r.status === 'fulfilled').map(r => r.value);
