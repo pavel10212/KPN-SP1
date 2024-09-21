@@ -17,7 +17,7 @@ export default function RegisterForm() {
         name: "",
         email: "",
         password: "",
-        confirmPassword: "",
+        confirm_password: "",
         api_key: "",
         prop_key: "",
     });
@@ -25,87 +25,102 @@ export default function RegisterForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("1. Submitting form");
+        console.log("2. Full form data:", formData);
+
         setIsLoading(true);
+        setErrors({});
+
         try {
-            if (formData.password !== formData.confirmPassword) {
-                setErrors({...errors, confirmPassword: "Passwords do not match"});
-                setIsLoading(false);
-                return;
+            if (formData.password !== formData.confirm_password) {
+                console.log("3A. Passwords do not match");
+                throw new Error("Passwords do not match");
             }
-            const {confirmPassword, ...dataToSubmit} = formData;
+
+            console.log("3B. Passwords match, continuing with submission");
+
+            const dataToSubmit = {
+                name: formData.name,
+                email: formData.email,
+                password: formData.password,
+                api_key: formData.api_key,
+                prop_key: formData.prop_key,
+            }
+
             registerSchema.parse(dataToSubmit);
+            console.log("4. Form data validated");
+
             const response = await fetch("/api/register", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(dataToSubmit),
             });
-            const user = await response.json();
-            if (response.ok) {
-                const data = await fetch("api/data", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(user.userId),
-                });
-                if (data.ok) {
-                    const result = await data.json();
 
-                    const createResponse = await fetch("/api/createBookings", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                                userId: user.userId,
-                                bookingsData: result
-                            }
-                        ),
-                    });
-
-                    if (!createResponse.ok) {
-                        const errorBody = await createResponse.text();
-                        throw new Error(`Failed to create bookings: ${createResponse.status} ${createResponse.statusText}. ${errorBody || 'No additional error information available.'}`);
-                    }
-                    const createdBookings = await createResponse.json();
-                    console.log("Created bookings:", createdBookings);
-
-                } else {
-                    const errorBody = await data.text();
-                    console.error("Failed to fetch data", data.status, data.statusText, errorBody);
-                    toast.error(`Failed to fetch data: ${data.status} ${data.statusText}. ${errorBody || 'No additional error information available.'}`);
-                    setIsLoading(false);
-                    return;
-                }
-                setIsLoading(false);
-                console.log("Registration successful");
-                toast.success("Registration successful");
-                router.push("/login");
-            } else {
-                setIsLoading(false);
+            if (!response.ok) {
                 const errorBody = await response.text();
-                console.error("Registration failed", response.status, response.statusText, errorBody);
-                toast.error(`Registration failed: ${response.status} ${response.statusText}. ${errorBody || 'No additional error information available.'}`);
+                throw new Error(`Registration failed: ${response.status} ${response.statusText}. ${errorBody || 'No additional error information available.'}`);
             }
+
+            console.log("5. User registered");
+            const user = await response.json();
+
+            const dataResponse = await fetch("/api/data", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(user.userId),
+            });
+
+            if (!dataResponse.ok) {
+                const errorBody = await dataResponse.text();
+                throw new Error(`Failed to fetch data: ${dataResponse.status} ${dataResponse.statusText}. ${errorBody || 'No additional error information available.'}`);
+            }
+
+            console.log("6. Data fetched");
+            const result = await dataResponse.json();
+            console.log("6. Data fetched:", result);
+
+            const createResponse = await fetch("/api/createBookings", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    userId: user.userId,
+                    bookingsData: result
+                }),
+            });
+            if (!createResponse.ok) {
+                const errorBody = await createResponse.text();
+                throw new Error(`Failed to create bookings: ${createResponse.status} ${createResponse.statusText}. ${errorBody || 'No additional error information available.'}`);
+            }
+
+            const createdBookings = await createResponse.json();
+            console.log("7. Created bookings:", createdBookings);
+
+            console.log("8. Registration successful");
+            toast.success("Registration successful");
+            router.push("/login");
         } catch (error) {
-            setIsLoading(false);
+            console.error("9. Error caught:", error);
             if (error instanceof z.ZodError) {
                 const newErrors = {};
                 error.issues.forEach((issue) => {
                     newErrors[issue.path[0]] = issue.message;
                 });
                 setErrors(newErrors);
+            } else if (error.message === "Passwords do not match") {
+                setErrors({confirm_password: "Passwords do not match"});
             } else {
-                console.error("An unexpected error occurred", error);
-                toast.error(`An unexpected error occurred: ${error.message}`);
+                toast.error(`An error occurred: ${error.message}`);
             }
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const handleChange = (e) => {
-        setFormData({...formData, [e.target.name]: e.target.value});
-        if (errors[e.target.name]) {
-            setErrors({...errors, [e.target.name]: ""});
+        const {name, value} = e.target;
+        setFormData(prev => ({...prev, [name]: value}));
+        if (errors[name]) {
+            setErrors(prev => ({...prev, [name]: ""}));
         }
     };
 
@@ -149,7 +164,7 @@ export default function RegisterForm() {
                 >
                     <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 rounded-xl">
                         <form className="space-y-6" onSubmit={handleSubmit}>
-                            {["name", "email", "password", "confirmPassword", "api_key", "prop_key"].map((field, index) => (
+                            {["name", "email", "password", "confirm_password", "api_key", "prop_key"].map((field, index) => (
                                 <motion.div
                                     key={field}
                                     variants={itemVariants}
@@ -161,7 +176,7 @@ export default function RegisterForm() {
                                         htmlFor={field}
                                         className="block text-sm font-medium text-gray-700"
                                     >
-                                        {field === "confirmPassword"
+                                        {field === "confirm_password"
                                             ? "Confirm Password"
                                             : field
                                                 .split("_")

@@ -15,7 +15,7 @@ const AddMemberPage = () => {
         name: "",
         email: "",
         password: "",
-        role: "Co-Host",
+        role: "",
         session: session,
     });
     const [errors, setErrors] = useState({});
@@ -40,27 +40,43 @@ const AddMemberPage = () => {
             return;
         }
         try {
-            console.log("Attempting to parse form data with registerSchema");
-            const validatedData = registerSchema.parse(formData);
-            console.log("Form data parsed successfully:", validatedData);
-
-            // Add session data to the validated data
-            const apiRequestData = {
-                ...validatedData,
-                session: session
-            };
-
             console.log("Sending fetch request to /api/addUser");
             const response = await fetch("/api/addUser", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(apiRequestData),
+                body: JSON.stringify(formData),
             });
             console.log("Fetch response received:", response);
 
+            console.log("formData.role", formData.role);
+
             if (response.ok) {
+                try {
+                    const emailResponse = await fetch("/api/send", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            to: formData.email,
+                            name: formData.name,
+                            role: formData.role,
+                            password: formData.password,
+                            email: formData.email,
+                        }),
+                    });
+
+                    if (emailResponse.ok) {
+                        console.log("Welcome email sent successfully");
+                    } else {
+                        console.error("Failed to send welcome email");
+                    }
+                } catch (emailError) {
+                    console.error("Error sending welcome email:", emailError);
+                }
+
                 setSubmitStatus("success");
                 setTimeout(() => router.push("/dashboard/users"), 2000);
             } else {
@@ -79,6 +95,7 @@ const AddMemberPage = () => {
             }
         }
     };
+
 
     return (
         <div className="flex items-center justify-center bg-gray-100 p-4">

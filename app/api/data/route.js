@@ -4,7 +4,6 @@ import prisma from "../prismaClient";
 export async function POST(req) {
     try {
         const body = await req.json();
-        console.log("body", body);
 
         const user = await prisma.user.findFirst({
             where: {
@@ -12,11 +11,15 @@ export async function POST(req) {
             },
         });
 
+        console.log(user, "user");
+
         if (!user) {
             return NextResponse.json({error: "User not found"}, {status: 404});
         }
 
         const teamId = user.teamId;
+
+        console.log(teamId, "teamId");
 
         const team = await prisma.team.findFirst({
             where: {id: teamId},
@@ -49,8 +52,10 @@ export async function POST(req) {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
+            console.log(response, "response")
 
             const data = await response.json();
+            console.log(data, "data");
             return NextResponse.json(data);
         } finally {
             clearTimeout(timeoutId);

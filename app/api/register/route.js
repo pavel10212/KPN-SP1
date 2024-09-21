@@ -8,7 +8,8 @@ import crypto from "crypto";
 export async function POST(req) {
     try {
         const body = await req.json();
-        const {name, email, password, api_key, prop_key} = registerSchema.parse(body);
+        const {name, email, password} = registerSchema.parse(body);
+        const {api_key, prop_key} = body;
 
         const existingUser = await prisma.user.findUnique({where: {email}});
         if (existingUser) {

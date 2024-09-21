@@ -252,7 +252,7 @@ const CustomTaskForm = () => {
                                         </FormItem>
                                     )}
                                 />
-                                <Button type="submit" className="w-full">
+                                <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700">
                                     Submit Task
                                 </Button>
                             </form>
