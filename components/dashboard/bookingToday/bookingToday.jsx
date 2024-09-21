@@ -1,16 +1,16 @@
 "use client";
 
-import {useMemo} from "react";
-import {DataGrid} from "@mui/x-data-grid";
+import { useMemo } from "react";
+import { DataGrid } from "@mui/x-data-grid";
 
-const BookingToday = ({ bookings, checkInOrOut }) => {
+const BookingToday = ({ bookings, checkInOrOut, excludeField }) => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleString();
   };
 
-  const columns = useMemo(
-    () => [
+  const columns = useMemo(() => {
+    const allColumns = [
       { field: "roomId", headerName: "Room", flex: 0.5, minWidth: 70 },
       { field: "guestFirstName", headerName: "Name", flex: 1, minWidth: 120 },
       {
@@ -28,9 +28,10 @@ const BookingToday = ({ bookings, checkInOrOut }) => {
         renderCell: (params) => formatDate(params.value),
       },
       { field: "status", headerName: "Status", flex: 0.8, minWidth: 100 },
-    ],
-    []
-  );
+    ];
+
+    return allColumns.filter((column) => column.field !== excludeField);
+  }, [excludeField]);
 
   const rows = useMemo(
     () =>

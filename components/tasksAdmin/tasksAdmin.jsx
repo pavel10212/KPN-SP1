@@ -19,6 +19,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import dayjs from "dayjs";
+import { Box, Typography } from "@mui/material";
 
 const TaskAdmin = ({ tasks }) => {
   const statusOptions = [
@@ -192,93 +193,119 @@ const TaskAdmin = ({ tasks }) => {
         disableSelectionOnClick={true}
       />
 
-      <Dialog open={openEditDialog} onClose={handleCloseEditDialog}>
-        <DialogTitle>Edit Task</DialogTitle>
-        <DialogContent>
-          <TextField
-            margin="dense"
-            label="Room"
-            fullWidth
-            value={selectedTask?.roomId || ""}
-            onChange={(e) => handleInputChange("roomId", e.target.value)}
-          />
-          <TextField
-            margin="dense"
-            label="Name"
-            fullWidth
-            value={selectedTask?.guestName || ""}
-            onChange={(e) => handleInputChange("guestName", e.target.value)}
-          />
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateTimePicker
-              label="Check-In Date"
-              value={
-                selectedTask?.firstNight ? dayjs(selectedTask.firstNight) : null
-              }
-              onChange={(newValue) =>
-                handleInputChange("firstNight", newValue.toISOString())
-              }
-              renderInput={(props) => (
-                <TextField {...props} margin="dense" fullWidth />
-              )}
-            />
-            <DateTimePicker
-              label="Check-Out Date"
-              value={
-                selectedTask?.lastNight ? dayjs(selectedTask.lastNight) : null
-              }
-              onChange={(newValue) =>
-                handleInputChange("lastNight", newValue.toISOString())
-              }
-              renderInput={(props) => (
-                <TextField {...props} margin="dense" fullWidth />
-              )}
-            />
-          </LocalizationProvider>
-          <TextField
-            margin="dense"
-            label="Notes"
-            fullWidth
-            multiline
-            rows={4}
-            value={selectedTask?.customNotes || ""}
-            onChange={(e) => handleInputChange("customNotes", e.target.value)}
-          />
-          <Select
-            margin="dense"
-            fullWidth
-            value={selectedTask?.status || ""}
-            onChange={(e) => handleInputChange("status", e.target.value)}
+      <Dialog
+        open={openEditDialog}
+        onClose={handleCloseEditDialog}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle
+          sx={{
+            backgroundColor: "#f3f4f6",
+            padding: "16px 24px",
+            borderBottom: "1px solid #e5e7eb",
+          }}
+        >
+          Edit Task
+        </DialogTitle>
+        <DialogContent
+          sx={{
+            padding: "16px 24px", // Reduced padding
+            paddingTop: "16px", // Consistent top padding
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "16px",
+              marginTop: "8px",
+            }}
           >
-            {statusOptions.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </Select>
+            <TextField
+              label="Room"
+              fullWidth
+              variant="outlined"
+              value={selectedTask?.roomId || ""}
+              onChange={(e) => handleInputChange("roomId", e.target.value)}
+            />
+            <TextField
+              label="Name"
+              fullWidth
+              variant="outlined"
+              value={selectedTask?.guestName || ""}
+              onChange={(e) => handleInputChange("guestName", e.target.value)}
+            />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DateTimePicker
+                label="Check-In Date"
+                value={
+                  selectedTask?.firstNight
+                    ? dayjs(selectedTask.firstNight)
+                    : null
+                }
+                onChange={(newValue) =>
+                  handleInputChange("firstNight", newValue.toISOString())
+                }
+                renderInput={(props) => (
+                  <TextField {...props} fullWidth variant="outlined" />
+                )}
+              />
+              <DateTimePicker
+                label="Check-Out Date"
+                value={
+                  selectedTask?.lastNight ? dayjs(selectedTask.lastNight) : null
+                }
+                onChange={(newValue) =>
+                  handleInputChange("lastNight", newValue.toISOString())
+                }
+                renderInput={(props) => (
+                  <TextField {...props} fullWidth variant="outlined" />
+                )}
+              />
+            </LocalizationProvider>
+            <TextField
+              label="Notes"
+              fullWidth
+              variant="outlined"
+              multiline
+              rows={4}
+              value={selectedTask?.customNotes || ""}
+              onChange={(e) => handleInputChange("customNotes", e.target.value)}
+            />
+            <TextField
+              select
+              label="Status"
+              fullWidth
+              variant="outlined"
+              value={selectedTask?.status || ""}
+              onChange={(e) => handleInputChange("status", e.target.value)}
+            >
+              {statusOptions.map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseEditDialog}>Cancel</Button>
-          <Button onClick={handleSaveEdit} variant="contained" color="primary">
-            Save
+        <DialogActions
+          sx={{ padding: "16px 24px", backgroundColor: "#f3f4f6" }}
+        >
+          <Button onClick={handleCloseEditDialog} sx={{ color: "#6B7280" }}>
+            Cancel
           </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
-        <DialogTitle>Confirm Delete</DialogTitle>
-        <DialogContent>
-          Are you sure you want to delete this task? This action cannot be
-          undone.
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDeleteDialog}>Cancel</Button>
           <Button
-            onClick={handleConfirmDelete}
-            color="error"
+            onClick={handleSaveEdit}
             variant="contained"
+            sx={{
+              backgroundColor: "#4F46E5",
+              "&:hover": {
+                backgroundColor: "#4338CA",
+              },
+            }}
           >
-            Delete
+            Save
           </Button>
         </DialogActions>
       </Dialog>
