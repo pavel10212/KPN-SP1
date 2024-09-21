@@ -4,25 +4,30 @@ import {NextResponse} from "next/server";
 const CRON_SECRET = process.env.CRON_SECRET;
 
 export async function GET(request) {
-    // Get the URL from the request
-    const url = new URL(request.url);
-
-    // Check for the secret token in query parameter
-    const secretToken = url.searchParams.get('secret');
-    if (secretToken !== CRON_SECRET) {
-        return NextResponse.json({error: 'Unauthorized'}, {status: 401});
-    }
-
     try {
+
+        const url = new URL(request.url);
+
+        const secretToken = url.searchParams.get('secret');
+
+        if (secretToken !== CRON_SECRET) {
+            return NextResponse.json({error: 'Unauthorized'}, {status: 401});
+        }
+
+        console.log("Authentication successful");
+
         const teams = await prisma.team.findMany({
-            select: {id: true, teamId: true},
+            select: {id: true},
         });
+
+        console.log("Teams fetched:", teams.length);
 
         if (!teams || teams.length === 0) {
             console.error("No teams found");
             return NextResponse.json({error: "No teams found"}, {status: 404});
         }
 
+        console.log("Fetching bookings from API");
         const response = await fetch("https://api.beds24.com/json/getBookings", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
@@ -41,12 +46,14 @@ export async function GET(request) {
         }
 
         const data = await response.json();
+        console.log("Bookings fetched:", data.length);
 
         if (data.error) {
             console.error("Error fetching bookings:", data.error);
             return NextResponse.json({error: data.error}, {status: 500});
         }
 
+        console.log("Processing bookings");
         const results = await Promise.allSettled(
             data.flatMap(booking =>
                 teams.map(async (team) => {
@@ -100,6 +107,6 @@ export async function GET(request) {
         });
     } catch (error) {
         console.error("Unexpected error:", error);
-        return NextResponse.json({error: "An unexpected error occurred"}, {status: 500});
+        return NextResponse.json({error: "An unexpected error occurred", details: error.message}, {status: 500});
     }
 }

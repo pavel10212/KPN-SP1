@@ -22,31 +22,34 @@ export async function POST(request) {
 
         const createdBookings = await Promise.all(
             bookingsData.map(async (booking) => {
-                try {
-                    return await prisma.booking.create({
-                        data: {
-                            bookId: booking.bookId,
-                            roomId: booking.roomId,
-                            firstNight: new Date(booking.firstNight),
-                            lastNight: new Date(booking.lastNight),
-                            numAdult: booking.numAdult,
-                            numChild: booking.numChild,
-                            guestFirstName: booking.guestFirstName,
-                            guestName: booking.guestName,
-                            guestEmail: booking.guestEmail,
-                            guestPhone: booking.guestPhone,
-                            teamId: teamUser.teamId,
-                        },
-                    });
-                } catch (error) {
-                    console.error("Error creating booking:", error);
-                    return {error: error.message, booking};
+                if (booking.status === "1" || booking.status === "2") {
+                    try {
+                        return await prisma.booking.create({
+                            data: {
+                                bookId: booking.bookId,
+                                roomId: booking.roomId,
+                                firstNight: new Date(booking.firstNight),
+                                lastNight: new Date(booking.lastNight),
+                                numAdult: booking.numAdult,
+                                numChild: booking.numChild,
+                                guestFirstName: booking.guestFirstName,
+                                guestName: booking.guestName,
+                                guestEmail: booking.guestEmail,
+                                guestPhone: booking.guestPhone,
+                                teamId: teamUser.teamId,
+                            },
+                        });
+                    } catch (error) {
+                        console.error("Error creating booking:", error);
+                        return {error: error.message, booking};
+                    }
                 }
+                return null;
             })
         );
 
-        const successfulBookings = createdBookings.filter(booking => !booking.error);
-        const failedBookings = createdBookings.filter(booking => booking.error);
+        const successfulBookings = createdBookings.filter(booking => booking && !booking.error);
+        const failedBookings = createdBookings.filter(booking => booking && booking.error);
 
         console.log("Created bookings:", successfulBookings);
         if (failedBookings.length > 0) {

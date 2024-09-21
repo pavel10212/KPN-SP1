@@ -53,7 +53,6 @@ export async function POST(req) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             console.log(response, "response")
-
             const data = await response.json();
             console.log(data, "data");
             return NextResponse.json(data);
