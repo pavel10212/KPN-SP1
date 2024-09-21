@@ -1,12 +1,12 @@
 import prisma from "@/app/api/prismaClient";
 import TaskAdmin from "@/components/tasksAdmin/tasksAdmin";
-import {auth} from "@/auth";
+import { auth } from "@/auth";
 import CustomTask from "@/components/customTaskAdmin/customTask";
 import MainTasks from "@/components/mainTasksReadOnlyComponent/mainTasksReadOnlyComponent";
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {MdAdd} from "react-icons/md";
-import {findUserByEmail} from "@/lib/utils";
+import { MdAdd } from "react-icons/md";
+import { findUserByEmail } from "@/lib/utils";
 
 const Task = async () => {
   const session = await auth();
@@ -70,9 +70,7 @@ const Task = async () => {
       return (
         <>
           <div className="bg-white rounded-xl shadow-md p-4 mb-6">
-            <h2 className="text-2xl font-semibold text-gray-800">
-              Main Tasks
-            </h2>
+            <h2 className="text-2xl font-semibold text-gray-800">Main Tasks</h2>
             <TaskAdmin tasks={tasks} />
           </div>
           <div className="bg-white rounded-xl shadow-md p-4 mb-6">
@@ -105,9 +103,9 @@ const Task = async () => {
   };
 
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen">
       <div className="mx-auto px-4 sm:px-6">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-end items-center mb-6">
           {user.role === "admin" && (
             <Link href="/dashboard/task/addTask">
               <Button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg flex items-center transition duration-300">
