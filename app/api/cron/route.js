@@ -4,9 +4,12 @@ import {NextResponse} from "next/server";
 const CRON_SECRET = process.env.CRON_SECRET;
 
 export async function GET(request) {
-    // Check for the secret token
-    const authHeader = request.headers.get('authorization');
-    if (authHeader !== `Bearer ${CRON_SECRET}`) {
+    // Get the URL from the request
+    const url = new URL(request.url);
+
+    // Check for the secret token in query parameter
+    const secretToken = url.searchParams.get('secret');
+    if (secretToken !== CRON_SECRET) {
         return NextResponse.json({error: 'Unauthorized'}, {status: 401});
     }
 
