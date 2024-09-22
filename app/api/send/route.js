@@ -10,7 +10,7 @@ export async function POST(req) {
 
     try {
         const {data, error} = await resend.emails.send({
-            from: 'onboarding@resend.dev',
+            from: 'onboarding@taskspro.live',
             to: to,
             subject: 'Welcome to Our Team!',
             react: <EmailTemplate firstName={name} role={role} email={email} password={password}/>,
@@ -25,27 +25,3 @@ export async function POST(req) {
         return new Response(JSON.stringify({error: error.message}), {status: 500});
     }
 }
-
-// import {Resend} from 'resend';
-// import EmailTemplate from "@/components/email/email-template";
-//
-// const resend = new Resend(process.env.RESEND_API_KEY);
-//
-// export async function POST() {
-//     try {
-//         const {data, error} = await resend.emails.send({
-//             from: 'onboarding@resend.dev',
-//             to: 'u6430176@au.edu',
-//             subject: 'Hello world',
-//             react: <EmailTemplate firstName="John"/>,
-//         });
-//
-//         if (error) {
-//             return new Response(JSON.stringify({error}), {status: 500});
-//         }
-//
-//         return new Response(JSON.stringify(data));
-//     } catch (error) {
-//         return new Response(JSON.stringify({error}), {status: 500});
-//     }
-// }

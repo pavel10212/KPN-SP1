@@ -1,316 +1,339 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
+import {useCallback, useState} from "react";
+import {DataGrid} from "@mui/x-data-grid";
 import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  MenuItem,
-  Select,
-  TextField,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    IconButton,
+    MenuItem,
+    Select,
+    TextField,
 } from "@mui/material";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import dayjs from "dayjs";
-import { Box, Typography } from "@mui/material";
+import {Box, Typography} from "@mui/material";
 
-const TaskAdmin = ({ tasks }) => {
-  const statusOptions = [
-    "To Arrive",
-    "Arrived",
-    "In House",
-    "Departed",
-    "No Show",
-    "Cancelled",
-  ];
+const TaskAdmin = ({tasks}) => {
+    const statusOptions = [
+        "To Arrive",
+        "Arrived",
+        "In House",
+        "Departed",
+        "No Show",
+        "Cancelled",
+    ];
 
-  const initialTasks = tasks.map((task) => ({
-    ...task,
-    id: task.id,
-    status: task.status || "Booked",
-    firstNight: task.firstNight
-      ? new Date(task.firstNight).toISOString()
-      : null,
-    lastNight: task.lastNight ? new Date(task.lastNight).toISOString() : null,
-  }));
+    const initialTasks = tasks.map((task) => ({
+        ...task,
+        id: task.id,
+        status: task.status || "Booked",
+        firstNight: task.firstNight
+            ? new Date(task.firstNight).toISOString()
+            : null,
+        lastNight: task.lastNight ? new Date(task.lastNight).toISOString() : null,
+    }));
 
-  const [rows, setRows] = useState(initialTasks);
-  const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [taskToDelete, setTaskToDelete] = useState(null);
+    const [rows, setRows] = useState(initialTasks);
+    const [openEditDialog, setOpenEditDialog] = useState(false);
+    const [selectedTask, setSelectedTask] = useState(null);
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+    const [taskToDelete, setTaskToDelete] = useState(null);
 
-  const handleEditClick = (task) => {
-    setSelectedTask({ ...task });
-    setOpenEditDialog(true);
-  };
+    const handleEditClick = (task) => {
+        setSelectedTask({...task});
+        setOpenEditDialog(true);
+    };
 
-  const handleCloseEditDialog = () => {
-    setOpenEditDialog(false);
-    setSelectedTask(null);
-  };
+    const handleCloseEditDialog = () => {
+        setOpenEditDialog(false);
+        setSelectedTask(null);
+    };
 
-  const handleSaveEdit = async () => {
-    try {
-      const response = await fetch("/api/updateMainTasks", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(selectedTask),
-      });
+    const handleSaveEdit = async () => {
+        try {
+            const response = await fetch("/api/updateMainTasks", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(selectedTask),
+            });
 
-      if (!response.ok) throw new Error("Failed to update task");
-      const updatedTask = await response.json();
-      console.log("Updated task:", updatedTask);
-      updateRowData(updatedTask);
-      try {
-        await sendNotification(updatedTask);
-      } catch (notificationError) {
-        console.error("Failed to send notification:", notificationError);
-      }
-      handleCloseEditDialog();
-    } catch (error) {
-      console.error("Error updating task:", error);
-    }
-  };
+            if (!response.ok) throw new Error("Failed to update task");
+            const updatedTask = await response.json();
+            console.log("Updated task:", updatedTask);
+            updateRowData(updatedTask);
 
-  const sendNotification = async (task) => {
-    console.log("Sending notification for task:", task);
-    try {
-      const response = await fetch("/api/sendTopicNotificationMain", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sentTopic: "taskUpdates",
-          sentTitle: "Task Updated",
-          sentMsg: `Task for ${task.booking.guestFirstName} ${task.booking.guestName} in Room ${task.booking.roomId} has been updated.`,
-        }),
-      });
+            try {
+                await sendNotification(updatedTask);
+                await sendNotificationToTab(updatedTask);
+            } catch (notificationError) {
+                console.error("Failed to send notification:", notificationError);
+            }
 
-      if (!response.ok) {
-        throw new Error("Failed to send notification");
-      }
+            handleCloseEditDialog();
+        } catch (error) {
+            console.error("Error updating task:", error);
+        }
+    };
 
-      console.log("Notification sent successfully");
-    } catch (error) {
-      console.error("Error sending notification:", error);
-    }
-  };
+    const sendNotificationToTab = async (task) => {
+        console.log("Sending notification for task:", task);
+        try {
+            const response = await fetch("/api/notificationCoHostMaid", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    title: "Task Updated",
+                    message: `Task for ${task.guestFirstName} ${task.guestName} in Room ${task.roomId} has been updated.`,
+                }),
+            });
 
-  const updateRowData = useCallback((updatedTask) => {
-    setRows((prevRows) =>
-      prevRows.map((row) =>
-        row.id === updatedTask.id ? { ...row, ...updatedTask } : row
-      )
-    );
-  }, []);
+            if (!response.ok) {
+                throw new Error("Failed to send notification");
+            }
+        } catch (error) {
+            console.error("Error sending notification:", error);
+        }
+    };
 
-  const handleInputChange = (field, value) => {
-    setSelectedTask((prev) => {
-      const updated = { ...prev, [field]: value };
-      updateRowData(updated);
-      return updated;
-    });
-  };
+    const sendNotification = async (task) => {
+        console.log("Sending notification for task:", task);
+        try {
+            const response = await fetch("/api/sendTopicNotificationMain", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    sentTopic: "taskUpdates",
+                    sentTitle: "Task Updated",
+                    sentMsg: `Task for ${task.booking.guestFirstName} ${task.booking.guestName} in Room ${task.booking.roomId} has been updated.`,
+                }),
+            });
 
-  const handleDeleteClick = (id) => {
-    setTaskToDelete(id);
-    setOpenDeleteDialog(true);
-  };
+            if (!response.ok) {
+                throw new Error("Failed to send notification");
+            }
 
-  const handleCloseDeleteDialog = () => {
-    setOpenDeleteDialog(false);
-    setTaskToDelete(null);
-  };
+            console.log("Notification sent successfully");
+        } catch (error) {
+            console.error("Error sending notification:", error);
+        }
+    };
 
-  const handleConfirmDelete = async () => {
-    if (taskToDelete) {
-      setRows(rows.filter((row) => row.id !== taskToDelete));
-      await fetch("/api/deleteTask", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: taskToDelete }),
-      });
-      handleCloseDeleteDialog();
-    }
-  };
+    const updateRowData = useCallback((updatedTask) => {
+        setRows((prevRows) =>
+            prevRows.map((row) =>
+                row.id === updatedTask.id ? {...row, ...updatedTask} : row
+            )
+        );
+    }, []);
 
-  const formatDate = (date) =>
-    date ? dayjs(date).format("YYYY-MM-DD HH:mm:ss") : "";
+    const handleInputChange = (field, value) => {
+        setSelectedTask((prev) => {
+            const updated = {...prev, [field]: value};
+            updateRowData(updated);
+            return updated;
+        });
+    };
 
-  const columns = [
-    { field: "roomId", headerName: "Room", width: 110 },
-    { field: "guestName", headerName: "Name", width: 150 },
-    {
-      field: "firstNight",
-      headerName: "Check-In Date",
-      width: 200,
-      renderCell: (params) => formatDate(params.row.firstNight),
-    },
-    {
-      field: "lastNight",
-      headerName: "Check-Out Date",
-      width: 200,
-      renderCell: (params) => formatDate(params.row.lastNight),
-    },
-    { field: "customNotes", headerName: "Notes", width: 200 },
-    { field: "status", headerName: "Status", width: 130 },
-    {
-      field: "actions",
-      headerName: "Actions",
-      width: 120,
-      renderCell: (params) => (
-        <>
-          <IconButton onClick={() => handleEditClick(params.row)}>
-            <EditIcon />
-          </IconButton>
-          <IconButton onClick={() => handleDeleteClick(params.id)}>
-            <DeleteIcon />
-          </IconButton>
-        </>
-      ),
-    },
-  ];
+    const handleDeleteClick = (id) => {
+        setTaskToDelete(id);
+        setOpenDeleteDialog(true);
+    };
 
-  return (
-    <div
-      className="bg-white p-5 rounded-xl mt-1"
-      style={{ height: 530, width: "100%" }}
-    >
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        pageSize={5}
-        style={{ height: 500, width: "100%" }}
-        autoPageSize
-        rowsPerPageOptions={[5, 10, 20]}
-        disableSelectionOnClick={true}
-      />
+    const handleCloseDeleteDialog = () => {
+        setOpenDeleteDialog(false);
+        setTaskToDelete(null);
+    };
 
-      <Dialog
-        open={openEditDialog}
-        onClose={handleCloseEditDialog}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle
-          sx={{
-            backgroundColor: "#f3f4f6",
-            padding: "16px 24px",
-            borderBottom: "1px solid #e5e7eb",
-          }}
+    const handleConfirmDelete = async () => {
+        if (taskToDelete) {
+            setRows(rows.filter((row) => row.id !== taskToDelete));
+            await fetch("/api/deleteTask", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({id: taskToDelete}),
+            });
+            handleCloseDeleteDialog();
+        }
+    };
+
+    const formatDate = (date) =>
+        date ? dayjs(date).format("YYYY-MM-DD HH:mm:ss") : "";
+
+    const columns = [
+        {field: "roomId", headerName: "Room", width: 110},
+        {field: "guestName", headerName: "Name", width: 150},
+        {
+            field: "firstNight",
+            headerName: "Check-In Date",
+            width: 200,
+            renderCell: (params) => formatDate(params.row.firstNight),
+        },
+        {
+            field: "lastNight",
+            headerName: "Check-Out Date",
+            width: 200,
+            renderCell: (params) => formatDate(params.row.lastNight),
+        },
+        {field: "customNotes", headerName: "Notes", width: 200},
+        {field: "status", headerName: "Status", width: 130},
+        {
+            field: "actions",
+            headerName: "Actions",
+            width: 120,
+            renderCell: (params) => (
+                <>
+                    <IconButton onClick={() => handleEditClick(params.row)}>
+                        <EditIcon/>
+                    </IconButton>
+                    <IconButton onClick={() => handleDeleteClick(params.id)}>
+                        <DeleteIcon/>
+                    </IconButton>
+                </>
+            ),
+        },
+    ];
+
+    return (
+        <div
+            className="bg-white p-5 rounded-xl mt-1"
+            style={{height: 530, width: "100%"}}
         >
-          Edit Task
-        </DialogTitle>
-        <DialogContent
-          sx={{
-            padding: "16px 24px", // Reduced padding
-            paddingTop: "16px", // Consistent top padding
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "16px",
-              marginTop: "8px",
-            }}
-          >
-            <TextField
-              label="Room"
-              fullWidth
-              variant="outlined"
-              value={selectedTask?.roomId || ""}
-              onChange={(e) => handleInputChange("roomId", e.target.value)}
+            <DataGrid
+                rows={rows}
+                columns={columns}
+                pageSize={5}
+                style={{height: 500, width: "100%"}}
+                autoPageSize
+                rowsPerPageOptions={[5, 10, 20]}
+                disableSelectionOnClick={true}
             />
-            <TextField
-              label="Name"
-              fullWidth
-              variant="outlined"
-              value={selectedTask?.guestName || ""}
-              onChange={(e) => handleInputChange("guestName", e.target.value)}
-            />
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DateTimePicker
-                label="Check-In Date"
-                value={
-                  selectedTask?.firstNight
-                    ? dayjs(selectedTask.firstNight)
-                    : null
-                }
-                onChange={(newValue) =>
-                  handleInputChange("firstNight", newValue.toISOString())
-                }
-                renderInput={(props) => (
-                  <TextField {...props} fullWidth variant="outlined" />
-                )}
-              />
-              <DateTimePicker
-                label="Check-Out Date"
-                value={
-                  selectedTask?.lastNight ? dayjs(selectedTask.lastNight) : null
-                }
-                onChange={(newValue) =>
-                  handleInputChange("lastNight", newValue.toISOString())
-                }
-                renderInput={(props) => (
-                  <TextField {...props} fullWidth variant="outlined" />
-                )}
-              />
-            </LocalizationProvider>
-            <TextField
-              label="Notes"
-              fullWidth
-              variant="outlined"
-              multiline
-              rows={4}
-              value={selectedTask?.customNotes || ""}
-              onChange={(e) => handleInputChange("customNotes", e.target.value)}
-            />
-            <TextField
-              select
-              label="Status"
-              fullWidth
-              variant="outlined"
-              value={selectedTask?.status || ""}
-              onChange={(e) => handleInputChange("status", e.target.value)}
+
+            <Dialog
+                open={openEditDialog}
+                onClose={handleCloseEditDialog}
+                maxWidth="sm"
+                fullWidth
             >
-              {statusOptions.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Box>
-        </DialogContent>
-        <DialogActions
-          sx={{ padding: "16px 24px", backgroundColor: "#f3f4f6" }}
-        >
-          <Button onClick={handleCloseEditDialog} sx={{ color: "#6B7280" }}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSaveEdit}
-            variant="contained"
-            sx={{
-              backgroundColor: "#4F46E5",
-              "&:hover": {
-                backgroundColor: "#4338CA",
-              },
-            }}
-          >
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
-  );
+                <DialogTitle
+                    sx={{
+                        backgroundColor: "#f3f4f6",
+                        padding: "16px 24px",
+                        borderBottom: "1px solid #e5e7eb",
+                    }}
+                >
+                    Edit Task
+                </DialogTitle>
+                <DialogContent
+                    sx={{
+                        padding: "16px 24px",
+                        paddingTop: "16px",
+                    }}
+                >
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "16px",
+                            marginTop: "8px",
+                        }}
+                    >
+                        <TextField
+                            label="Room"
+                            fullWidth
+                            variant="outlined"
+                            value={selectedTask?.roomId || ""}
+                            onChange={(e) => handleInputChange("roomId", e.target.value)}
+                        />
+                        <TextField
+                            label="Name"
+                            fullWidth
+                            variant="outlined"
+                            value={selectedTask?.guestName || ""}
+                            onChange={(e) => handleInputChange("guestName", e.target.value)}
+                        />
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DateTimePicker
+                                label="Check-In Date"
+                                value={
+                                    selectedTask?.firstNight
+                                        ? dayjs(selectedTask.firstNight)
+                                        : null
+                                }
+                                onChange={(newValue) =>
+                                    handleInputChange("firstNight", newValue.toISOString())
+                                }
+                                renderInput={(props) => (
+                                    <TextField {...props} fullWidth variant="outlined"/>
+                                )}
+                            />
+                            <DateTimePicker
+                                label="Check-Out Date"
+                                value={
+                                    selectedTask?.lastNight ? dayjs(selectedTask.lastNight) : null
+                                }
+                                onChange={(newValue) =>
+                                    handleInputChange("lastNight", newValue.toISOString())
+                                }
+                                renderInput={(props) => (
+                                    <TextField {...props} fullWidth variant="outlined"/>
+                                )}
+                            />
+                        </LocalizationProvider>
+                        <TextField
+                            label="Notes"
+                            fullWidth
+                            variant="outlined"
+                            multiline
+                            rows={4}
+                            value={selectedTask?.customNotes || ""}
+                            onChange={(e) => handleInputChange("customNotes", e.target.value)}
+                        />
+                        <TextField
+                            select
+                            label="Status"
+                            fullWidth
+                            variant="outlined"
+                            value={selectedTask?.status || ""}
+                            onChange={(e) => handleInputChange("status", e.target.value)}
+                        >
+                            {statusOptions.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                    </Box>
+                </DialogContent>
+                <DialogActions
+                    sx={{padding: "16px 24px", backgroundColor: "#f3f4f6"}}
+                >
+                    <Button onClick={handleCloseEditDialog} sx={{color: "#6B7280"}}>
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleSaveEdit}
+                        variant="contained"
+                        sx={{
+                            backgroundColor: "#4F46E5",
+                            "&:hover": {
+                                backgroundColor: "#4338CA",
+                            },
+                        }}
+                    >
+                        Save
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </div>
+    );
 };
 
 export default TaskAdmin;
