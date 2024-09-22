@@ -8,15 +8,16 @@ generator client {
 }
 
 model Team {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
-  name         String
-  users        User[]
-  bookings     Booking[]
-  chatEngineId String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  api_key      String?
-  prop_key     String?
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  users         User[]
+  bookings      Booking[]
+  chatEngineId  String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  api_key       String?
+  prop_key      String?
+  notifications Notification[]
 }
 
 model CustomTask {
@@ -48,6 +49,18 @@ model Booking {
   customNotes    String?
   status         String?  @default("To Arrive")
   team           Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  teamId    String   @db.ObjectId
+  role      String
+  message   String
+  type      String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  updatedAt DateTime @updatedAt
 }
 
 model User {
