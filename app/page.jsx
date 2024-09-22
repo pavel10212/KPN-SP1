@@ -1,5 +1,5 @@
-import {redirect} from "next/navigation";
-import {auth} from "@/auth";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -14,7 +14,7 @@ export default async function HomePage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-200 flex flex-col justify-center items-center p-4">
       <div className="bg-white rounded-lg shadow-xl p-8 max-w-md w-full text-center">
         <Image
-          src="/logo2.svg"
+          src="/logo5.png"
           alt="KPN Logo"
           width={100}
           height={100}

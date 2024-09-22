@@ -47,6 +47,8 @@ const CustomTaskForm = () => {
     },
   });
 
+  const watchRole = form.watch("role");
+
   const onSubmit = async (data) => {
     try {
       const response = await fetch("/api/addCustomtask", {
@@ -92,6 +94,7 @@ const CustomTaskForm = () => {
       setSubmitStatus("error");
     }
   };
+
   return (
     <div className="flex justify-center items-center">
       <div className="w-full max-w-3xl">
@@ -182,34 +185,6 @@ const CustomTaskForm = () => {
                     </FormItem>
                   )}
                 />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="guestFirstName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Guest First Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="John" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="guestName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Guest Last Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Smith" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
                 <FormField
                   control={form.control}
                   name="location"
@@ -226,22 +201,54 @@ const CustomTaskForm = () => {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="guestPhone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter guest's phone number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {watchRole !== "Maintenance" && (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="guestFirstName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Guest First Name</FormLabel>
+                            <FormControl>
+                              <Input placeholder="John" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="guestName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Guest Last Name</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Smith" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <FormField
+                      control={form.control}
+                      name="guestPhone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Phone Number</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter guest's phone number"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </>
+                )}
                 <FormField
                   control={form.control}
                   name="date"
