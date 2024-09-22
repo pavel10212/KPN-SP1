@@ -5,9 +5,9 @@ import {findUserByEmail} from "@/lib/utils";
 
 export async function GET() {
     const session = await auth()
-    const user = findUserByEmail(session.user.email)
+    const user = await findUserByEmail(session.user.email)
     const teamId = user.teamId
-    const userRole = user.role
+    const userRole = session.user.role
 
     const notifications = await prisma.notification.findMany({
         where: {

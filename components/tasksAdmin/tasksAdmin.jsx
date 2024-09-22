@@ -10,7 +10,6 @@ import {
     DialogTitle,
     IconButton,
     MenuItem,
-    Select,
     TextField,
 } from "@mui/material";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
@@ -19,7 +18,7 @@ import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import dayjs from "dayjs";
-import {Box, Typography} from "@mui/material";
+import {Box} from "@mui/material";
 
 const TaskAdmin = ({tasks}) => {
     const statusOptions = [
@@ -72,7 +71,7 @@ const TaskAdmin = ({tasks}) => {
 
             try {
                 await sendNotification(updatedTask);
-                await sendNotificationToTab(updatedTask);
+                await sendNotificationToTab(updatedTask.booking);
             } catch (notificationError) {
                 console.error("Failed to send notification:", notificationError);
             }
@@ -84,7 +83,9 @@ const TaskAdmin = ({tasks}) => {
     };
 
     const sendNotificationToTab = async (task) => {
-        console.log("Sending notification for task:", task);
+        console.log(task)
+        console.log(task.guestFirstName)
+        console.log(task.guestName)
         try {
             const response = await fetch("/api/notificationCoHostMaid", {
                 method: "POST",
