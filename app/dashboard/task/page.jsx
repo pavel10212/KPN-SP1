@@ -69,27 +69,48 @@ const Task = async () => {
     if (user.role === "admin") {
       return (
         <>
-          <div className="bg-white rounded-xl shadow-md p-4 mb-6">
-            <h2 className="text-2xl font-semibold text-gray-800">Main Tasks</h2>
+          <div className="bg-white rounded-xl shadow-md mb-6 overflow-hidden">
+            <div className="px-4 pt-4">
+              <h2 className="text-2xl font-semibold text-gray-800">
+                Main Tasks
+              </h2>
+            </div>
             <TaskAdmin tasks={tasks} />
           </div>
-          <div className="bg-white rounded-xl shadow-md p-4 mb-6">
-            <h2 className="text-2xl font-semibold text-gray-800">
-              Custom Tasks
-            </h2>
+          <div className="bg-white rounded-xl shadow-md mb-6 overflow-hidden">
+            <div className="flex justify-between items-center px-4 pt-4">
+              <h2 className="text-2xl font-semibold text-gray-800">
+                Custom Tasks
+              </h2>
+              <Link href="/dashboard/task/addTask">
+                <Button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-1 sm:py-2 px-2 sm:px-4 text-xs sm:text-base rounded-lg flex items-center transition duration-300">
+                  <MdAdd className="mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Add Custom Task</span>
+                  <span className="sm:hidden">Add Task</span>
+                </Button>
+              </Link>
+            </div>
             <CustomTask tasks={customTasks} isAdmin={true} />
           </div>
         </>
       );
     } else if (user.role === "Maid" || user.role === "Co-Host") {
       return (
-        <div className="bg-white rounded-xl shadow-md ">
+        <div className="bg-white rounded-xl shadow-md overflow-hidden">
+          <div className="px-4 pt-4">
+            <h2 className="text-2xl font-semibold text-gray-800">Main Tasks</h2>
+          </div>
           <MainTasks tasks={tasks} canEditStatus={true} />
         </div>
       );
     } else if (user.role === "Driver" || user.role === "Maintenance") {
       return (
-        <div className="bg-white rounded-xl shadow-md">
+        <div className="bg-white rounded-xl shadow-md overflow-hidden">
+          <div className="px-4 pt-4">
+            <h2 className="text-2xl font-semibold text-gray-800">
+              Custom Tasks
+            </h2>
+          </div>
           <CustomTask tasks={customTasks} readOnly={true} />
         </div>
       );
@@ -104,19 +125,7 @@ const Task = async () => {
 
   return (
     <div className="min-h-screen">
-      <div className="mx-auto px-4 sm:px-6">
-        <div className="flex justify-end items-center mb-6">
-          {user.role === "admin" && (
-            <Link href="/dashboard/task/addTask">
-              <Button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg flex items-center transition duration-300">
-                <MdAdd className="mr-2" />
-                Add Custom Task
-              </Button>
-            </Link>
-          )}
-        </div>
-        {renderContent()}
-      </div>
+      <div className="mx-auto px-0 sm:px-6">{renderContent()}</div>
     </div>
   );
 };

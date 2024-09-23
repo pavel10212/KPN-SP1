@@ -126,28 +126,45 @@ const CustomTask = ({ tasks, readOnly = false, isAdmin = false }) => {
     date ? dayjs(date).format("YYYY-MM-DD HH:mm:ss") : "";
 
   const columns = [
-    { field: "taskTitle", headerName: "Task Title", width: 110 },
-    { field: "guestFirstName", headerName: "First Name", width: 130 },
-    { field: "guestName", headerName: "Guest Last Name", width: 130 },
-    { field: "guestPhone", headerName: "Phone Number", width: 130 },
-    { field: "location", headerName: "Location", width: 200 },
-    { field: "taskDescription", headerName: "Description", width: 200 },
+    { field: "taskTitle", headerName: "Task Title", flex: 1, minWidth: 110 },
+    {
+      field: "guestFirstName",
+      headerName: "First Name",
+      flex: 1,
+      minWidth: 110,
+    },
+    {
+      field: "guestName",
+      headerName: "Guest Last Name",
+      flex: 1,
+      minWidth: 130,
+    },
+    { field: "guestPhone", headerName: "Phone Number", flex: 1, minWidth: 130 },
+    { field: "location", headerName: "Location", flex: 1, minWidth: 150 },
+    {
+      field: "taskDescription",
+      headerName: "Description",
+      flex: 1.5,
+      minWidth: 200,
+    },
     {
       field: "date",
       headerName: "Time and Date",
-      width: 200,
+      flex: 1,
+      minWidth: 150,
       renderCell: (params) => formatDate(params.row.date),
     },
-    { field: "status", headerName: "Status", width: 120 },
+    { field: "status", headerName: "Status", flex: 0.8, minWidth: 100 },
     ...(isAdmin
-      ? [{ field: "role", headerName: "Assigned Role", width: 150 }]
+      ? [{ field: "role", headerName: "Assigned Role", flex: 1, minWidth: 130 }]
       : []),
     ...(!readOnly
       ? [
           {
             field: "actions",
             headerName: "Actions",
-            width: 120,
+            flex: 0.7,
+            minWidth: 100,
             renderCell: (params) => (
               <>
                 <IconButton onClick={() => handleOpenDialog(params.row)}>
@@ -170,13 +187,15 @@ const CustomTask = ({ tasks, readOnly = false, isAdmin = false }) => {
 
   return (
     <div className="bg-white p-5 rounded-xl mt-1">
-      <div style={{ height: 400, width: "100%" }}>
+      <div style={{ height: 490, width: "100%" }}>
         <DataGrid
           rows={rows}
           columns={columns}
           pageSize={5}
+          style={{ height: 475, width: "100%" }}
+          autoPageSize
           rowsPerPageOptions={[5, 10, 20]}
-          disableSelectionOnClick
+          disableSelectionOnClick={true}
         />
       </div>
       {!readOnly && (
