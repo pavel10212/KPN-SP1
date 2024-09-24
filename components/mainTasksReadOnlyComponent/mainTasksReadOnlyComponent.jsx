@@ -1,175 +1,163 @@
 "use client";
 
-import React, {useState} from "react";
-import {DataGrid} from "@mui/x-data-grid";
-import {Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Select,} from "@mui/material";
-import {MdEdit} from "react-icons/md";
+import React, { useState } from "react";
+import { DataGrid } from "@mui/x-data-grid";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  MenuItem,
+  Select,
+  IconButton,
+  TextField,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import dayjs from "dayjs";
-import {Button} from "@/components/ui/button";
+import { Button } from "@mui/material";
 
 const MainTasks = ({ tasks, canEditStatus }) => {
-  const [rows, setRows] = useState(tasks);
+  const [rows, setRows] = useState(
+    tasks.map((task) => ({
+      ...task,
+      id: task.id,
+      firstNight: task.firstNight ? dayjs(task.firstNight) : null,
+      lastNight: task.lastNight ? dayjs(task.lastNight) : null,
+    }))
+  );
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-  const [newStatus, setNewStatus] = useState("");
 
   const handleOpenDialog = (task) => {
-    setSelectedTask(task);
-    setNewStatus(task.status);
+    setSelectedTask({ ...task });
     setOpenDialog(true);
   };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setSelectedTask(null);
-    setNewStatus("");
   };
 
-  const handleStatusChange = async () => {
-    if (!selectedTask || newStatus === selectedTask.status) {
-      handleCloseDialog();
-      return;
-    }
-
+  const handleSaveChanges = async () => {
     try {
       const response = await fetch("/api/updateMainTasks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: selectedTask.id, status: newStatus }),
+        body: JSON.stringify(selectedTask),
       });
 
-      if (!response.ok) throw new Error("Failed to update task status");
-      await response.json();
-// Update the local state immediately
+      if (!response.ok) throw new Error("Failed to update task");
+      const updatedTask = await response.json();
+
       setRows((prevRows) =>
         prevRows.map((row) =>
-          row.id === selectedTask.id ? { ...row, status: newStatus } : row
+          row.id === updatedTask.id ? { ...row, ...updatedTask } : row
         )
       );
 
       handleCloseDialog();
     } catch (error) {
-      console.error("Error updating task status:", error);
-      // Optionally, show an error message to the user
+      console.error("Error updating task:", error);
     }
   };
 
+  const handleInputChange = (field, value) => {
+    setSelectedTask((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const formatDate = (date) =>
+    date ? dayjs(date).format("YYYY-MM-DD HH:mm:ss") : "";
+
   const columns = [
-    { field: "roomId", headerName: "Room", width: 100 },
-    { field: "guestFirstName", headerName: "First Name", width: 130 },
-    { field: "guestName", headerName: "Last Name", width: 130 },
+    { field: "roomId", headerName: "Room", flex: 0.5, minWidth: 70 },
+    {
+      field: "guestFirstName",
+      headerName: "First Name",
+      flex: 1,
+      minWidth: 120,
+    },
+    { field: "guestName", headerName: "Last Name", flex: 1, minWidth: 120 },
     {
       field: "firstNight",
-      headerName: "Check-In",
-      width: 180,
-      valueFormatter: (params) =>
-        dayjs(params.value).format("YYYY-MM-DD HH:mm"),
+      headerName: "Check-In Date",
+      flex: 1,
+      minWidth: 150,
+      renderCell: (params) => formatDate(params.row.firstNight),
     },
     {
       field: "lastNight",
-      headerName: "Check-Out",
-      width: 180,
-      valueFormatter: (params) =>
-        dayjs(params.value).format("YYYY-MM-DD HH:mm"),
+      headerName: "Check-Out Date",
+      flex: 1,
+      minWidth: 150,
+      renderCell: (params) => formatDate(params.row.lastNight),
     },
-    { field: "customNotes", headerName: "Notes", width: 200 },
-    {
-      field: "status",
-      headerName: "Status",
-      width: 120,
-      renderCell: (params) => (
-        <span
-          className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(
-            params.value
-          )}`}
-        >
-          {params.value}
-        </span>
-      ),
-    },
+    { field: "customNotes", headerName: "Notes", flex: 1, minWidth: 150 },
+    { field: "status", headerName: "Status", flex: 0.8, minWidth: 100 },
     ...(canEditStatus
       ? [
           {
             field: "actions",
             headerName: "Actions",
-            width: 100,
+            flex: 0.7,
+            minWidth: 100,
             renderCell: (params) => (
-              <Button
-                onClick={() => handleOpenDialog(params.row)}
-                variant="ghost"
-                className="p-1"
-              >
-                <MdEdit
-                  className="text-gray-600 hover:text-indigo-600"
-                  size={20}
-                />
-              </Button>
+              <IconButton onClick={() => handleOpenDialog(params.row)}>
+                <EditIcon />
+              </IconButton>
             ),
           },
         ]
       : []),
   ];
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "To Arrive":
-        return "bg-yellow-100 text-yellow-800";
-      case "Arrived":
-        return "bg-green-100 text-green-800";
-      case "In House":
-        return "bg-blue-100 text-blue-800";
-      case "Departed":
-        return "bg-purple-100 text-purple-800";
-      case "No Show":
-        return "bg-red-100 text-red-800";
-      case "Cancelled":
-        return "bg-gray-100 text-gray-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">Main Tasks</h2>
-      <div style={{ height: 500, width: "100%" }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          pageSize={7}
-          rowsPerPageOptions={[7, 14, 21]}
-          disableSelectionOnClick
-          className="border-none"
-          sx={{
-            "& .MuiDataGrid-cell:focus": {
-              outline: "none",
-            },
-            "& .MuiDataGrid-row:hover": {
-              backgroundColor: "#f3f4f6",
-            },
-          }}
-        />
-      </div>
+    <div
+      className="bg-white p-5 rounded-xl mt-1"
+      style={{ height: 530, width: "100%" }}
+    >
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        pageSize={5}
+        style={{ height: 475, width: "100%" }}
+        autoPageSize
+        rowsPerPageOptions={[5, 10, 20]}
+        disableSelectionOnClick={true}
+      />
+
       {canEditStatus && (
         <Dialog
           open={openDialog}
           onClose={handleCloseDialog}
-          PaperProps={{
-            style: {
-              borderRadius: "0.5rem",
-              padding: "1rem",
-            },
-          }}
+          maxWidth="sm"
+          fullWidth
         >
-          <DialogTitle className="text-xl font-semibold text-gray-800">
-            Edit Task Status
+          <DialogTitle
+            sx={{
+              backgroundColor: "#f3f4f6",
+              padding: "16px 24px",
+              borderBottom: "1px solid #e5e7eb",
+            }}
+          >
+            Edit Task
           </DialogTitle>
-          <DialogContent>
-            <Select
-              value={newStatus}
-              onChange={(e) => setNewStatus(e.target.value)}
+          <DialogContent
+            sx={{
+              padding: "16px 24px",
+              paddingTop: "16px",
+            }}
+          >
+            <TextField
+              select
+              label="Status"
               fullWidth
-              className="mt-4"
+              variant="outlined"
+              value={selectedTask?.status || ""}
+              onChange={(e) => handleInputChange("status", e.target.value)}
+              sx={{ marginTop: "16px" }}
             >
               <MenuItem value="To Arrive">To Arrive</MenuItem>
               <MenuItem value="Arrived">Arrived</MenuItem>
@@ -177,13 +165,24 @@ const MainTasks = ({ tasks, canEditStatus }) => {
               <MenuItem value="Departed">Departed</MenuItem>
               <MenuItem value="No Show">No Show</MenuItem>
               <MenuItem value="Cancelled">Cancelled</MenuItem>
-            </Select>
+            </TextField>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDialog} variant="outline">
+          <DialogActions
+            sx={{ padding: "16px 24px", backgroundColor: "#f3f4f6" }}
+          >
+            <Button onClick={handleCloseDialog} sx={{ color: "#6B7280" }}>
               Cancel
             </Button>
-            <Button onClick={handleStatusChange} variant="default">
+            <Button
+              onClick={handleSaveChanges}
+              variant="contained"
+              sx={{
+                backgroundColor: "#4F46E5",
+                "&:hover": {
+                  backgroundColor: "#4338CA",
+                },
+              }}
+            >
               Save
             </Button>
           </DialogActions>

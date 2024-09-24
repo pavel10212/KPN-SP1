@@ -113,7 +113,7 @@ const ClientUsers = ({ users, user }) => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-0 sm:p-6">
       <div className="bg-white rounded-xl shadow-md p-6" ref={containerRef}>
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold text-gray-800">
@@ -121,9 +121,10 @@ const ClientUsers = ({ users, user }) => {
           </h2>
           {user.role === "admin" && (
             <Link href="/dashboard/users/add">
-              <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg flex items-center transition duration-300">
-                <MdAdd className="mr-2" />
-                Add New
+              <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-1 px-2 sm:py-2 sm:px-4 text-xs sm:text-base rounded-lg flex items-center transition duration-300">
+                <MdAdd className="mr-1 sm:mr-2 text-sm sm:text-base" />
+                <span className="hidden sm:inline">Add New</span>
+                <span className="sm:hidden">Add</span>
               </button>
             </Link>
           )}
