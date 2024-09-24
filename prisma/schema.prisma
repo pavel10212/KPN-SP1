@@ -45,6 +45,7 @@ model Booking {
   guestName      String
   guestEmail     String
   guestPhone     String
+  cleanStatus    String?  @default("To Clean")
   teamId         String   @db.ObjectId
   customNotes    String?
   status         String?  @default("To Arrive")
