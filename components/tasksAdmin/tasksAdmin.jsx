@@ -18,7 +18,10 @@ import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import dayjs from "dayjs";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import {Box} from "@mui/material";
+
+dayjs.extend(isSameOrAfter);
 
 const TaskAdmin = ({tasks}) => {
     const statusOptions = [
@@ -30,15 +33,16 @@ const TaskAdmin = ({tasks}) => {
         "Cancelled",
     ];
 
-    const initialTasks = tasks.map((task) => ({
-        ...task,
-        id: task.id,
-        status: task.status || "Booked",
-        firstNight: task.firstNight
-            ? new Date(task.firstNight).toISOString()
-            : null,
-        lastNight: task.lastNight ? new Date(task.lastNight).toISOString() : null,
-    }));
+    const initialTasks = tasks
+        .filter(task => dayjs(task.firstNight).isSameOrAfter(dayjs().subtract(5, 'day')))
+        .map((task) => ({
+            ...task,
+            id: task.id,
+            status: task.status || "Booked",
+            firstNight: task.firstNight ? new Date(task.firstNight).toISOString() : null,
+            lastNight: task.lastNight ? new Date(task.lastNight).toISOString() : null,
+        }))
+        .sort((a, b) => dayjs(a.firstNight).diff(dayjs(b.firstNight)));
 
     const [rows, setRows] = useState(initialTasks);
     const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -71,7 +75,7 @@ const TaskAdmin = ({tasks}) => {
 
             try {
                 await sendNotification(updatedTask);
-                await sendNotificationToTab(updatedTask.booking);
+                await sendNotificationToTab(updatedTask);
             } catch (notificationError) {
                 console.error("Failed to send notification:", notificationError);
             }
@@ -83,9 +87,7 @@ const TaskAdmin = ({tasks}) => {
     };
 
     const sendNotificationToTab = async (task) => {
-        console.log(task)
-        console.log(task.guestFirstName)
-        console.log(task.guestName)
+        console.log("Sending notification for task:", task);
         try {
             const response = await fetch("/api/notificationCoHostMaid", {
                 method: "POST",
@@ -128,11 +130,12 @@ const TaskAdmin = ({tasks}) => {
     };
 
     const updateRowData = useCallback((updatedTask) => {
-        setRows((prevRows) =>
-            prevRows.map((row) =>
+        setRows((prevRows) => {
+            const newRows = prevRows.map((row) =>
                 row.id === updatedTask.id ? {...row, ...updatedTask} : row
-            )
-        );
+            );
+            return newRows.sort((a, b) => dayjs(a.firstNight).diff(dayjs(b.firstNight)));
+        });
     }, []);
 
     const handleInputChange = (field, value) => {
@@ -155,13 +158,30 @@ const TaskAdmin = ({tasks}) => {
 
     const handleConfirmDelete = async () => {
         if (taskToDelete) {
-            setRows(rows.filter((row) => row.id !== taskToDelete));
-            await fetch("/api/deleteTask", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({id: taskToDelete}),
-            });
-            handleCloseDeleteDialog();
+            try {
+                const response = await fetch("/api/deleteTask", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({id: taskToDelete}),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to delete task");
+                }
+
+                setRows(prevRows => {
+                    const newRows = prevRows.filter((row) => row.id !== taskToDelete);
+                    return newRows
+                        .filter(task => dayjs(task.firstNight).isSameOrAfter(dayjs(), 'day'))
+                        .sort((a, b) => dayjs(a.firstNight).diff(dayjs(b.firstNight)));
+                });
+
+                console.log("Task deleted successfully");
+            } catch (error) {
+                console.error("Error deleting task:", error);
+            } finally {
+                handleCloseDeleteDialog();
+            }
         }
     };
 
@@ -215,6 +235,12 @@ const TaskAdmin = ({tasks}) => {
                 autoPageSize
                 rowsPerPageOptions={[5, 10, 20]}
                 disableSelectionOnClick={true}
+                sortModel={[
+                    {
+                        field: 'firstNight',
+                        sort: 'asc',
+                    },
+                ]}
             />
 
             <Dialog
@@ -263,11 +289,7 @@ const TaskAdmin = ({tasks}) => {
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DateTimePicker
                                 label="Check-In Date"
-                                value={
-                                    selectedTask?.firstNight
-                                        ? dayjs(selectedTask.firstNight)
-                                        : null
-                                }
+                                value={selectedTask?.firstNight ? dayjs(selectedTask.firstNight) : null}
                                 onChange={(newValue) =>
                                     handleInputChange("firstNight", newValue.toISOString())
                                 }
@@ -277,9 +299,7 @@ const TaskAdmin = ({tasks}) => {
                             />
                             <DateTimePicker
                                 label="Check-Out Date"
-                                value={
-                                    selectedTask?.lastNight ? dayjs(selectedTask.lastNight) : null
-                                }
+                                value={selectedTask?.lastNight ? dayjs(selectedTask.lastNight) : null}
                                 onChange={(newValue) =>
                                     handleInputChange("lastNight", newValue.toISOString())
                                 }
@@ -330,6 +350,50 @@ const TaskAdmin = ({tasks}) => {
                         }}
                     >
                         Save
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={openDeleteDialog}
+                onClose={handleCloseDeleteDialog}
+                maxWidth="sm"
+                fullWidth
+            >
+                <DialogTitle
+                    sx={{
+                        backgroundColor: "#f3f4f6",
+                        padding: "16px 24px",
+                        borderBottom: "1px solid #e5e7eb",
+                    }}
+                >
+                    Confirm Delete
+                </DialogTitle>
+                <DialogContent
+                    sx={{
+                        padding: "16px 24px",
+                        paddingTop: "16px",
+                    }}
+                >
+                    <p>Are you sure you want to delete this task?</p>
+                </DialogContent>
+                <DialogActions
+                    sx={{padding: "16px 24px", backgroundColor: "#f3f4f6"}}
+                >
+                    <Button onClick={handleCloseDeleteDialog} sx={{color: "#6B7280"}}>
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleConfirmDelete}
+                        variant="contained"
+                        sx={{
+                            backgroundColor: "#DC2626",
+                            "&:hover": {
+                                backgroundColor: "#B91C1C",
+                            },
+                        }}
+                    >
+                        Delete
                     </Button>
                 </DialogActions>
             </Dialog>
