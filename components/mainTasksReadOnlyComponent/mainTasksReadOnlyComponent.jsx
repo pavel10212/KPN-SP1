@@ -16,7 +16,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import dayjs from "dayjs";
 
-const MainTasks = ({tasks, canEditStatus, isMaid}) => {
+const MainTasks = ({tasks}) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     const [rows, setRows] = useState([]);
@@ -31,7 +31,6 @@ const MainTasks = ({tasks, canEditStatus, isMaid}) => {
             }))
             .filter((task) => task.firstNight && task.firstNight.isAfter(dayjs().subtract(5, 'day')))
             .sort((a, b) => a.firstNight.diff(b.firstNight));
-
         setRows(sortedRows);
     }, [tasks]);
 
@@ -41,7 +40,6 @@ const MainTasks = ({tasks, canEditStatus, isMaid}) => {
         if (taskDate.isAfter(today)) {
             return;
         }
-
         setSelectedTask({...task});
         setOpenDialog(true);
     };
@@ -87,7 +85,7 @@ const MainTasks = ({tasks, canEditStatus, isMaid}) => {
     };
 
     const formatDate = (date) =>
-        date ? dayjs(date).format("DD-MM-YYYY HH:mm:ss") : "";
+        date ? dayjs(date).format("DD-MM-YYYY HH:mm") : "";
 
     const columns = [
         {field: "roomId", headerName: "Room", flex: 0.5, minWidth: 70},
@@ -115,20 +113,18 @@ const MainTasks = ({tasks, canEditStatus, isMaid}) => {
         {field: "customNotes", headerName: "Notes", flex: 1, minWidth: 150},
         {field: "status", headerName: "Status", flex: 0.8, minWidth: 100},
         {field: "cleanStatus", headerName: "Clean Status", flex: 0.8, minWidth: 100},
-        ...(canEditStatus
-            ? [
-                {
-                    field: "actions",
-                    headerName: "Actions",
-                    flex: 0.7,
-                    minWidth: 100,
-                    renderCell: (params) => {
-                        const today = dayjs();
-                        const taskDate = dayjs(params.row.firstNight);
-                        const canEdit = !taskDate.isAfter(today);
+        {
+            field: "actions",
+            headerName: "Actions",
+            flex: 0.7,
+            minWidth: 100,
+            renderCell: (params) => {
+                const today = dayjs();
+                const taskDate = dayjs(params.row.firstNight);
+                const canEdit = !taskDate.isAfter(today);
 
-                        return (
-                            <Tooltip title={canEdit ? "Edit" : "Cannot edit future tasks"}>
+                return (
+                    <Tooltip title={canEdit ? "Edit" : "Cannot edit future tasks"}>
                   <span>
                     <IconButton
                         onClick={() => handleOpenDialog(params.row)}
@@ -137,12 +133,10 @@ const MainTasks = ({tasks, canEditStatus, isMaid}) => {
                       <EditIcon/>
                     </IconButton>
                   </span>
-                            </Tooltip>
-                        );
-                    },
-                },
-            ]
-            : []),
+                    </Tooltip>
+                );
+            },
+        },
     ];
 
     return (
@@ -159,84 +153,61 @@ const MainTasks = ({tasks, canEditStatus, isMaid}) => {
                 rowsPerPageOptions={[5, 10, 20]}
                 disableSelectionOnClick={true}
             />
-
-            {canEditStatus && (
-                <Dialog
-                    open={openDialog}
-                    onClose={handleCloseDialog}
-                    maxWidth="sm"
-                    fullWidth
+            <Dialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                maxWidth="sm"
+                fullWidth
+            >
+                <DialogTitle
+                    sx={{
+                        backgroundColor: "#f3f4f6",
+                        padding: "16px 24px",
+                        borderBottom: "1px solid #e5e7eb",
+                    }}
                 >
-                    <DialogTitle
-                        sx={{
-                            backgroundColor: "#f3f4f6",
-                            padding: "16px 24px",
-                            borderBottom: "1px solid #e5e7eb",
-                        }}
+                    Edit Task
+                </DialogTitle>
+                <DialogContent
+                    sx={{
+                        padding: "16px 24px",
+                        paddingTop: "16px",
+                    }}
+                >
+                    <TextField
+                        select
+                        label="Clean Status"
+                        fullWidth
+                        variant="outlined"
+                        value={selectedTask?.cleanStatus || ""}
+                        onChange={(e) => handleInputChange("cleanStatus", e.target.value)}
+                        sx={{marginTop: "16px"}}
                     >
-                        Edit Task
-                    </DialogTitle>
-                    <DialogContent
-                        sx={{
-                            padding: "16px 24px",
-                            paddingTop: "16px",
-                        }}
-                    >
-                        {!isMaid ? (
-                            <TextField
-                                select
-                                label="Status"
-                                fullWidth
-                                variant="outlined"
-                                value={selectedTask?.status || ""}
-                                onChange={(e) => handleInputChange("status", e.target.value)}
-                                sx={{marginTop: "16px"}}
-                            >
-                                <MenuItem value="To Arrive">To Arrive</MenuItem>
-                                <MenuItem value="Arrived">Arrived</MenuItem>
-                                <MenuItem value="In House">In House</MenuItem>
-                                <MenuItem value="Departed">Departed</MenuItem>
-                                <MenuItem value="No Show">No Show</MenuItem>
-                                <MenuItem value="Cancelled">Cancelled</MenuItem>
-                            </TextField>
-                        ) : (
-                            <TextField
-                                select
-                                label="Clean Status"
-                                fullWidth
-                                variant="outlined"
-                                value={selectedTask?.cleanStatus || ""}
-                                onChange={(e) => handleInputChange("cleanStatus", e.target.value)}
-                                sx={{marginTop: "16px"}}
-                            >
-                                <MenuItem value="To Clean">To Clean</MenuItem>
-                                <MenuItem value="Cleaned">Cleaned</MenuItem>
+                        <MenuItem value="To Clean">To Clean</MenuItem>
+                        <MenuItem value="Cleaned">Cleaned</MenuItem>
 
-                            </TextField>
-                        )
-                        }
-                    </DialogContent>
-                    <DialogActions
-                        sx={{padding: "16px 24px", backgroundColor: "#f3f4f6"}}
+                    </TextField>
+                </DialogContent>
+                <DialogActions
+                    sx={{padding: "16px 24px", backgroundColor: "#f3f4f6"}}
+                >
+                    <Button onClick={handleCloseDialog} sx={{color: "#6B7280"}}>
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleSaveChanges}
+                        variant="contained"
+                        sx={{
+                            backgroundColor: "#4F46E5",
+                            "&:hover": {
+                                backgroundColor: "#4338CA",
+                            },
+                        }}
                     >
-                        <Button onClick={handleCloseDialog} sx={{color: "#6B7280"}}>
-                            Cancel
-                        </Button>
-                        <Button
-                            onClick={handleSaveChanges}
-                            variant="contained"
-                            sx={{
-                                backgroundColor: "#4F46E5",
-                                "&:hover": {
-                                    backgroundColor: "#4338CA",
-                                },
-                            }}
-                        >
-                            Save
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            )}
+                        Save
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     )
         ;

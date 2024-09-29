@@ -3,7 +3,6 @@
 import {useState} from "react";
 import {DataGrid} from "@mui/x-data-grid";
 import {
-    Alert,
     Button,
     Dialog,
     DialogActions,
@@ -12,7 +11,6 @@ import {
     IconButton,
     MenuItem,
     Select,
-    Snackbar,
     TextField,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
@@ -21,8 +19,9 @@ import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 import dayjs from "dayjs";
+import {toast} from 'sonner';
 
-const CustomTask = ({tasks, readOnly = false, isAdmin = false}) => {
+const CustomTask = ({tasks, isAdmin}) => {
     const [rows, setRows] = useState(
         tasks.map((task) => ({
             ...task,
@@ -32,7 +31,6 @@ const CustomTask = ({tasks, readOnly = false, isAdmin = false}) => {
     );
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
-    const [snackbar, setSnackbar] = useState(null);
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
     const [taskToDelete, setTaskToDelete] = useState(null);
 
@@ -46,13 +44,20 @@ const CustomTask = ({tasks, readOnly = false, isAdmin = false}) => {
         setSelectedTask(null);
     };
 
+    const driverStatus = ["Assigned", "Picked Up", "Dropped Off"];
+    const maintenanceStatus = ["Assigned", "In Progress", "Completed"];
+
     const handleSaveChanges = async () => {
-        if (readOnly) return;
         try {
-            const taskToUpdate = {
-                ...selectedTask,
-                date: selectedTask.date.toISOString(),
-            };
+            const taskToUpdate = isAdmin
+                ? {
+                    ...selectedTask,
+                    date: selectedTask.date.toISOString(),
+                }
+                : {
+                    id: selectedTask.id,
+                    status: selectedTask.status,
+                };
 
             const response = await fetch("/api/updateCustomTasks", {
                 method: "POST",
@@ -65,15 +70,12 @@ const CustomTask = ({tasks, readOnly = false, isAdmin = false}) => {
             }
 
             const {task: updatedTask} = await response.json();
-            updateRowData({...updatedTask, date: dayjs(updatedTask.date)});
+            updateRowData(isAdmin ? {...updatedTask, date: dayjs(updatedTask.date)} : updatedTask);
             handleCloseDialog();
-            setSnackbar({
-                message: "Task updated successfully",
-                severity: "success",
-            });
+            toast.success("Task updated successfully");
         } catch (error) {
             console.error("Error updating task:", error);
-            setSnackbar({message: "Failed to update task", severity: "error"});
+            toast.error("Failed to update task");
         }
     };
 
@@ -86,7 +88,6 @@ const CustomTask = ({tasks, readOnly = false, isAdmin = false}) => {
     };
 
     const handleDeleteTask = async () => {
-        if (readOnly || !taskToDelete) return;
         try {
             const response = await fetch("/api/deleteCustomTask", {
                 method: "POST",
@@ -101,13 +102,10 @@ const CustomTask = ({tasks, readOnly = false, isAdmin = false}) => {
             setRows((prevRows) =>
                 prevRows.filter((row) => row.id !== taskToDelete.id)
             );
-            setSnackbar({
-                message: "Task deleted successfully",
-                severity: "success",
-            });
+            toast.success("Task deleted successfully");
         } catch (error) {
             console.error("Error deleting task:", error);
-            setSnackbar({message: "Failed to delete task", severity: "error"});
+            toast.error("Failed to delete task");
         } finally {
             setDeleteConfirmOpen(false);
             setTaskToDelete(null);
@@ -115,7 +113,6 @@ const CustomTask = ({tasks, readOnly = false, isAdmin = false}) => {
     };
 
     const handleInputChange = (field, value) => {
-        if (readOnly) return;
         setSelectedTask((prev) => ({
             ...prev,
             [field]: value,
@@ -155,34 +152,29 @@ const CustomTask = ({tasks, readOnly = false, isAdmin = false}) => {
             renderCell: (params) => formatDate(params.row.date),
         },
         {field: "status", headerName: "Status", flex: 0.8, minWidth: 100},
-        ...(isAdmin
-            ? [{field: "role", headerName: "Assigned Role", flex: 1, minWidth: 130}]
-            : []),
-        ...(!readOnly
-            ? [
-                {
-                    field: "actions",
-                    headerName: "Actions",
-                    flex: 0.7,
-                    minWidth: 100,
-                    renderCell: (params) => (
-                        <>
-                            <IconButton onClick={() => handleOpenDialog(params.row)}>
-                                <EditIcon/>
-                            </IconButton>
-                            <IconButton
-                                onClick={() => {
-                                    setTaskToDelete(params.row);
-                                    setDeleteConfirmOpen(true);
-                                }}
-                            >
-                                <DeleteIcon/>
-                            </IconButton>
-                        </>
-                    ),
-                },
-            ]
-            : []),
+        {
+            field: "actions",
+            headerName: "Actions",
+            flex: 0.7,
+            minWidth: 100,
+            renderCell: (params) => (
+                <>
+                    <IconButton onClick={() => handleOpenDialog(params.row)}>
+                        <EditIcon/>
+                    </IconButton>
+                    {isAdmin && (
+                        <IconButton
+                            onClick={() => {
+                                setTaskToDelete(params.row);
+                                setDeleteConfirmOpen(true);
+                            }}
+                        >
+                            <DeleteIcon/>
+                        </IconButton>
+                    )}
+                </>
+            ),
+        },
     ];
 
     return (
@@ -198,11 +190,11 @@ const CustomTask = ({tasks, readOnly = false, isAdmin = false}) => {
                     disableSelectionOnClick={true}
                 />
             </div>
-            {!readOnly && (
-                <>
-                    <Dialog open={openDialog} onClose={handleCloseDialog}>
-                        <DialogTitle>Edit Task</DialogTitle>
-                        <DialogContent>
+            <Dialog open={openDialog} onClose={handleCloseDialog}>
+                <DialogTitle>{isAdmin ? "Edit Task" : "Update Status"}</DialogTitle>
+                <DialogContent>
+                    {isAdmin && (
+                        <>
                             <TextField
                                 margin="dense"
                                 label="Task Title"
@@ -251,74 +243,60 @@ const CustomTask = ({tasks, readOnly = false, isAdmin = false}) => {
                                     )}
                                 />
                             </LocalizationProvider>
-                            <Select
-                                margin="dense"
-                                fullWidth
-                                value={selectedTask?.status || ""}
-                                onChange={(e) => handleInputChange("status", e.target.value)}
-                            >
-                                <MenuItem value="Assigned">Assigned</MenuItem>
-                                <MenuItem value="In Progress">In Progress</MenuItem>
-                                <MenuItem value="Completed">Completed</MenuItem>
-                            </Select>
-                            {isAdmin && (
-                                <Select
-                                    margin="dense"
-                                    fullWidth
-                                    value={selectedTask?.role || ""}
-                                    onChange={(e) => handleInputChange("role", e.target.value)}
-                                >
-                                    <MenuItem value="Driver">Driver</MenuItem>
-                                    <MenuItem value="Maintenance">Maintenance</MenuItem>
-                                </Select>
-                            )}
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleCloseDialog}>Cancel</Button>
-                            <Button
-                                onClick={handleSaveChanges}
-                                variant="contained"
-                                color="primary"
-                            >
-                                Save
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-                    <Dialog
-                        open={deleteConfirmOpen}
-                        onClose={() => setDeleteConfirmOpen(false)}
+                        </>
+                    )}
+                    <Select
+                        margin="dense"
+                        fullWidth
+                        value={selectedTask?.status || ""}
+                        onChange={(e) => handleInputChange("status", e.target.value)}
                     >
-                        <DialogTitle>Confirm Delete</DialogTitle>
-                        <DialogContent>
-                            Are you sure you want to delete this task?
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={() => setDeleteConfirmOpen(false)}>
-                                Cancel
-                            </Button>
-                            <Button onClick={handleDeleteTask} color="error">
-                                Delete
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-                </>
+                        <MenuItem value="">Select Status</MenuItem>
+                        {selectedTask?.role === "Driver"
+                            ? driverStatus.map((status) => (
+                                <MenuItem key={status} value={status}>
+                                    {status}
+                                </MenuItem>
+                            ))
+                            : selectedTask?.role === "Maintenance"
+                                ? maintenanceStatus.map((status) => (
+                                    <MenuItem key={status} value={status}>
+                                        {status}
+                                    </MenuItem>
+                                ))
+                                : null}
+                    </Select>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog}>Cancel</Button>
+                    <Button
+                        onClick={handleSaveChanges}
+                        variant="contained"
+                        color="primary"
+                    >
+                        Save
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            {isAdmin && (
+                <Dialog
+                    open={deleteConfirmOpen}
+                    onClose={() => setDeleteConfirmOpen(false)}
+                >
+                    <DialogTitle>Confirm Delete</DialogTitle>
+                    <DialogContent>
+                        Are you sure you want to delete this task?
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setDeleteConfirmOpen(false)}>
+                            Cancel
+                        </Button>
+                        <Button onClick={handleDeleteTask} color="error">
+                            Delete
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             )}
-            <Snackbar
-                open={!!snackbar}
-                autoHideDuration={6000}
-                onClose={() => setSnackbar(null)}
-                anchorOrigin={{vertical: "bottom", horizontal: "center"}}
-            >
-                {snackbar && (
-                    <Alert
-                        onClose={() => setSnackbar(null)}
-                        severity={snackbar.severity}
-                        sx={{width: "100%"}}
-                    >
-                        {snackbar.message}
-                    </Alert>
-                )}
-            </Snackbar>
         </div>
     );
 };

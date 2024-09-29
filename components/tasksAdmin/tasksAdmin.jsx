@@ -23,7 +23,6 @@ import {Box} from "@mui/material";
 const TaskAdmin = ({tasks}) => {
     const statusOptions = [
         "To Arrive",
-        "Arrived",
         "In House",
         "Departed",
         "No Show",
@@ -63,6 +62,9 @@ const TaskAdmin = ({tasks}) => {
     const [selectedTask, setSelectedTask] = useState(null);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [taskToDelete, setTaskToDelete] = useState(null);
+    const isDateTodayOrBefore = (date) => {
+        return dayjs(date).isSame(dayjs(), 'day') || dayjs(date).isBefore(dayjs(), 'day');
+    };
 
     const handleEditClick = (task) => {
         setSelectedTask({...task});
@@ -160,6 +162,9 @@ const TaskAdmin = ({tasks}) => {
 
     const handleInputChange = (field, value) => {
         setSelectedTask((prev) => {
+            if (field === 'status' && !isDateTodayOrBefore(prev.firstNight)) {
+                return prev;
+            }
             const updated = {...prev, [field]: value};
             updateRowData(updated);
             return updated;
@@ -189,7 +194,7 @@ const TaskAdmin = ({tasks}) => {
     };
 
     const formatDate = (date) =>
-        date ? dayjs(date).format("DD-MM-YYYY HH:mm:ss") : "";
+        date ? dayjs(date).format("DD-MM-YYYY HH:mm") : "";
 
     const columns = [
         {field: "roomId", headerName: "Room", flex: 0.5, minWidth: 70},
@@ -219,7 +224,9 @@ const TaskAdmin = ({tasks}) => {
             minWidth: 100,
             renderCell: (params) => (
                 <>
-                    <IconButton onClick={() => handleEditClick(params.row)}>
+                    <IconButton
+                        onClick={() => handleEditClick(params.row)}
+                    >
                         <EditIcon/>
                     </IconButton>
                     <IconButton onClick={() => handleDeleteClick(params.id)}>
@@ -332,6 +339,7 @@ const TaskAdmin = ({tasks}) => {
                             variant="outlined"
                             value={selectedTask?.status || ""}
                             onChange={(e) => handleInputChange("status", e.target.value)}
+                            disabled={!isDateTodayOrBefore(selectedTask?.firstNight)}
                         >
                             {statusOptions.map((option) => (
                                 <MenuItem key={option} value={option}>

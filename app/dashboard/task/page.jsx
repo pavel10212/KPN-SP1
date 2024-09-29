@@ -31,7 +31,7 @@ const Task = async () => {
     });
 
     let customTasks;
-    if (user.role === "admin") {
+    if (user.role === "admin" || user.role === "Co-Host") {
         customTasks = await prisma.customTask.findMany({
             select: {
                 id: true,
@@ -67,7 +67,7 @@ const Task = async () => {
     }
 
     const renderContent = () => {
-        if (user.role === "admin") {
+        if (user.role === "admin" || user.role === "Co-Host") {
             return (
                 <>
                     <div className="bg-white rounded-xl shadow-md mb-6 overflow-hidden">
@@ -92,18 +92,9 @@ const Task = async () => {
                                 </Button>
                             </Link>
                         </div>
-                        <CustomTask tasks={customTasks} isAdmin={true}/>
+                        <CustomTask tasks={customTasks} readOnly={false} isAdmin={true}/>
                     </div>
                 </>
-            );
-        } else if (user.role === "Co-Host") {
-            return (
-                <div className="bg-white rounded-xl shadow-md overflow-hidden">
-                    <div className="px-4 pt-4">
-                        <h2 className="text-2xl font-semibold text-gray-800">Main Tasks</h2>
-                    </div>
-                    <MainTasks tasks={tasks} canEditStatus={true} isMaid={false}/>
-                </div>
             );
         } else if (user.role === "Maid") {
             return (
@@ -113,7 +104,7 @@ const Task = async () => {
                             Main Tasks
                         </h2>
                     </div>
-                    <MainTasks tasks={tasks} canEditStatus={true} isMaid={true}/>
+                    <MainTasks tasks={tasks}/>
                 </div>
             )
 
@@ -125,7 +116,7 @@ const Task = async () => {
                             Custom Tasks
                         </h2>
                     </div>
-                    <CustomTask tasks={customTasks} readOnly={true}/>
+                    <CustomTask tasks={customTasks} readOnly={false} isAdmin={false}/>
                 </div>
             );
         } else {
