@@ -39,7 +39,6 @@ const TaskAdmin = ({tasks}) => {
         lastNight: task.lastNight ? new Date(task.lastNight).toISOString() : null,
     }));
 
-
     useEffect(() => {
         const sortedRows = tasks
             .map((task) => ({
@@ -162,7 +161,7 @@ const TaskAdmin = ({tasks}) => {
 
     const handleInputChange = (field, value) => {
         setSelectedTask((prev) => {
-            if (field === 'status' && !isDateTodayOrBefore(prev.firstNight)) {
+            if ((field === 'status' || field === 'cleanStatus') && !isDateTodayOrBefore(prev.firstNight)) {
                 return prev;
             }
             const updated = {...prev, [field]: value};
@@ -354,6 +353,7 @@ const TaskAdmin = ({tasks}) => {
                             variant="outlined"
                             value={selectedTask?.cleanStatus || ""}
                             onChange={(e) => handleInputChange("cleanStatus", e.target.value)}
+                            disabled={!isDateTodayOrBefore(selectedTask?.firstNight)}
                         >
                             <MenuItem value="To Clean">To Clean</MenuItem>
                             <MenuItem value="Cleaned">Cleaned</MenuItem>

@@ -8,36 +8,36 @@ const BookingToday = ({bookings, checkInOrOut, excludeField, isMaid}) => {
         const date = new Date(dateString);
         return date.toLocaleString();
     };
-    console.log(bookings)
 
     const columns = useMemo(() => {
-                const allColumns = [
-                        {field: "roomId", headerName: "Room", flex: 0.5, minWidth: 70},
-                        {field: "guestFirstName", headerName: "Name", flex: 1, minWidth: 120},
-                        {
-                            field: "firstNight",
-                            headerName: "Check-in",
-                            flex: 1,
-                            minWidth: 160,
-                            renderCell: (params) => formatDate(params.value),
-                        },
-                        {
-                            field: "lastNight",
-                            headerName: "Check-out",
-                            flex: 1,
-                            minWidth: 160,
-                            renderCell: (params) => formatDate(params.value),
-                        },
-                        {field: "status", headerName: "Status", flex: 0.8, minWidth: 100},
-                        isMaid ? {field: "cleanStatus", headerName: "Clean Status", flex: 0.8, minWidth: 100} : null,
-                    ]
-                ;
-
-                return allColumns.filter((column) => column.field !== excludeField);
+        const allColumns = [
+            {field: "roomId", headerName: "Room", flex: 0.5, minWidth: 70},
+            {field: "guestFirstName", headerName: "Name", flex: 1, minWidth: 120},
+            {
+                field: "firstNight",
+                headerName: "Check-in",
+                flex: 1,
+                minWidth: 160,
+                renderCell: (params) => formatDate(params.value),
             },
-            [excludeField]
-        )
-    ;
+            {
+                field: "lastNight",
+                headerName: "Check-out",
+                flex: 1,
+                minWidth: 160,
+                renderCell: (params) => formatDate(params.value),
+            },
+            {field: "status", headerName: "Status", flex: 0.8, minWidth: 100},
+        ];
+
+        let filteredColumns = allColumns.filter((column) => column.field !== excludeField);
+
+        if (isMaid) {
+            filteredColumns.push({field: "cleanStatus", headerName: "Clean Status", flex: 0.8, minWidth: 100});
+        }
+
+        return filteredColumns;
+    }, [excludeField, isMaid]);
 
     const rows = useMemo(
         () =>
