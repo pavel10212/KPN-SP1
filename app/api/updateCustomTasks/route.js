@@ -1,5 +1,6 @@
 import prisma from "../prismaClient";
 import {NextResponse} from "next/server";
+import dayjs from "dayjs";
 
 export async function POST(req) {
     try {
@@ -31,7 +32,7 @@ export async function POST(req) {
                 guestName,
                 location,
                 guestPhone,
-                date: new Date(date),
+                date: dayjs(date).toDate().toISOString(),
                 status,
             },
         });
