@@ -1,14 +1,14 @@
 "use client";
 
-import {useRouter} from "next/navigation";
-import {signIn} from "next-auth/react";
-import {useState} from "react";
-import {signInSchema} from "@/lib/zod";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { useState } from "react";
+import { signInSchema } from "@/lib/zod";
 import Image from "next/image";
-import {z} from "zod";
-import {MdError} from "react-icons/md";
-import {toast} from "sonner";
-import {motion} from "framer-motion";
+import { z } from "zod";
+import { MdError } from "react-icons/md";
+import { toast } from "sonner";
+import { motion } from "framer-motion";
 
 const LoginPage = () => {
     const router = useRouter();
@@ -24,7 +24,7 @@ const LoginPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            signInSchema.parse({email: userEmail, password: userPassword});
+            signInSchema.parse({ email: userEmail, password: userPassword });
             const result = await signIn("credentials", {
                 email: userEmail,
                 password: userPassword,
@@ -32,7 +32,7 @@ const LoginPage = () => {
             });
             if (result?.error) {
                 const errorMessage = errorMessages[result.error] || errorMessages.default;
-                setErrors({general: errorMessage});
+                setErrors({ general: errorMessage });
             } else {
                 toast.success("Login successful");
                 router.push("/dashboard");
@@ -46,7 +46,7 @@ const LoginPage = () => {
                 setErrors(newErrors);
             } else {
                 console.error(err);
-                setErrors({general: errorMessages.default});
+                setErrors({ general: errorMessages.default });
             }
         }
     };
@@ -55,9 +55,9 @@ const LoginPage = () => {
         <div
             className="min-h-screen flex flex-col justify-center px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-100 to-indigo-100">
             <motion.div
-                initial={{opacity: 0, y: -20}}
-                animate={{opacity: 1, y: 0}}
-                transition={{duration: 0.5}}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
                 className="sm:mx-auto sm:w-full sm:max-w-md"
             >
                 <Image
@@ -73,9 +73,9 @@ const LoginPage = () => {
             </motion.div>
 
             <motion.div
-                initial={{opacity: 0, y: 20}}
-                animate={{opacity: 1, y: 0}}
-                transition={{duration: 0.5, delay: 0.2}}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
                 className="mt-8 sm:mx-auto sm:w-full sm:max-w-md"
             >
                 <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
@@ -96,9 +96,8 @@ const LoginPage = () => {
                                     required
                                     value={userEmail}
                                     onChange={(e) => setUserEmail(e.target.value)}
-                                    className={`appearance-none block w-full px-3 py-2 border ${
-                                        errors.email ? 'border-red-300' : 'border-gray-300'
-                                    } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+                                    className={`appearance-none block w-full px-3 py-2 border ${errors.email ? 'border-red-300' : 'border-gray-300'
+                                        } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                                 />
                             </div>
                             {errors.email && (
@@ -122,9 +121,8 @@ const LoginPage = () => {
                                     required
                                     value={userPassword}
                                     onChange={(e) => setUserPassword(e.target.value)}
-                                    className={`appearance-none block w-full px-3 py-2 border ${
-                                        errors.password ? 'border-red-300' : 'border-gray-300'
-                                    } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+                                    className={`appearance-none block w-full px-3 py-2 border ${errors.password ? 'border-red-300' : 'border-gray-300'
+                                        } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                                 />
                             </div>
                             {errors.password && (

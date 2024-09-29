@@ -9,6 +9,43 @@ import {useRouter} from "next/navigation";
 import {toast} from "sonner";
 import {motion} from "framer-motion";
 import {LoadingWrapper, useLoading} from "@/components/loading/loadingWrapper";
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import InfoIcon from '@mui/icons-material/Info';
+
+const InputFieldWithTooltip = ({field, label, value, onChange, error, tooltipText}) => (
+    <div>
+        <label htmlFor={field} className="block text-sm font-medium text-gray-700 flex items-center">
+            {label}
+            {tooltipText && (
+                <Tooltip title={tooltipText} arrow>
+                    <IconButton size="small" aria-label={`info about ${field}`}>
+                        <InfoIcon fontSize="small"/>
+                    </IconButton>
+                </Tooltip>
+            )}
+        </label>
+        <div className="mt-1 relative rounded-md shadow-sm">
+            <input
+                id={field}
+                name={field}
+                type={field.includes("password") ? "password" : "text"}
+                required
+                value={value}
+                onChange={onChange}
+                className={`appearance-none block w-full px-3 py-2 border ${
+                    error ? "border-red-300" : "border-gray-300"
+                } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out`}
+            />
+            {error && (
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    <MdError className="h-5 w-5 text-red-500"/>
+                </div>
+            )}
+        </div>
+        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+    </div>
+);
 
 export default function RegisterForm() {
     const router = useRouter();
@@ -164,7 +201,7 @@ export default function RegisterForm() {
                 >
                     <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 rounded-xl">
                         <form className="space-y-6" onSubmit={handleSubmit}>
-                            {["name", "email", "password", "confirm_password", "api_key", "prop_key"].map((field, index) => (
+                            {["name", "email", "password", "confirm_password"].map((field, index) => (
                                 <motion.div
                                     key={field}
                                     variants={itemVariants}
@@ -172,37 +209,40 @@ export default function RegisterForm() {
                                     animate="visible"
                                     transition={{delay: index * 0.1}}
                                 >
-                                    <label
-                                        htmlFor={field}
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        {field === "confirm_password"
+                                    <InputFieldWithTooltip
+                                        field={field}
+                                        label={field === "confirm_password"
                                             ? "Confirm Password"
                                             : field
                                                 .split("_")
                                                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                                                 .join(" ")}
-                                    </label>
-                                    <div className="mt-1 relative rounded-md shadow-sm">
-                                        <input
-                                            id={field}
-                                            name={field}
-                                            type={field.includes("password") ? "password" : "text"}
-                                            required
-                                            value={formData[field]}
-                                            onChange={handleChange}
-                                            className={`appearance-none block w-full px-3 py-2 border ${
-                                                errors[field] ? "border-red-300" : "border-gray-300"
-                                            } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out`}
-                                        />
-                                        {errors[field] && (
-                                            <div
-                                                className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                                <MdError className="h-5 w-5 text-red-500"/>
-                                            </div>
-                                        )}
-                                    </div>
-                                    {errors[field] && <p className="mt-2 text-sm text-red-600">{errors[field]}</p>}
+                                        value={formData[field]}
+                                        onChange={handleChange}
+                                        error={errors[field]}
+                                    />
+                                </motion.div>
+                            ))}
+
+                            {["api_key", "prop_key"].map((field, index) => (
+                                <motion.div
+                                    key={field}
+                                    variants={itemVariants}
+                                    initial="hidden"
+                                    animate="visible"
+                                    transition={{delay: (index + 4) * 0.1}}
+                                >
+                                    <InputFieldWithTooltip
+                                        field={field}
+                                        label={field
+                                            .split("_")
+                                            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                                            .join(" ")}
+                                        value={formData[field]}
+                                        onChange={handleChange}
+                                        error={errors[field]}
+                                        tooltipText="This is a key from beds24"
+                                    />
                                 </motion.div>
                             ))}
 

@@ -16,7 +16,7 @@ const DriverMaintenanceTasks = ({user, userTasks}) => {
     );
 
     const formatDate = (date) =>
-        date ? dayjs(date).format("YYYY-MM-DD HH:mm:ss") : "";
+        date ? dayjs(date).format("DD-MM-YYYY HH:mm:ss") : "";
 
     const columnsIfDriver = [
         {field: "taskTitle", headerName: "Task Title", width: 200},

@@ -1,15 +1,17 @@
 import prisma from "../prismaClient";
 import {NextResponse} from 'next/server';
 
+
 export async function POST(req) {
     try {
         const body = await req.json();
-        const { id, status } = body;
+        const {id, status} = body;
+        console.log(body, "body")
 
         if (!id) {
             return NextResponse.json(
-                { message: "Booking ID is required" },
-                { status: 400 }
+                {message: "Booking ID is required"},
+                {status: 400}
             );
         }
 
@@ -18,6 +20,8 @@ export async function POST(req) {
         if (status) {
             updateData.status = status;
         }
+
+        updateData["cleanStatus"] = body["cleanStatus"];
 
         ["roomId", "guestName", "customNotes"].forEach((field) => {
             if (body[field] !== undefined) {
@@ -35,20 +39,20 @@ export async function POST(req) {
         });
 
         const updatedBooking = await prisma.booking.update({
-            where: { id },
+            where: {id},
             data: updateData,
         });
 
         return NextResponse.json(
-            { message: "Booking updated successfully", booking: updatedBooking },
-            { status: 200 }
+            {message: "Booking updated successfully", booking: updatedBooking},
+            {status: 200}
         );
 
     } catch (error) {
         console.error("Failed to update booking:", error);
         return NextResponse.json(
-            { message: "Failed to update booking", error: error.message },
-            { status: 500 }
+            {message: "Failed to update booking", error: error.message},
+            {status: 500}
         );
     }
 }

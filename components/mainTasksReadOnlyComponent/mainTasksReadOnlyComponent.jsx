@@ -1,195 +1,245 @@
 "use client";
 
-import React, { useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
+import {useState, useEffect} from "react";
+import {DataGrid} from "@mui/x-data-grid";
 import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  MenuItem,
-  Select,
-  IconButton,
-  TextField,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    MenuItem,
+    IconButton,
+    TextField,
+    Tooltip,
+    Button,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import dayjs from "dayjs";
-import { Button } from "@mui/material";
 
-const MainTasks = ({ tasks, canEditStatus }) => {
-  const [rows, setRows] = useState(
-    tasks.map((task) => ({
-      ...task,
-      id: task.id,
-      firstNight: task.firstNight ? dayjs(task.firstNight) : null,
-      lastNight: task.lastNight ? dayjs(task.lastNight) : null,
-    }))
-  );
-  const [openDialog, setOpenDialog] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
+const MainTasks = ({tasks, canEditStatus, isMaid}) => {
+    const [openDialog, setOpenDialog] = useState(false);
+    const [selectedTask, setSelectedTask] = useState(null);
+    const [rows, setRows] = useState([]);
 
-  const handleOpenDialog = (task) => {
-    setSelectedTask({ ...task });
-    setOpenDialog(true);
-  };
+    useEffect(() => {
+        const sortedRows = tasks
+            .map((task) => ({
+                ...task,
+                id: task.id,
+                firstNight: task.firstNight ? dayjs(task.firstNight) : null,
+                lastNight: task.lastNight ? dayjs(task.lastNight) : null,
+            }))
+            .filter((task) => task.firstNight && task.firstNight.isAfter(dayjs().subtract(5, 'day')))
+            .sort((a, b) => a.firstNight.diff(b.firstNight));
 
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    setSelectedTask(null);
-  };
+        setRows(sortedRows);
+    }, [tasks]);
 
-  const handleSaveChanges = async () => {
-    try {
-      const response = await fetch("/api/updateMainTasks", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(selectedTask),
-      });
+    const handleOpenDialog = (task) => {
+        const today = dayjs();
+        const taskDate = dayjs(task.firstNight);
+        if (taskDate.isAfter(today)) {
+            return;
+        }
 
-      if (!response.ok) throw new Error("Failed to update task");
-      const updatedTask = await response.json();
+        setSelectedTask({...task});
+        setOpenDialog(true);
+    };
 
-      setRows((prevRows) =>
-        prevRows.map((row) =>
-          row.id === updatedTask.id ? { ...row, ...updatedTask } : row
-        )
-      );
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        setSelectedTask(null);
+    };
 
-      handleCloseDialog();
-    } catch (error) {
-      console.error("Error updating task:", error);
-    }
-  };
+    const handleSaveChanges = async () => {
+        try {
+            const response = await fetch("/api/updateMainTasks", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(selectedTask),
+            });
 
-  const handleInputChange = (field, value) => {
-    setSelectedTask((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+            if (!response.ok) throw new Error("Failed to update task");
+            const updatedTask = await response.json();
 
-  const formatDate = (date) =>
-    date ? dayjs(date).format("YYYY-MM-DD HH:mm:ss") : "";
+            setRows((prevRows) =>
+                prevRows.map((row) =>
+                    row.id === updatedTask.booking.id ? {
+                        ...row,
+                        ...updatedTask.booking,
+                        firstNight: dayjs(updatedTask.booking.firstNight),
+                        lastNight: dayjs(updatedTask.booking.lastNight)
+                    } : row
+                )
+            );
 
-  const columns = [
-    { field: "roomId", headerName: "Room", flex: 0.5, minWidth: 70 },
-    {
-      field: "guestFirstName",
-      headerName: "First Name",
-      flex: 1,
-      minWidth: 120,
-    },
-    { field: "guestName", headerName: "Last Name", flex: 1, minWidth: 120 },
-    {
-      field: "firstNight",
-      headerName: "Check-In Date",
-      flex: 1,
-      minWidth: 150,
-      renderCell: (params) => formatDate(params.row.firstNight),
-    },
-    {
-      field: "lastNight",
-      headerName: "Check-Out Date",
-      flex: 1,
-      minWidth: 150,
-      renderCell: (params) => formatDate(params.row.lastNight),
-    },
-    { field: "customNotes", headerName: "Notes", flex: 1, minWidth: 150 },
-    { field: "status", headerName: "Status", flex: 0.8, minWidth: 100 },
-    ...(canEditStatus
-      ? [
-          {
-            field: "actions",
-            headerName: "Actions",
-            flex: 0.7,
-            minWidth: 100,
-            renderCell: (params) => (
-              <IconButton onClick={() => handleOpenDialog(params.row)}>
-                <EditIcon />
-              </IconButton>
-            ),
-          },
-        ]
-      : []),
-  ];
+            handleCloseDialog();
+        } catch (error) {
+            console.error("Error updating task:", error);
+        }
+    };
 
-  return (
-    <div
-      className="bg-white p-5 rounded-xl mt-1"
-      style={{ height: 530, width: "100%" }}
-    >
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        pageSize={5}
-        style={{ height: 475, width: "100%" }}
-        autoPageSize
-        rowsPerPageOptions={[5, 10, 20]}
-        disableSelectionOnClick={true}
-      />
+    const handleInputChange = (field, value) => {
+        setSelectedTask((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
+    };
 
-      {canEditStatus && (
-        <Dialog
-          open={openDialog}
-          onClose={handleCloseDialog}
-          maxWidth="sm"
-          fullWidth
-        >
-          <DialogTitle
-            sx={{
-              backgroundColor: "#f3f4f6",
-              padding: "16px 24px",
-              borderBottom: "1px solid #e5e7eb",
-            }}
-          >
-            Edit Task
-          </DialogTitle>
-          <DialogContent
-            sx={{
-              padding: "16px 24px",
-              paddingTop: "16px",
-            }}
-          >
-            <TextField
-              select
-              label="Status"
-              fullWidth
-              variant="outlined"
-              value={selectedTask?.status || ""}
-              onChange={(e) => handleInputChange("status", e.target.value)}
-              sx={{ marginTop: "16px" }}
-            >
-              <MenuItem value="To Arrive">To Arrive</MenuItem>
-              <MenuItem value="Arrived">Arrived</MenuItem>
-              <MenuItem value="In House">In House</MenuItem>
-              <MenuItem value="Departed">Departed</MenuItem>
-              <MenuItem value="No Show">No Show</MenuItem>
-              <MenuItem value="Cancelled">Cancelled</MenuItem>
-            </TextField>
-          </DialogContent>
-          <DialogActions
-            sx={{ padding: "16px 24px", backgroundColor: "#f3f4f6" }}
-          >
-            <Button onClick={handleCloseDialog} sx={{ color: "#6B7280" }}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handleSaveChanges}
-              variant="contained"
-              sx={{
-                backgroundColor: "#4F46E5",
-                "&:hover": {
-                  backgroundColor: "#4338CA",
+    const formatDate = (date) =>
+        date ? dayjs(date).format("DD-MM-YYYY HH:mm:ss") : "";
+
+    const columns = [
+        {field: "roomId", headerName: "Room", flex: 0.5, minWidth: 70},
+        {
+            field: "guestFirstName",
+            headerName: "First Name",
+            flex: 1,
+            minWidth: 120,
+        },
+        {field: "guestName", headerName: "Last Name", flex: 1, minWidth: 120},
+        {
+            field: "firstNight",
+            headerName: "Check-In Date",
+            flex: 1,
+            minWidth: 150,
+            renderCell: (params) => formatDate(params.row.firstNight),
+        },
+        {
+            field: "lastNight",
+            headerName: "Check-Out Date",
+            flex: 1,
+            minWidth: 150,
+            renderCell: (params) => formatDate(params.row.lastNight),
+        },
+        {field: "customNotes", headerName: "Notes", flex: 1, minWidth: 150},
+        {field: "status", headerName: "Status", flex: 0.8, minWidth: 100},
+        {field: "cleanStatus", headerName: "Clean Status", flex: 0.8, minWidth: 100},
+        ...(canEditStatus
+            ? [
+                {
+                    field: "actions",
+                    headerName: "Actions",
+                    flex: 0.7,
+                    minWidth: 100,
+                    renderCell: (params) => {
+                        const today = dayjs();
+                        const taskDate = dayjs(params.row.firstNight);
+                        const canEdit = !taskDate.isAfter(today);
+
+                        return (
+                            <Tooltip title={canEdit ? "Edit" : "Cannot edit future tasks"}>
+                  <span>
+                    <IconButton
+                        onClick={() => handleOpenDialog(params.row)}
+                        disabled={!canEdit}
+                    >
+                      <EditIcon/>
+                    </IconButton>
+                  </span>
+                            </Tooltip>
+                        );
+                    },
                 },
-              }}
-            >
-              Save
-            </Button>
-          </DialogActions>
-        </Dialog>
-      )}
-    </div>
-  );
+            ]
+            : []),
+    ];
+
+    return (
+        <div
+            className="bg-white p-5 rounded-xl mt-1"
+            style={{height: 530, width: "100%"}}
+        >
+            <DataGrid
+                rows={rows}
+                columns={columns}
+                pageSize={5}
+                style={{height: 475, width: "100%"}}
+                autoPageSize
+                rowsPerPageOptions={[5, 10, 20]}
+                disableSelectionOnClick={true}
+            />
+
+            {canEditStatus && (
+                <Dialog
+                    open={openDialog}
+                    onClose={handleCloseDialog}
+                    maxWidth="sm"
+                    fullWidth
+                >
+                    <DialogTitle
+                        sx={{
+                            backgroundColor: "#f3f4f6",
+                            padding: "16px 24px",
+                            borderBottom: "1px solid #e5e7eb",
+                        }}
+                    >
+                        Edit Task
+                    </DialogTitle>
+                    <DialogContent
+                        sx={{
+                            padding: "16px 24px",
+                            paddingTop: "16px",
+                        }}
+                    >
+                        {!isMaid ? (
+                            <TextField
+                                select
+                                label="Status"
+                                fullWidth
+                                variant="outlined"
+                                value={selectedTask?.status || ""}
+                                onChange={(e) => handleInputChange("status", e.target.value)}
+                                sx={{marginTop: "16px"}}
+                            >
+                                <MenuItem value="To Arrive">To Arrive</MenuItem>
+                                <MenuItem value="Arrived">Arrived</MenuItem>
+                                <MenuItem value="In House">In House</MenuItem>
+                                <MenuItem value="Departed">Departed</MenuItem>
+                                <MenuItem value="No Show">No Show</MenuItem>
+                                <MenuItem value="Cancelled">Cancelled</MenuItem>
+                            </TextField>
+                        ) : (
+                            <TextField
+                                select
+                                label="Clean Status"
+                                fullWidth
+                                variant="outlined"
+                                value={selectedTask?.cleanStatus || ""}
+                                onChange={(e) => handleInputChange("cleanStatus", e.target.value)}
+                                sx={{marginTop: "16px"}}
+                            >
+                                <MenuItem value="To Clean">To Clean</MenuItem>
+                                <MenuItem value="Cleaned">Cleaned</MenuItem>
+
+                            </TextField>
+                        )
+                        }
+                    </DialogContent>
+                    <DialogActions
+                        sx={{padding: "16px 24px", backgroundColor: "#f3f4f6"}}
+                    >
+                        <Button onClick={handleCloseDialog} sx={{color: "#6B7280"}}>
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleSaveChanges}
+                            variant="contained"
+                            sx={{
+                                backgroundColor: "#4F46E5",
+                                "&:hover": {
+                                    backgroundColor: "#4338CA",
+                                },
+                            }}
+                        >
+                            Save
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            )}
+        </div>
+    )
+        ;
 };
 
 export default MainTasks;
