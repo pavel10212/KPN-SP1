@@ -48,3 +48,7 @@ certificates
 
 # Qodana Config File
 !/qodana.yaml
+
+# JetBrains IDE Config Files
+.idea/
+
