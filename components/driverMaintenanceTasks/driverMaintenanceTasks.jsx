@@ -58,13 +58,12 @@ const DriverMaintenanceTasks = ({ user, userTasks }) => {
 
   useEffect(() => {
     const resizeGrid = () => {
-      if (gridRef.current) {
-        gridRef.current.apiRef.current.setColumnWidths(
-          columns.map((col) => ({
-            field: col.field,
-            width: gridRef.current.clientWidth / columns.length,
-          }))
-        );
+      if (gridRef.current && gridRef.current.api) {
+        const newColumnWidths = columns.map((col) => ({
+          field: col.field,
+          width: gridRef.current.clientWidth / columns.length,
+        }));
+        gridRef.current.api.setColumnWidths(newColumnWidths);
       }
     };
 
@@ -78,7 +77,7 @@ const DriverMaintenanceTasks = ({ user, userTasks }) => {
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 h-auto flex flex-col">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">
+      <h2 className="text-2xl font-semibold text-gray-800 mb-6">
         {user.role === "Driver" ? "Driver Tasks" : "Maintenance Tasks"}
       </h2>
       <div style={{ height: "auto", width: "100%" }}>

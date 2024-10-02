@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, gridClasses } from "@mui/x-data-grid";
 import {
   Button,
   Dialog,
@@ -119,7 +119,7 @@ const CustomTask = ({ tasks, isAdmin }) => {
   };
 
   const formatDate = (date) =>
-    date ? dayjs(date).format("DD-MM-YYYY HH:mm:ss") : "";
+    date ? dayjs(date).format("DD-MM-YYYY HH:mm") : "";
 
   const columns = [
     { field: "taskTitle", headerName: "Task Title", flex: 1, minWidth: 110 },
@@ -178,13 +178,19 @@ const CustomTask = ({ tasks, isAdmin }) => {
 
   return (
     <div className="bg-white p-5 rounded-xl mt-1">
-      <div style={{ height: 475, width: "100%" }}>
+      <div style={{ width: "100%", overflow: "hidden" }}>
         <DataGrid
           rows={rows}
           columns={columns}
           pageSize={5}
-          style={{ height: 475, width: "100%" }}
-          autoPageSize
+          autoHeight
+          getRowHeight={() => "auto"}
+          getEstimatedRowHeight={() => 100}
+          sx={{
+            [`& .${gridClasses.cell}`]: {
+              py: 1,
+            },
+          }}
           rowsPerPageOptions={[5, 10, 20]}
           disableSelectionOnClick
         />
