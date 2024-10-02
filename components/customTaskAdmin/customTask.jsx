@@ -193,6 +193,7 @@ const CustomTask = ({ tasks, isAdmin }) => {
           }}
           rowsPerPageOptions={[5, 10, 20]}
           disableSelectionOnClick
+          className="border-none"
         />
       </div>
       <Dialog open={openDialog} onClose={handleCloseDialog}>
@@ -259,17 +260,17 @@ const CustomTask = ({ tasks, isAdmin }) => {
             <MenuItem value="">Select Status</MenuItem>
             {selectedTask?.role === "Driver"
               ? ["Assigned", "Picked Up", "Dropped Off"].map((status) => (
-                  <MenuItem key={status} value={status}>
-                    {status}
-                  </MenuItem>
-                ))
+                <MenuItem key={status} value={status}>
+                  {status}
+                </MenuItem>
+              ))
               : selectedTask?.role === "Maintenance"
-              ? ["Assigned", "In Progress", "Completed"].map((status) => (
+                ? ["Assigned", "In Progress", "Completed"].map((status) => (
                   <MenuItem key={status} value={status}>
                     {status}
                   </MenuItem>
                 ))
-              : null}
+                : null}
           </Select>
         </DialogContent>
         <DialogActions>
