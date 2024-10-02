@@ -13,7 +13,7 @@ import {auth, signOut} from "@/auth.js";
 import {redirect} from "next/navigation";
 import SidebarToggle from "/components/sidebar/sidebarToggle/sidebarToggle";
 import ClientSideImage from "@/components/clientSideImage/ClientSideImage";
-import {findUserByEmail} from "@/lib/utils";
+import {findUserById} from "@/lib/utils";
 
 const Sidebar = async ({className}) => {
     const session = await auth();
@@ -22,7 +22,7 @@ const Sidebar = async ({className}) => {
         redirect("/login");
     }
 
-    const user = await findUserByEmail(session.user.email);
+    const user = await findUserById(session.user.id);
 
     if (!user) {
         console.error("User not found in the database");
@@ -84,7 +84,7 @@ const Sidebar = async ({className}) => {
     const sidebarContent = (
         <div className="flex flex-col h-full bg-white shadow-md">
             <div className="p-6 flex flex-col items-center border-b border-gray-200">
-                <ClientSideImage userId={user.id} userName={user.name} />
+                <ClientSideImage userId={user.id} userName={user.name}/>
                 <span className="font-semibold text-gray-800 text-lg">{user.name}</span>
                 <span className="text-sm text-indigo-600 font-medium mt-1">
           {user.role}

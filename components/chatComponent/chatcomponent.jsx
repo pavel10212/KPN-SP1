@@ -3,107 +3,19 @@
 import {useEffect, useState} from "react";
 import dynamic from "next/dynamic";
 import {
-    ChatList, ChatCard, NewChatForm,
-    ChatFeed, ChatHeader, MessageBubble, IsTyping, ConnectionBar, ScrollDownBar,
-    NewMessageForm, ChatSettings, ChatSettingsTop, PeopleSettings, PhotosSettings, OptionsSettings
+    ChatList, ChatCard, NewChatForm, ChatFeed, ChatHeader,
+    MessageBubble, IsTyping, ScrollDownBar, NewMessageForm,
+    ChatSettings, ChatSettingsTop, PeopleSettings, PhotosSettings, OptionsSettings
 } from "react-chat-engine";
 
 const ChatEngine = dynamic(
     () => import("react-chat-engine").then((module) => module.ChatEngine),
-    {
-        ssr: false,
-        loading: () => <p>Loading Chat...</p>,
-    }
+    {ssr: false, loading: () => <p>Loading Chat...</p>}
 );
 
-// Wrapper components for customization
-const CustomChatList = (props) => (
-    <div className="custom-chat-list">
-        <ChatList {...props} />
-    </div>
-);
-
-const CustomChatCard = (props) => (
-    <div className="custom-chat-card">
-        <ChatCard {...props} />
-    </div>
-);
-
-const CustomNewChatForm = (props) => (
-    <div className="custom-new-chat-form">
-        <NewChatForm {...props} />
-    </div>
-);
-
-const CustomChatFeed = (props) => (
-    <div className="custom-chat-feed">
-        <ChatFeed {...props} />
-    </div>
-);
-
-const CustomChatHeader = (props) => (
-    <div className="custom-chat-header">
-        <ChatHeader {...props} />
-    </div>
-);
-
-const CustomMessageBubble = (props) => (
-    <div className="custom-message-bubble">
-        <MessageBubble {...props} />
-    </div>
-);
-
-const CustomIsTyping = (props) => (
-    <div className="custom-is-typing">
-        <IsTyping {...props} />
-    </div>
-);
-
-const CustomConnectionBar = (props) => (
-    <div className="custom-connection-bar">
-        <ConnectionBar {...props} />
-    </div>
-);
-
-const CustomScrollDownBar = (props) => (
-    <div className="custom-scroll-down-bar">
-        <ScrollDownBar {...props} />
-    </div>
-);
-
-const CustomNewMessageForm = (props) => (
-    <div className="custom-new-message-form">
-        <NewMessageForm {...props} />
-    </div>
-);
-
-const CustomChatSettings = (props) => (
-    <div className="custom-chat-settings">
-        <ChatSettings {...props} />
-    </div>
-);
-
-const CustomChatSettingsTop = (props) => (
-    <div className="custom-chat-settings-top">
-        <ChatSettingsTop {...props} />
-    </div>
-);
-
-const CustomPeopleSettings = (props) => (
-    <div className="custom-people-settings">
-        <PeopleSettings {...props} />
-    </div>
-);
-
-const CustomPhotosSettings = (props) => (
-    <div className="custom-photos-settings">
-        <PhotosSettings {...props} />
-    </div>
-);
-
-const CustomOptionsSettings = (props) => (
-    <div className="custom-options-settings">
-        <OptionsSettings {...props} />
+const CustomComponent = ({Component, className, ...props}) => (
+    <div className={className}>
+        <Component {...props} />
     </div>
 );
 
@@ -130,28 +42,45 @@ export default function ChatComponent({userName, userSecret}) {
                 projectID={process.env.NEXT_PUBLIC_CHAT_ENGINE_PROJECT_ID}
                 userName={userName}
                 userSecret={userSecret}
-                renderChatList={(chatAppState) => <CustomChatList {...chatAppState} />}
-                renderChatCard={(chat, index) => <CustomChatCard chat={chat}/>}
-                renderNewChatForm={(creds) => <CustomNewChatForm creds={creds}/>}
-                renderChatFeed={(chatAppState) => <CustomChatFeed {...chatAppState} />}
-                renderChatHeader={(chat) => <CustomChatHeader chat={chat}/>}
+                renderChatList={(chatAppState) => <CustomComponent Component={ChatList}
+                                                                   className="custom-chat-list" {...chatAppState} />}
+                renderChatCard={(chat) => <CustomComponent Component={ChatCard} className="custom-chat-card"
+                                                           chat={chat}/>}
+                renderNewChatForm={(creds) => <CustomComponent Component={NewChatForm} className="custom-new-chat-form"
+                                                               creds={creds}/>}
+                renderChatFeed={(chatAppState) => <CustomComponent Component={ChatFeed}
+                                                                   className="custom-chat-feed" {...chatAppState} />}
+                renderChatHeader={(chat) => <CustomComponent Component={ChatHeader} className="custom-chat-header"
+                                                             chat={chat}/>}
                 renderMessageBubble={(creds, chat, lastMessage, message, nextMessage) => (
-                    <CustomMessageBubble
+                    <CustomComponent
+                        Component={MessageBubble}
+                        className="custom-message-bubble"
                         lastMessage={lastMessage}
                         message={message}
                         nextMessage={nextMessage}
                         chat={chat}
                     />
                 )}
-                renderIsTyping={(typers) => <CustomIsTyping/>}
-                renderConnectionBar={(chat) => <CustomConnectionBar/>}
-                renderScrollDownBar={(chat) => <CustomScrollDownBar chat={chat}/>}
-                renderNewMessageForm={(creds, chatId) => <CustomNewMessageForm creds={creds} chatId={chatId}/>}
-                renderChatSettings={(chatAppProps) => <CustomChatSettings {...chatAppProps} />}
-                renderChatSettingsTop={(creds, chat) => <CustomChatSettingsTop creds={creds} chat={chat}/>}
-                renderPeopleSettings={(creds, chat) => <CustomPeopleSettings creds={creds} chat={chat}/>}
-                renderPhotosSettings={(chat) => <CustomPhotosSettings chat={chat}/>}
-                renderOptionsSettings={(creds, chat) => <CustomOptionsSettings creds={creds} chat={chat}/>}
+                renderIsTyping={() => <CustomComponent Component={IsTyping} className="custom-is-typing"/>}
+                renderScrollDownBar={(chat) => <CustomComponent Component={ScrollDownBar}
+                                                                className="custom-scroll-down-bar" chat={chat}/>}
+                renderNewMessageForm={(creds, chatId) => <CustomComponent Component={NewMessageForm}
+                                                                          className="custom-new-message-form"
+                                                                          creds={creds} chatId={chatId}/>}
+                renderChatSettings={(chatAppProps) => <CustomComponent Component={ChatSettings}
+                                                                       className="custom-chat-settings" {...chatAppProps} />}
+                renderChatSettingsTop={(creds, chat) => <CustomComponent Component={ChatSettingsTop}
+                                                                         className="custom-chat-settings-top"
+                                                                         creds={creds} chat={chat}/>}
+                renderPeopleSettings={(creds, chat) => <CustomComponent Component={PeopleSettings}
+                                                                        className="custom-people-settings" creds={creds}
+                                                                        chat={chat}/>}
+                renderPhotosSettings={(chat) => <CustomComponent Component={PhotosSettings}
+                                                                 className="custom-photos-settings" chat={chat}/>}
+                renderOptionsSettings={(creds, chat) => <CustomComponent Component={OptionsSettings}
+                                                                         className="custom-options-settings"
+                                                                         creds={creds} chat={chat}/>}
             />
         </div>
     );

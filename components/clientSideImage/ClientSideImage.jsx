@@ -5,7 +5,7 @@ import Image from 'next/image';
 import {storage} from '@/lib/firebase/firebaseConfig';
 import {getDownloadURL, ref} from "firebase/storage";
 
-const ClientSideImage = ({ userId, userName }) => {
+const ClientSideImage = ({userId, userName}) => {
     const [imageUrl, setImageUrl] = useState('/noavatar.png');
 
     useEffect(() => {
@@ -20,7 +20,7 @@ const ClientSideImage = ({ userId, userName }) => {
             }
         };
 
-        loadImage().then(r => console.log("Image loaded:", r));
+        loadImage()
     }, [userId]);
 
     return (

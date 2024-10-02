@@ -5,101 +5,55 @@ import BookingToday from "../../components/dashboard/bookingToday/bookingToday";
 import {pullCustomBookings, pullFromDatabase} from "@/lib/actions";
 import prisma from "../api/prismaClient";
 import DriverMaintenanceTasks from "@/components/driverMaintenanceTasks/driverMaintenanceTasks";
+import {findUserById} from "@/lib/utils";
 
 export default async function Dashboard() {
     const session = await auth();
-    if (!session) {
-        redirect("/login");
-    }
+    if (!session) redirect("/login");
 
-    const teamMember = await prisma.user.findFirst({
-        where: {
-            email: session.user.email,
-        },
-    });
+    const teamMember = await findUserById(session.user.id);
     const teamId = teamMember.teamId;
-    const teamCount = await prisma.user.findMany({
-        where: {
-            teamId: teamId,
-        },
-    });
+    const teamCount = await prisma.user.findMany({where: {teamId}});
 
-    const check_ins = await pullFromDatabase(teamId, "firstNight");
-    const check_outs = await pullFromDatabase(teamId, "lastNight");
-    const userTasks = await pullCustomBookings(teamMember.role);
+    const [check_ins, check_outs, userTasks] = await Promise.all([
+        pullFromDatabase(teamId, "firstNight"),
+        pullFromDatabase(teamId, "lastNight"),
+        pullCustomBookings(teamMember.role)
+    ]);
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const bookingsStartingToday = check_ins.filter((booking) => {
-        const bookingStartDate = new Date(booking.firstNight);
-        bookingStartDate.setHours(0, 0, 0, 0);
-        return bookingStartDate.getTime() === today.getTime();
-    });
 
-    const bookingsEndingToday = check_outs.filter((booking) => {
-        const bookingEndDate = new Date(booking.lastNight);
-        bookingEndDate.setHours(0, 0, 0, 0);
-        return bookingEndDate.getTime() === today.getTime();
-    });
+    const filterBookingsByDate = (bookings, dateField) =>
+        bookings.filter(booking => new Date(booking[dateField]).setHours(0, 0, 0, 0) === today.getTime());
+
+    const bookingsStartingToday = filterBookingsByDate(check_ins, "firstNight");
+    const bookingsEndingToday = filterBookingsByDate(check_outs, "lastNight");
 
     const cards = [
-        {
-            id: 1,
-            title: "Total Team Members",
-            number: teamCount.length,
-            icon: "👥",
-        },
-        {
-            id: 2,
-            title: "Check-ins Today",
-            number: bookingsStartingToday.length,
-            icon: "🛎️",
-        },
-        {
-            id: 3,
-            title: "Check-outs Today",
-            number: bookingsEndingToday.length,
-            icon: "🔑",
-        },
+        {id: 1, title: "Total Team Members", number: teamCount.length, icon: "👥"},
+        {id: 2, title: "Check-ins Today", number: bookingsStartingToday.length, icon: "🛎️"},
+        {id: 3, title: "Check-outs Today", number: bookingsEndingToday.length, icon: "🔑"}
     ];
 
-    if (
-        teamMember.role === "admin" ||
-        teamMember.role === "Maid" ||
-        teamMember.role === "Co-Host"
-    ) {
+    if (["admin", "Maid", "Co-Host"].includes(teamMember.role)) {
         return (
             <div className="min-h-screen p-0 pb-2 sm:p-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 max-w-4xl">
-                    {cards.map((card) => (
-                        <Card key={card.id} item={card}/>
-                    ))}
+                    {cards.map(card => <Card key={card.id} item={card}/>)}
                 </div>
                 <div className="space-y-6">
-                    <BookingToday
-                        bookings={check_ins}
-                        isMaid={teamMember.role === "Maid" ? true : false}
-                        checkInOrOut="Upcoming Check-Ins"
-                        excludeField="lastNight"
-                    />
-                    <BookingToday
-                        bookings={check_outs}
-                        isMaid={teamMember.role === "Maid" ? true : false}
-                        checkInOrOut="Upcoming Check-outs"
-                        excludeField="firstNight"
-                    />
+                    <BookingToday bookings={check_ins} isMaid={teamMember.role === "Maid"}
+                                  checkInOrOut="Upcoming Check-Ins" excludeField="lastNight"/>
+                    <BookingToday bookings={check_outs} isMaid={teamMember.role === "Maid"}
+                                  checkInOrOut="Upcoming Check-outs" excludeField="firstNight"/>
                 </div>
             </div>
         );
-    } else if (
-        teamMember.role === "Driver" ||
-        teamMember.role === "Maintenance"
-    ) {
+    } else if (["Driver", "Maintenance"].includes(teamMember.role)) {
         return (
             <div className="min-h-screen rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
-                <h1 className="text-3xl font-bold text-gray-800 mb-8">
-                    Task Dashboard
-                </h1>
+                <h1 className="text-3xl font-bold text-gray-800 mb-8">Task Dashboard</h1>
                 <DriverMaintenanceTasks user={teamMember} userTasks={userTasks}/>
             </div>
         );

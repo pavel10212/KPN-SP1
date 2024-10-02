@@ -33,9 +33,7 @@ const InputFieldWithTooltip = ({field, label, value, onChange, error, tooltipTex
                 required
                 value={value}
                 onChange={onChange}
-                className={`appearance-none block w-full px-3 py-2 border ${
-                    error ? "border-red-300" : "border-gray-300"
-                } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out`}
+                className={`appearance-none block w-full px-3 py-2 border ${error ? "border-red-300" : "border-gray-300"} rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out`}
             />
             {error && (
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -62,30 +60,16 @@ export default function RegisterForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("1. Submitting form");
-        console.log("2. Full form data:", formData);
-
         setIsLoading(true);
         setErrors({});
 
         try {
             if (formData.password !== formData.confirm_password) {
-                console.log("3A. Passwords do not match");
                 throw new Error("Passwords do not match");
             }
 
-            console.log("3B. Passwords match, continuing with submission");
-
-            const dataToSubmit = {
-                name: formData.name,
-                email: formData.email,
-                password: formData.password,
-                api_key: formData.api_key,
-                prop_key: formData.prop_key,
-            }
-
+            const dataToSubmit = {...formData};
             registerSchema.parse(dataToSubmit);
-            console.log("4. Form data validated");
 
             const response = await fetch("/api/register", {
                 method: "POST",
@@ -98,7 +82,6 @@ export default function RegisterForm() {
                 throw new Error(`Registration failed: ${response.status} ${response.statusText}. ${errorBody || 'No additional error information available.'}`);
             }
 
-            console.log("5. User registered");
             const user = await response.json();
 
             const dataResponse = await fetch("/api/data", {
@@ -112,31 +95,22 @@ export default function RegisterForm() {
                 throw new Error(`Failed to fetch data: ${dataResponse.status} ${dataResponse.statusText}. ${errorBody || 'No additional error information available.'}`);
             }
 
-            console.log("6. Data fetched");
             const result = await dataResponse.json();
-            console.log("6. Data fetched:", result);
 
             const createResponse = await fetch("/api/createBookings", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                    userId: user.userId,
-                    bookingsData: result
-                }),
+                body: JSON.stringify({userId: user.userId, bookingsData: result}),
             });
+
             if (!createResponse.ok) {
                 const errorBody = await createResponse.text();
                 throw new Error(`Failed to create bookings: ${createResponse.status} ${createResponse.statusText}. ${errorBody || 'No additional error information available.'}`);
             }
 
-            const createdBookings = await createResponse.json();
-            console.log("7. Created bookings:", createdBookings);
-
-            console.log("8. Registration successful");
             toast.success("Registration successful");
             router.push("/login");
         } catch (error) {
-            console.error("9. Error caught:", error);
             if (error instanceof z.ZodError) {
                 const newErrors = {};
                 error.issues.forEach((issue) => {
@@ -155,9 +129,9 @@ export default function RegisterForm() {
 
     const handleChange = (e) => {
         const {name, value} = e.target;
-        setFormData(prev => ({...prev, [name]: value}));
+        setFormData((prev) => ({...prev, [name]: value}));
         if (errors[name]) {
-            setErrors(prev => ({...prev, [name]: ""}));
+            setErrors((prev) => ({...prev, [name]: ""}));
         }
     };
 
@@ -179,44 +153,20 @@ export default function RegisterForm() {
                 initial="hidden"
                 animate="visible"
             >
-                <motion.div
-                    className="sm:mx-auto sm:w-full sm:max-w-md"
-                    variants={itemVariants}
-                >
-                    <Image
-                        className="mx-auto"
-                        width={120}
-                        height={120}
-                        src="/logo5.png"
-                        alt="Your Company"
-                    />
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                        Create your account
-                    </h2>
+                <motion.div className="sm:mx-auto sm:w-full sm:max-w-md" variants={itemVariants}>
+                    <Image className="mx-auto" width={120} height={120} src="/logo5.png" alt="Your Company"/>
+                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Create your account</h2>
                 </motion.div>
 
-                <motion.div
-                    className="mt-8 sm:mx-auto sm:w-full sm:max-w-md"
-                    variants={itemVariants}
-                >
+                <motion.div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md" variants={itemVariants}>
                     <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 rounded-xl">
                         <form className="space-y-6" onSubmit={handleSubmit}>
                             {["name", "email", "password", "confirm_password"].map((field, index) => (
-                                <motion.div
-                                    key={field}
-                                    variants={itemVariants}
-                                    initial="hidden"
-                                    animate="visible"
-                                    transition={{delay: index * 0.1}}
-                                >
+                                <motion.div key={field} variants={itemVariants} initial="hidden" animate="visible"
+                                            transition={{delay: index * 0.1}}>
                                     <InputFieldWithTooltip
                                         field={field}
-                                        label={field === "confirm_password"
-                                            ? "Confirm Password"
-                                            : field
-                                                .split("_")
-                                                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                                                .join(" ")}
+                                        label={field === "confirm_password" ? "Confirm Password" : field.split("_").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
                                         value={formData[field]}
                                         onChange={handleChange}
                                         error={errors[field]}
@@ -225,19 +175,11 @@ export default function RegisterForm() {
                             ))}
 
                             {["api_key", "prop_key"].map((field, index) => (
-                                <motion.div
-                                    key={field}
-                                    variants={itemVariants}
-                                    initial="hidden"
-                                    animate="visible"
-                                    transition={{delay: (index + 4) * 0.1}}
-                                >
+                                <motion.div key={field} variants={itemVariants} initial="hidden" animate="visible"
+                                            transition={{delay: (index + 4) * 0.1}}>
                                     <InputFieldWithTooltip
                                         field={field}
-                                        label={field
-                                            .split("_")
-                                            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                                            .join(" ")}
+                                        label={field.split("_").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
                                         value={formData[field]}
                                         onChange={handleChange}
                                         error={errors[field]}

@@ -4,13 +4,10 @@ import {useMemo} from "react";
 import {DataGrid} from "@mui/x-data-grid";
 
 const BookingToday = ({bookings, checkInOrOut, excludeField, isMaid}) => {
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        return date.toLocaleString();
-    };
+    const formatDate = (dateString) => new Date(dateString).toLocaleString();
 
     const columns = useMemo(() => {
-        const allColumns = [
+        const baseColumns = [
             {field: "roomId", headerName: "Room", flex: 0.5, minWidth: 70},
             {field: "guestFirstName", headerName: "Name", flex: 1, minWidth: 120},
             {
@@ -18,19 +15,19 @@ const BookingToday = ({bookings, checkInOrOut, excludeField, isMaid}) => {
                 headerName: "Check-in",
                 flex: 1,
                 minWidth: 160,
-                renderCell: (params) => formatDate(params.value),
+                renderCell: (params) => formatDate(params.value)
             },
             {
                 field: "lastNight",
                 headerName: "Check-out",
                 flex: 1,
                 minWidth: 160,
-                renderCell: (params) => formatDate(params.value),
+                renderCell: (params) => formatDate(params.value)
             },
             {field: "status", headerName: "Status", flex: 0.8, minWidth: 100},
         ];
 
-        let filteredColumns = allColumns.filter((column) => column.field !== excludeField);
+        const filteredColumns = baseColumns.filter((col) => col.field !== excludeField);
 
         if (isMaid) {
             filteredColumns.push({field: "cleanStatus", headerName: "Clean Status", flex: 0.8, minWidth: 100});
@@ -39,20 +36,11 @@ const BookingToday = ({bookings, checkInOrOut, excludeField, isMaid}) => {
         return filteredColumns;
     }, [excludeField, isMaid]);
 
-    const rows = useMemo(
-        () =>
-            bookings.map((booking, index) => ({
-                ...booking,
-                id: index,
-            })),
-        [bookings]
-    );
+    const rows = useMemo(() => bookings.map((booking, index) => ({...booking, id: index})), [bookings]);
 
     return (
         <div className="bg-white rounded-xl shadow-lg p-6 h-auto flex flex-col">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                {checkInOrOut}
-            </h2>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">{checkInOrOut}</h2>
             <div className="flex-grow">
                 <DataGrid
                     columns={columns}

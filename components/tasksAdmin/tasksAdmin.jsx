@@ -11,6 +11,7 @@ import {
     IconButton,
     MenuItem,
     TextField,
+    Box,
 } from "@mui/material";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
@@ -18,54 +19,39 @@ import {DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import dayjs from "dayjs";
-import {Box} from "@mui/material";
 
 const TaskAdmin = ({tasks}) => {
-    const statusOptions = [
-        "To Arrive",
-        "In House",
-        "Departed",
-        "No Show",
-        "Cancelled",
-    ];
-
-    const initialTasks = tasks.map((task) => ({
+    const statusOptions = ["To Arrive", "In House", "Departed", "No Show", "Cancelled"];
+    const initialTasks = tasks.map(task => ({
         ...task,
-        id: task.id,
         status: task.status || "Booked",
-        firstNight: task.firstNight
-            ? new Date(task.firstNight).toISOString()
-            : null,
+        firstNight: task.firstNight ? new Date(task.firstNight).toISOString() : null,
         lastNight: task.lastNight ? new Date(task.lastNight).toISOString() : null,
     }));
-
-    useEffect(() => {
-        const sortedRows = tasks
-            .map((task) => ({
-                ...task,
-                id: task.id,
-                status: task.status || "Booked",
-                firstNight: task.firstNight ? dayjs(task.firstNight) : null,
-                lastNight: task.lastNight ? dayjs(task.lastNight) : null,
-            }))
-            .filter((task) => {
-                return task.firstNight && task.firstNight.isAfter(dayjs().subtract(5, 'day'));
-            })
-            .sort((a, b) => a.firstNight.diff(b.firstNight));
-
-        setRows(sortedRows);
-    }, [tasks]);
 
     const [rows, setRows] = useState(initialTasks);
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [selectedTask, setSelectedTask] = useState(null);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [taskToDelete, setTaskToDelete] = useState(null);
-    const isDateTodayOrBefore = (date) => {
-        return dayjs(date).isSame(dayjs(), 'day') || dayjs(date).isBefore(dayjs(), 'day');
-    };
 
-    const handleEditClick = (task) => {
+    useEffect(() => {
+        const sortedRows = tasks
+            .map(task => ({
+                ...task,
+                status: task.status || "Booked",
+                firstNight: task.firstNight ? dayjs(task.firstNight) : null,
+                lastNight: task.lastNight ? dayjs(task.lastNight) : null,
+            }))
+            .filter(task => task.firstNight && task.firstNight.isAfter(dayjs().subtract(5, 'day')))
+            .sort((a, b) => a.firstNight.diff(b.firstNight));
+
+        setRows(sortedRows);
+    }, [tasks]);
+
+    const isDateTodayOrBefore = date => dayjs(date).isSame(dayjs(), 'day') || dayjs(date).isBefore(dayjs(), 'day');
+
+    const handleEditClick = task => {
         setSelectedTask({...task});
         setOpenEditDialog(true);
     };
@@ -85,15 +71,10 @@ const TaskAdmin = ({tasks}) => {
 
             if (!response.ok) throw new Error("Failed to update task");
             const updatedTask = await response.json();
-            console.log("Updated task:", updatedTask);
-            updateRowData(updatedTask);
+            updateRowData(updatedTask.booking);
 
-            try {
-                await sendNotification(updatedTask);
-                await sendNotificationToTab(updatedTask.booking);
-            } catch (notificationError) {
-                console.error("Failed to send notification:", notificationError);
-            }
+            await sendNotification(updatedTask.booking);
+            await sendNotificationToTab(updatedTask.booking);
 
             handleCloseEditDialog();
         } catch (error) {
@@ -101,10 +82,7 @@ const TaskAdmin = ({tasks}) => {
         }
     };
 
-    const sendNotificationToTab = async (task) => {
-        console.log(task);
-        console.log(task.guestFirstName);
-        console.log(task.guestName);
+    const sendNotificationToTab = async task => {
         try {
             const response = await fetch("/api/notificationCoHostMaid", {
                 method: "POST",
@@ -115,16 +93,13 @@ const TaskAdmin = ({tasks}) => {
                 }),
             });
 
-            if (!response.ok) {
-                throw new Error("Failed to send notification");
-            }
+            if (!response.ok) throw new Error("Failed to send notification");
         } catch (error) {
             console.error("Error sending notification:", error);
         }
     };
 
-    const sendNotification = async (task) => {
-        console.log("Sending notification for task:", task);
+    const sendNotification = async task => {
         try {
             const response = await fetch("/api/sendTopicNotificationMain", {
                 method: "POST",
@@ -136,41 +111,37 @@ const TaskAdmin = ({tasks}) => {
                 }),
             });
 
-            if (!response.ok) {
-                throw new Error("Failed to send notification");
-            }
-
-            console.log("Notification sent successfully");
+            if (!response.ok) throw new Error("Failed to send notification");
         } catch (error) {
             console.error("Error sending notification:", error);
         }
     };
 
-    const updateRowData = useCallback((updatedTask) => {
-        setRows((prevRows) =>
-            prevRows.map((row) =>
-                row.id === updatedTask.id ? {
-                    ...row,
-                    ...updatedTask,
-                    firstNight: dayjs(updatedTask.firstNight),
-                    lastNight: dayjs(updatedTask.lastNight)
-                } : row
+    const updateRowData = useCallback(updatedTask => {
+        setRows(prevRows =>
+            prevRows.map(row =>
+                row.id === updatedTask.id
+                    ? {
+                        ...row,
+                        ...updatedTask,
+                        firstNight: updatedTask.firstNight ? dayjs(updatedTask.firstNight) : null,
+                        lastNight: updatedTask.lastNight ? dayjs(updatedTask.lastNight) : null,
+                    }
+                    : row
             )
         );
     }, []);
 
     const handleInputChange = (field, value) => {
-        setSelectedTask((prev) => {
+        setSelectedTask(prev => {
             if ((field === 'status' || field === 'cleanStatus') && !isDateTodayOrBefore(prev.firstNight)) {
                 return prev;
             }
-            const updated = {...prev, [field]: value};
-            updateRowData(updated);
-            return updated;
+            return {...prev, [field]: value};
         });
     };
 
-    const handleDeleteClick = (id) => {
+    const handleDeleteClick = id => {
         setTaskToDelete(id);
         setOpenDeleteDialog(true);
     };
@@ -182,7 +153,7 @@ const TaskAdmin = ({tasks}) => {
 
     const handleConfirmDelete = async () => {
         if (taskToDelete) {
-            setRows(rows.filter((row) => row.id !== taskToDelete));
+            setRows(rows.filter(row => row.id !== taskToDelete));
             await fetch("/api/deleteTask", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
@@ -192,8 +163,7 @@ const TaskAdmin = ({tasks}) => {
         }
     };
 
-    const formatDate = (date) =>
-        date ? dayjs(date).format("DD-MM-YYYY HH:mm") : "";
+    const formatDate = date => (date ? dayjs(date).format("DD-MM-YYYY HH:mm") : "");
 
     const columns = [
         {field: "roomId", headerName: "Room", flex: 0.5, minWidth: 70},
@@ -204,14 +174,14 @@ const TaskAdmin = ({tasks}) => {
             headerName: "Check-In Date",
             flex: 1,
             minWidth: 150,
-            renderCell: (params) => formatDate(params.row.firstNight),
+            renderCell: params => formatDate(params.row.firstNight),
         },
         {
             field: "lastNight",
             headerName: "Check-Out Date",
             flex: 1,
             minWidth: 150,
-            renderCell: (params) => formatDate(params.row.lastNight),
+            renderCell: params => formatDate(params.row.lastNight),
         },
         {field: "customNotes", headerName: "Notes", flex: 1, minWidth: 150},
         {field: "status", headerName: "Status", flex: 0.8, minWidth: 100},
@@ -221,11 +191,9 @@ const TaskAdmin = ({tasks}) => {
             headerName: "Actions",
             flex: 0.7,
             minWidth: 100,
-            renderCell: (params) => (
+            renderCell: params => (
                 <>
-                    <IconButton
-                        onClick={() => handleEditClick(params.row)}
-                    >
+                    <IconButton onClick={() => handleEditClick(params.row)}>
                         <EditIcon/>
                     </IconButton>
                     <IconButton onClick={() => handleDeleteClick(params.id)}>
@@ -237,10 +205,7 @@ const TaskAdmin = ({tasks}) => {
     ];
 
     return (
-        <div
-            className="bg-white p-5 rounded-xl mt-1"
-            style={{height: 530, width: "100%"}}
-        >
+        <div className="bg-white p-5 rounded-xl mt-1" style={{height: 530, width: "100%"}}>
             <DataGrid
                 rows={rows}
                 columns={columns}
@@ -248,78 +213,41 @@ const TaskAdmin = ({tasks}) => {
                 style={{height: 475, width: "100%"}}
                 autoPageSize
                 rowsPerPageOptions={[5, 10, 20]}
-                disableSelectionOnClick={true}
+                disableSelectionOnClick
             />
 
-            <Dialog
-                open={openEditDialog}
-                onClose={handleCloseEditDialog}
-                maxWidth="sm"
-                fullWidth
-            >
-                <DialogTitle
-                    sx={{
-                        backgroundColor: "#f3f4f6",
-                        padding: "16px 24px",
-                        borderBottom: "1px solid #e5e7eb",
-                    }}
-                >
+            <Dialog open={openEditDialog} onClose={handleCloseEditDialog} maxWidth="sm" fullWidth>
+                <DialogTitle sx={{backgroundColor: "#f3f4f6", padding: "16px 24px", borderBottom: "1px solid #e5e7eb"}}>
                     Edit Task
                 </DialogTitle>
-                <DialogContent
-                    sx={{
-                        padding: "16px 24px",
-                        paddingTop: "16px",
-                    }}
-                >
-                    <Box
-                        sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "16px",
-                            marginTop: "8px",
-                        }}
-                    >
+                <DialogContent sx={{padding: "16px 24px", paddingTop: "16px"}}>
+                    <Box sx={{display: "flex", flexDirection: "column", gap: "16px", marginTop: "8px"}}>
                         <TextField
                             label="Room"
                             fullWidth
                             variant="outlined"
                             value={selectedTask?.roomId || ""}
-                            onChange={(e) => handleInputChange("roomId", e.target.value)}
+                            onChange={e => handleInputChange("roomId", e.target.value)}
                         />
                         <TextField
                             label="Name"
                             fullWidth
                             variant="outlined"
                             value={selectedTask?.guestName || ""}
-                            onChange={(e) => handleInputChange("guestName", e.target.value)}
+                            onChange={e => handleInputChange("guestName", e.target.value)}
                         />
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DateTimePicker
                                 label="Check-In Date"
-                                value={
-                                    selectedTask?.firstNight
-                                        ? dayjs(selectedTask.firstNight)
-                                        : null
-                                }
-                                onChange={(newValue) =>
-                                    handleInputChange("firstNight", newValue.toISOString())
-                                }
-                                renderInput={(props) => (
-                                    <TextField {...props} fullWidth variant="outlined"/>
-                                )}
+                                value={selectedTask?.firstNight ? dayjs(selectedTask.firstNight) : null}
+                                onChange={newValue => handleInputChange("firstNight", newValue.toISOString())}
+                                renderInput={props => <TextField {...props} fullWidth variant="outlined"/>}
                             />
                             <DateTimePicker
                                 label="Check-Out Date"
-                                value={
-                                    selectedTask?.lastNight ? dayjs(selectedTask.lastNight) : null
-                                }
-                                onChange={(newValue) =>
-                                    handleInputChange("lastNight", newValue.toISOString())
-                                }
-                                renderInput={(props) => (
-                                    <TextField {...props} fullWidth variant="outlined"/>
-                                )}
+                                value={selectedTask?.lastNight ? dayjs(selectedTask.lastNight) : null}
+                                onChange={newValue => handleInputChange("lastNight", newValue.toISOString())}
+                                renderInput={props => <TextField {...props} fullWidth variant="outlined"/>}
                             />
                         </LocalizationProvider>
                         <TextField
@@ -329,7 +257,7 @@ const TaskAdmin = ({tasks}) => {
                             multiline
                             rows={4}
                             value={selectedTask?.customNotes || ""}
-                            onChange={(e) => handleInputChange("customNotes", e.target.value)}
+                            onChange={e => handleInputChange("customNotes", e.target.value)}
                         />
                         <TextField
                             select
@@ -337,10 +265,10 @@ const TaskAdmin = ({tasks}) => {
                             fullWidth
                             variant="outlined"
                             value={selectedTask?.status || ""}
-                            onChange={(e) => handleInputChange("status", e.target.value)}
+                            onChange={e => handleInputChange("status", e.target.value)}
                             disabled={!isDateTodayOrBefore(selectedTask?.firstNight)}
                         >
-                            {statusOptions.map((option) => (
+                            {statusOptions.map(option => (
                                 <MenuItem key={option} value={option}>
                                     {option}
                                 </MenuItem>
@@ -352,7 +280,7 @@ const TaskAdmin = ({tasks}) => {
                             fullWidth
                             variant="outlined"
                             value={selectedTask?.cleanStatus || ""}
-                            onChange={(e) => handleInputChange("cleanStatus", e.target.value)}
+                            onChange={e => handleInputChange("cleanStatus", e.target.value)}
                             disabled={!isDateTodayOrBefore(selectedTask?.firstNight)}
                         >
                             <MenuItem value="To Clean">To Clean</MenuItem>
@@ -360,21 +288,14 @@ const TaskAdmin = ({tasks}) => {
                         </TextField>
                     </Box>
                 </DialogContent>
-                <DialogActions
-                    sx={{padding: "16px 24px", backgroundColor: "#f3f4f6"}}
-                >
+                <DialogActions sx={{padding: "16px 24px", backgroundColor: "#f3f4f6"}}>
                     <Button onClick={handleCloseEditDialog} sx={{color: "#6B7280"}}>
                         Cancel
                     </Button>
                     <Button
                         onClick={handleSaveEdit}
                         variant="contained"
-                        sx={{
-                            backgroundColor: "#4F46E5",
-                            "&:hover": {
-                                backgroundColor: "#4338CA",
-                            },
-                        }}
+                        sx={{backgroundColor: "#4F46E5", "&:hover": {backgroundColor: "#4338CA"}}}
                     >
                         Save
                     </Button>
@@ -382,20 +303,13 @@ const TaskAdmin = ({tasks}) => {
             </Dialog>
             <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
                 <DialogTitle>Delete Task</DialogTitle>
-                <DialogContent>
-                    Are you sure you want to delete this task?
-                </DialogContent>
+                <DialogContent>Are you sure you want to delete this task?</DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDeleteDialog}>Cancel</Button>
                     <Button
                         onClick={handleConfirmDelete}
                         variant="contained"
-                        sx={{
-                            backgroundColor: "#4F46E5",
-                            "&:hover": {
-                                backgroundColor: "#4338CA",
-                            },
-                        }}
+                        sx={{backgroundColor: "#4F46E5", "&:hover": {backgroundColor: "#4338CA"}}}
                     >
                         Delete
                     </Button>
