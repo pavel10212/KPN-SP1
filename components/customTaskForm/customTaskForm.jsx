@@ -4,7 +4,7 @@ import * as ReactHookForm from "react-hook-form";
 import {Button} from "../ui/button";
 import * as React from "react";
 import dayjs from "dayjs";
-import {LocalizationProvider, AdapterDayjs, DateTimePicker} from "@mui/x-date-pickers";
+import {LocalizationProvider, DateTimePicker} from "@mui/x-date-pickers";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "../ui/form";
 import {Input} from "../ui/input";
 import {
@@ -19,6 +19,7 @@ import {
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
 import {MdArrowBack, MdCheckCircle, MdError} from "react-icons/md";
 import {useRouter} from "next/navigation";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 
 const CustomTaskForm = () => {
     const [submitStatus, setSubmitStatus] = React.useState(null);
@@ -57,6 +58,15 @@ const CustomTaskForm = () => {
 
             if (!sendNotification.ok) throw new Error(`Failed to send notification: ${sendNotification.status} ${sendNotification.statusText}`);
 
+            const sendToNotificationTab = await fetch(`/api/notificationTabSend/?who=${data.role}`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    title: "Task Created",
+                    message: `Task "${data.taskTitle}" has been created`
+                }),
+            });
+            if (!sendToNotificationTab.ok) throw new Error(`Failed to send notification to notification tab: ${sendToNotificationTab.status} ${sendToNotificationTab.statusText}`);
             setSubmitStatus("success");
             form.reset();
         } catch (error) {

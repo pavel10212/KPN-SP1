@@ -84,7 +84,7 @@ const TaskAdmin = ({tasks}) => {
 
     const sendNotificationToTab = async task => {
         try {
-            const response = await fetch("/api/notificationCoHostMaid", {
+            const response = await fetch(`/api/notificationTabSend/?who=CoHostMaid`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({

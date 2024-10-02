@@ -10,7 +10,13 @@ export async function GET() {
         where: {userId, role: userRole},
         orderBy: {createdAt: 'desc'},
         take: 5,
-        select: {id, title, message, createdAt, isRead}
+        select: {
+            id: true,
+            title: true,
+            message: true,
+            createdAt: true,
+            isRead: true
+        }
     })
 
     if (!notifications) {

@@ -6,13 +6,26 @@ import {findUserById} from "@/lib/utils";
 export async function POST(req) {
     try {
         const {title, message} = await req.json();
+        const who = new URL(req.url).searchParams.get('who');
+
         const session = await auth();
         const currentUser = await findUserById(session.user.id);
+
+        const roleMap = {
+            "CoHostMaid": ["Co-Host", "Maid"],
+            "Driver": ["Driver"],
+            "Maintenance": ["Maintenance"]
+        };
+
+        const targetRoles = roleMap[who];
+        if (!targetRoles) {
+            return NextResponse.json({error: "Invalid target"}, {status: 400});
+        }
 
         const teamUsers = await prisma.user.findMany({
             where: {
                 teamId: currentUser.teamId,
-                role: {in: ["Maid", "Co-Host"]},
+                role: {in: targetRoles},
                 id: {not: currentUser.id}
             }
         });

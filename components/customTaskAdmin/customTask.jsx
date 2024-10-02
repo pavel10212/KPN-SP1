@@ -47,6 +47,16 @@ const CustomTask = ({tasks, isAdmin}) => {
 
             const {task: updatedTask} = await response.json();
             updateRowData(isAdmin ? {...updatedTask, date: dayjs(updatedTask.date)} : updatedTask);
+
+            const notification = await fetch(`/api/notificationTabSend/?who=${updatedTask.role}`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    title: "Task Updated",
+                    message: `Task "${updatedTask.taskTitle}" has been updated`
+                }),
+            });
+            if (!notification.ok) throw new Error("Failed to send notification");
             handleCloseDialog();
             toast.success("Task updated successfully");
         } catch (error) {
