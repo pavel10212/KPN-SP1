@@ -84,7 +84,7 @@ const Task = async () => {
 
   return (
     <div>
-      <div className="p-0 sm:p-6">{renderContent()}</div>
+      <div className="p-3 sm:p-6">{renderContent()}</div>
     </div>
   );
 };

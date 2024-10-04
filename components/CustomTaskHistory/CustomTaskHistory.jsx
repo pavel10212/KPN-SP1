@@ -55,7 +55,7 @@ const CustomTaskHistory = () => {
   return (
     <div
       className="bg-white p-5 rounded-xl mt-1 relative"
-      style={{ height: 720, width: "100%" }}
+      style={{ height: 620, width: "100%" }}
     >
       <h2 className="text-2xl font-semibold mb-4">History</h2>
       <button
@@ -68,7 +68,7 @@ const CustomTaskHistory = () => {
         rows={tasks}
         columns={columns}
         pageSize={5}
-        style={{ height: 631, width: "100%" }}
+        style={{ height: 530, width: "100%" }}
         autoPageSize
         rowsPerPageOptions={[5, 10, 20]}
         disableSelectionOnClick

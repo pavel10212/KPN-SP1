@@ -14,7 +14,7 @@ import {
 } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { FiSend, FiUsers, FiMenu, FiX } from "react-icons/fi";
+import { FiSend, FiUsers, FiChevronDown } from "react-icons/fi";
 
 const ChatApp = () => {
   const [messages, setMessages] = useState([]);
@@ -23,7 +23,6 @@ const ChatApp = () => {
   const [newMessage, setNewMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { data: session } = useSession();
   const messagesEndRef = useRef(null);
 
@@ -138,26 +137,11 @@ const ChatApp = () => {
     setIsLoading(false);
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
   if (error) return <ErrorDisplay error={error} />;
   if (isLoading) return <LoadingDisplay />;
 
   return (
-    <div className="flex h-full bg-gray-100 relative">
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black opacity-50 z-20"
-          onClick={toggleSidebar}
-        ></div>
-      )}
-      <Sidebar
-        teamMembers={teamMembers}
-        isOpen={isSidebarOpen}
-        toggleSidebar={toggleSidebar}
-      />
+    <div className="flex h-full bg-gray-100">
       <MainChatArea
         user={user}
         messages={messages}
@@ -166,53 +150,10 @@ const ChatApp = () => {
         setNewMessage={setNewMessage}
         handleSubmit={handleSubmit}
         messagesEndRef={messagesEndRef}
-        toggleSidebar={toggleSidebar}
       />
     </div>
   );
 };
-
-const Sidebar = ({ teamMembers, isOpen, toggleSidebar }) => (
-  <div
-    className={`fixed inset-y-0 left-0 z-30 w-54 bg-indigo-800 text-white p-4 transform transition-transform duration-300 ease-in-out ${
-      isOpen ? "translate-x-0" : "-translate-x-full"
-    } lg:relative lg:translate-x-0`}
-  >
-    <button
-      onClick={toggleSidebar}
-      className="lg:hidden absolute top-4 right-4"
-    >
-      <FiX className="text-white text-2xl" />
-    </button>
-    <h2 className="text-lg font-bold mb-4 flex items-center">
-      <FiUsers className="mr-2" /> Team Members
-    </h2>
-    <ul
-      className="space-y-2 overflow-y-auto"
-      style={{ maxHeight: "calc(100vh - 100px)" }}
-    >
-      {teamMembers.map((member) => (
-        <TeamMemberItem key={member.id} member={member} />
-      ))}
-    </ul>
-  </div>
-);
-
-const TeamMemberItem = ({ member }) => (
-  <li className="flex items-center p-2 hover:bg-indigo-700 rounded-lg transition-colors duration-200">
-    <Image
-      src={member.image || "/noavatar.png"}
-      alt={member.name || member.email}
-      width={32}
-      height={32}
-      className="rounded-full mr-2"
-    />
-    <div className="flex flex-col">
-      <span className="font-semibold text-sm">{member.name}</span>
-      <span className="text-sm">{member.email}</span>
-    </div>
-  </li>
-);
 
 const MainChatArea = ({
   user,
@@ -222,13 +163,12 @@ const MainChatArea = ({
   setNewMessage,
   handleSubmit,
   messagesEndRef,
-  toggleSidebar,
 }) => (
   <div
     className="flex-1 flex flex-col h-screen"
     style={{ maxHeight: "calc(100vh - 150px)" }}
   >
-    <Header user={user} toggleSidebar={toggleSidebar} />
+    <Header user={user} teamMembers={teamMembers} />
     <MessageList
       messages={messages}
       user={user}
@@ -244,14 +184,12 @@ const MainChatArea = ({
   </div>
 );
 
-const Header = ({ user, toggleSidebar }) => (
+const Header = ({ user, teamMembers }) => (
   <header className="bg-indigo-700 text-white p-4 shadow-md">
     <div className="flex justify-between items-center">
       <div className="flex items-center">
-        <button onClick={toggleSidebar} className="mr-4 lg:hidden">
-          <FiMenu className="text-white text-2xl" />
-        </button>
-        <h1 className="text-xl font-bold">Team Chat</h1>
+        <TeamMembersDropdown teamMembers={teamMembers} />
+        <h1 className="text-xl font-bold ml-4">Team Chat</h1>
       </div>
       <h2 className="text-l font-semibold hidden sm:block">
         {user?.team?.name}
@@ -259,6 +197,78 @@ const Header = ({ user, toggleSidebar }) => (
       {user && <UserInfo user={user} />}
     </div>
   </header>
+);
+
+const TeamMembersDropdown = ({ teamMembers }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <div className="relative inline-block text-left" ref={dropdownRef}>
+      <button
+        type="button"
+        className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-indigo-600 text-white hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-indigo-700 focus:ring-white"
+        id="options-menu"
+        aria-haspopup="true"
+        aria-expanded="true"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <FiChevronDown
+          className={`w-5 h-5 transition-transform duration-200 ${
+            isOpen ? "transform rotate-180" : ""
+          }`}
+        />
+      </button>
+
+      {isOpen && (
+        <div className="origin-top-right absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+          <div
+            className="py-1 max-h-96 overflow-y-auto"
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby="options-menu"
+          >
+            <div className="px-4 py-2 text-sm text-gray-700 font-semibold border-b border-gray-200">
+              <FiUsers className="inline mr-2" />
+              Team Members
+            </div>
+            {teamMembers.map((member) => (
+              <TeamMemberItem key={member.id} member={member} />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const TeamMemberItem = ({ member }) => (
+  <div className="px-4 py-2 hover:bg-gray-100 flex items-center">
+    <Image
+      src={member.image || "/noavatar.png"}
+      alt={member.name || member.email}
+      width={32}
+      height={32}
+      className="rounded-full mr-2"
+    />
+    <div className="flex flex-col">
+      <span className="font-semibold text-sm text-gray-700">{member.name}</span>
+      <span className="text-xs text-gray-500">{member.email}</span>
+    </div>
+  </div>
 );
 
 const UserInfo = ({ user }) => (

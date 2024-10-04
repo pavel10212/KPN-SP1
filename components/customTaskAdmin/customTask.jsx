@@ -12,6 +12,7 @@ import {
   MenuItem,
   Select,
   TextField,
+  Box,
 } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
@@ -69,12 +70,15 @@ const CustomTask = ({ tasks, isAdmin }) => {
       });
 
       if (
-        (updatedTask.role === "Maintenance" && updatedTask.status === "Completed") ||
+        (updatedTask.role === "Maintenance" &&
+          updatedTask.status === "Completed") ||
         (updatedTask.role === "Driver" && updatedTask.status === "Dropped Off")
       ) {
         await sendNotification("admin", {
           title: "Task Completed",
-          message: `${updatedTask.role} task "${updatedTask.taskTitle}" has been ${updatedTask.status.toLowerCase()}`,
+          message: `${updatedTask.role} task "${
+            updatedTask.taskTitle
+          }" has been ${updatedTask.status.toLowerCase()}`,
         });
       }
 
@@ -97,12 +101,12 @@ const CustomTask = ({ tasks, isAdmin }) => {
         }
       );
 
-      if (!notification.ok) throw new Error(`Failed to send notification to ${target}`);
+      if (!notification.ok)
+        throw new Error(`Failed to send notification to ${target}`);
     } catch (error) {
       console.error(`Error sending notification to ${target}:`, error);
     }
   };
-
 
   const updateRowData = (updatedTask) => {
     setRows((prevRows) =>
@@ -224,106 +228,162 @@ const CustomTask = ({ tasks, isAdmin }) => {
           className="border-none"
         />
       </div>
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>{isAdmin ? "Edit Task" : "Update Status"}</DialogTitle>
-        <DialogContent>
-          {isAdmin && (
-            <>
-              <TextField
-                margin="dense"
-                label="Task Title"
-                type="text"
-                fullWidth
-                value={selectedTask?.taskTitle || ""}
-                onChange={(e) => handleInputChange("taskTitle", e.target.value)}
-              />
-              <TextField
-                margin="dense"
-                label="Location"
-                type="text"
-                fullWidth
-                value={selectedTask?.location || ""}
-                onChange={(e) => handleInputChange("location", e.target.value)}
-              />
-              <TextField
-                margin="dense"
-                label="Phone Number"
-                type="text"
-                fullWidth
-                value={selectedTask?.guestPhone || ""}
-                onChange={(e) =>
-                  handleInputChange("guestPhone", e.target.value)
-                }
-              />
-              <TextField
-                margin="dense"
-                label="Description"
-                type="text"
-                fullWidth
-                multiline
-                rows={4}
-                value={selectedTask?.taskDescription || ""}
-                onChange={(e) =>
-                  handleInputChange("taskDescription", e.target.value)
-                }
-              />
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DateTimePicker
-                  label="Date & Time"
-                  value={selectedTask?.date}
-                  onChange={(newValue) => handleInputChange("date", newValue)}
-                  renderInput={(props) => (
-                    <TextField {...props} margin="dense" fullWidth />
-                  )}
-                />
-              </LocalizationProvider>
-            </>
-          )}
-          <Select
-            margin="dense"
-            fullWidth
-            value={selectedTask?.status || ""}
-            onChange={(e) => handleInputChange("status", e.target.value)}
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle
+          sx={{
+            backgroundColor: "#f3f4f6",
+            padding: "16px 24px",
+            borderBottom: "1px solid #e5e7eb",
+          }}
+        >
+          {isAdmin ? "Edit Task" : "Update Status"}
+        </DialogTitle>
+        <DialogContent sx={{ padding: "16px 24px", paddingTop: "16px" }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "16px",
+              marginTop: "8px",
+            }}
           >
-            <MenuItem value="">Select Status</MenuItem>
-            {selectedTask?.role === "Driver"
-              ? ["Assigned", "Picked Up", "Dropped Off"].map((status) => (
-                <MenuItem key={status} value={status}>
-                  {status}
-                </MenuItem>
-              ))
-              : selectedTask?.role === "Maintenance"
+            {isAdmin && (
+              <>
+                <TextField
+                  label="Task Title"
+                  fullWidth
+                  variant="outlined"
+                  value={selectedTask?.taskTitle || ""}
+                  onChange={(e) =>
+                    handleInputChange("taskTitle", e.target.value)
+                  }
+                />
+                <TextField
+                  label="Location"
+                  fullWidth
+                  variant="outlined"
+                  value={selectedTask?.location || ""}
+                  onChange={(e) =>
+                    handleInputChange("location", e.target.value)
+                  }
+                />
+                <TextField
+                  label="Phone Number"
+                  fullWidth
+                  variant="outlined"
+                  value={selectedTask?.guestPhone || ""}
+                  onChange={(e) =>
+                    handleInputChange("guestPhone", e.target.value)
+                  }
+                />
+                <TextField
+                  label="Description"
+                  fullWidth
+                  variant="outlined"
+                  multiline
+                  rows={4}
+                  value={selectedTask?.taskDescription || ""}
+                  onChange={(e) =>
+                    handleInputChange("taskDescription", e.target.value)
+                  }
+                />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DateTimePicker
+                    label="Date & Time"
+                    value={selectedTask?.date}
+                    onChange={(newValue) => handleInputChange("date", newValue)}
+                    renderInput={(props) => (
+                      <TextField {...props} fullWidth variant="outlined" />
+                    )}
+                  />
+                </LocalizationProvider>
+              </>
+            )}
+            <TextField
+              select
+              label="Status"
+              fullWidth
+              variant="outlined"
+              value={selectedTask?.status || ""}
+              onChange={(e) => handleInputChange("status", e.target.value)}
+            >
+              <MenuItem value="">Select Status</MenuItem>
+              {selectedTask?.role === "Driver"
+                ? ["Assigned", "Picked Up", "Dropped Off"].map((status) => (
+                    <MenuItem key={status} value={status}>
+                      {status}
+                    </MenuItem>
+                  ))
+                : selectedTask?.role === "Maintenance"
                 ? ["Assigned", "In Progress", "Completed"].map((status) => (
-                  <MenuItem key={status} value={status}>
-                    {status}
-                  </MenuItem>
-                ))
+                    <MenuItem key={status} value={status}>
+                      {status}
+                    </MenuItem>
+                  ))
                 : null}
-          </Select>
+            </TextField>
+          </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
+        <DialogActions
+          sx={{ padding: "16px 24px", backgroundColor: "#f3f4f6" }}
+        >
+          <Button onClick={handleCloseDialog} sx={{ color: "#6B7280" }}>
+            Cancel
+          </Button>
           <Button
             onClick={handleSaveChanges}
             variant="contained"
-            color="primary"
+            sx={{
+              backgroundColor: "#4F46E5",
+              "&:hover": { backgroundColor: "#4338CA" },
+            }}
           >
             Save
           </Button>
         </DialogActions>
       </Dialog>
+
       {isAdmin && (
         <Dialog
           open={deleteConfirmOpen}
           onClose={() => setDeleteConfirmOpen(false)}
+          maxWidth="sm"
+          fullWidth
         >
-          <DialogTitle>Confirm Delete</DialogTitle>
-          <DialogContent>
+          <DialogTitle
+            sx={{
+              backgroundColor: "#f3f4f6",
+              padding: "16px 24px",
+              borderBottom: "1px solid #e5e7eb",
+            }}
+          >
+            Delete Task
+          </DialogTitle>
+          <DialogContent sx={{ padding: "16px 24px", paddingTop: "16px" }}>
             Are you sure you want to delete this task?
           </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setDeleteConfirmOpen(false)}>Cancel</Button>
-            <Button onClick={handleDeleteTask} color="error">
+          <DialogActions
+            sx={{ padding: "16px 24px", backgroundColor: "#f3f4f6" }}
+          >
+            <Button
+              onClick={() => setDeleteConfirmOpen(false)}
+              sx={{ color: "#6B7280" }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleDeleteTask}
+              variant="contained"
+              sx={{
+                backgroundColor: "#4F46E5",
+                "&:hover": { backgroundColor: "#4338CA" },
+              }}
+            >
               Delete
             </Button>
           </DialogActions>
