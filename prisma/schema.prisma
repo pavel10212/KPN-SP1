@@ -12,7 +12,6 @@ model Team {
   name         String
   users        User[]
   bookings     Booking[]
-  chatEngineId String?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   api_key      String?
@@ -72,7 +71,6 @@ model User {
   image              String?
   hashedPassword     String?
   accounts           Account[]
-  chatEnginePassword String?
   sessions           Session[]
   teamId             String         @db.ObjectId
   team               Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)

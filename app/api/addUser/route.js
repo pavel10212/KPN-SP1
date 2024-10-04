@@ -3,8 +3,6 @@ import prisma from "../prismaClient";
 import { hash } from "bcrypt";
 import { registerSchema } from "@/lib/zod";
 import crypto from "crypto";
-import { database } from "@/lib/firebase/firebaseConfig";
-import { doc, setDoc } from "firebase/firestore";
 
 export async function POST(req) {
   console.log("POST request received");
@@ -61,7 +59,6 @@ export async function POST(req) {
 
     console.log("Hashing password");
     const hashedPassword = await hash(password, 10);
-    const chatEngineSecret = crypto.randomBytes(16).toString("hex");
 
     console.log("Creating user in database");
     const newUser = await prisma.user.create({
@@ -70,7 +67,6 @@ export async function POST(req) {
         email,
         hashedPassword,
         role,
-        chatEnginePassword: chatEngineSecret,
         team: { connect: { id: teamId } },
       },
       include: { team: true },
@@ -78,24 +74,6 @@ export async function POST(req) {
       console.error("Error creating user in database:", error);
       throw error;
     });
-
-    console.log(`New user created and added to team ${newUser.team.name} (ID: ${teamId})`);
-
-    try {
-      const userRef = doc(database, "users", newUser.id);
-      await setDoc(userRef, {
-        userId: newUser.id,
-        email,
-        name,
-        role,
-        teamId,
-        teamName: newUser.team.name,
-      });
-      console.log("User added to Firestore successfully");
-    } catch (error) {
-      console.error("Error adding user to Firestore:", error);
-    }
-
 
     console.log("User creation process completed");
     return NextResponse.json(

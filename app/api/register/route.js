@@ -4,8 +4,6 @@ import { hash } from "bcrypt";
 import { z } from "zod";
 import { registerSchema } from "@/lib/zod";
 import crypto from "crypto";
-import { database } from "@/lib/firebase/firebaseConfig";
-import { doc, setDoc } from "firebase/firestore";
 
 export async function POST(req) {
   try {
@@ -22,7 +20,6 @@ export async function POST(req) {
     }
 
     const hashedPassword = await hash(password, 10);
-    const chatEngineSecret = crypto.randomBytes(16).toString("hex");
 
     let team;
     let user;
@@ -43,7 +40,6 @@ export async function POST(req) {
             email,
             hashedPassword,
             teamId: team.id,
-            chatEnginePassword: chatEngineSecret,
           },
           include: { team: true },
         });
@@ -62,24 +58,6 @@ export async function POST(req) {
     }
 
     console.log("User and team created successfully");
-
-    try {
-      const docRef = doc(database, "users", user.id);
-      await setDoc(docRef, {
-        userId: user.id,
-        email,
-        name,
-        role: user.role,
-        team: {
-          id: team.id,
-          name: team.name,
-          messages: [],
-        },
-      });
-      console.log("User and team added to Firestore successfully");
-    } catch (error) {
-      console.error("Error adding user and team to Firestore:", error);
-    }
 
     return NextResponse.json(
       {
