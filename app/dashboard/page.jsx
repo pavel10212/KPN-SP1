@@ -4,7 +4,6 @@ import Card from "../../components/dashboard/card/card";
 import BookingToday from "../../components/dashboard/bookingToday/bookingToday";
 import { pullCustomBookings, pullFromDatabase } from "@/lib/actions";
 import prisma from "../api/prismaClient";
-import DriverMaintenanceTasks from "@/components/driverMaintenanceTasks/driverMaintenanceTasks";
 import { findUserById } from "@/lib/utils";
 
 export default async function Dashboard() {
@@ -13,9 +12,25 @@ export default async function Dashboard() {
 
   const teamMember = await findUserById(session.user.id);
   const teamId = teamMember.teamId;
+
+  if (["Driver", "Maintenance"].includes(teamMember.role)) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+        <h1 className="text-3xl font-bold text-gray-800 mb-4">Welcome, {teamMember.role}!</h1>
+        <p className="text-xl text-gray-600 mb-8">Please proceed to your tasks.</p>
+        <a
+          href="/dashboard/task"
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300"
+        >
+          Go to Tasks
+        </a>
+      </div>
+    );
+  }
+
   const teamCount = await prisma.user.findMany({ where: { teamId } });
 
-  const [check_ins, check_outs, userTasks] = await Promise.all([
+  const [check_ins, check_outs] = await Promise.all([
     pullFromDatabase(teamId, "firstNight"),
     pullFromDatabase(teamId, "lastNight"),
     pullCustomBookings(teamMember.role),
@@ -75,14 +90,6 @@ export default async function Dashboard() {
             checkInOrOut="Upcoming Check-outs"
             excludeField="firstNight"
           />
-        </div>
-      </div>
-    );
-  } else if (["Driver", "Maintenance"].includes(teamMember.role)) {
-    return (
-      <div className="p-0 sm:p-6">
-        <div className="space-y-6">
-          <DriverMaintenanceTasks user={teamMember} userTasks={userTasks} />
         </div>
       </div>
     );
