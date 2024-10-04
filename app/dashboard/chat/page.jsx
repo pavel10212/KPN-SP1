@@ -208,7 +208,7 @@ const TeamMemberItem = ({ member }) => (
       className="rounded-full mr-2"
     />
     <div className="flex flex-col">
-      <span className="font-semibold">{member.name}</span>
+      <span className="font-semibold text-sm">{member.name}</span>
       <span className="text-sm">{member.email}</span>
     </div>
   </li>
