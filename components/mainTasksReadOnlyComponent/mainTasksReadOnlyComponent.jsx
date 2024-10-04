@@ -28,13 +28,17 @@ const MainTasks = ({ tasks }) => {
         firstNight: task.firstNight ? dayjs(task.firstNight) : null,
         lastNight: task.lastNight ? dayjs(task.lastNight) : null,
       }))
-      .filter((task) => task.firstNight && task.firstNight.isAfter(dayjs().subtract(5, 'day')))
       .sort((a, b) => a.firstNight.diff(b.firstNight));
     setRows(sortedRows);
   }, [tasks]);
 
+  const isEditableTask = (taskDate) => {
+    const now = dayjs();
+    return taskDate.isAfter(now.subtract(5, 'day')) && taskDate.isBefore(now.add(1, 'day'));
+  };
+
   const handleOpenDialog = (task) => {
-    if (dayjs(task.firstNight).isAfter(dayjs())) return;
+    if (!isEditableTask(dayjs(task.firstNight))) return;
     setSelectedTask({ ...task });
     setOpenDialog(true);
   };
@@ -110,9 +114,9 @@ const MainTasks = ({ tasks }) => {
       flex: 0.7,
       minWidth: 100,
       renderCell: (params) => {
-        const canEdit = !dayjs(params.row.firstNight).isAfter(dayjs());
+        const canEdit = isEditableTask(dayjs(params.row.firstNight));
         return (
-          <Tooltip title={canEdit ? "Edit" : "Cannot edit future tasks"}>
+          <Tooltip title={canEdit ? "Edit" : "Cannot edit tasks outside of 5 days before and 1 day ahead"}>
             <span>
               <IconButton onClick={() => handleOpenDialog(params.row)} disabled={!canEdit}>
                 <EditIcon />
