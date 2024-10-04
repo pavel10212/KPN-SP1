@@ -19,6 +19,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
 
 const TaskAdmin = ({ tasks }) => {
   const statusOptions = [
@@ -42,6 +43,7 @@ const TaskAdmin = ({ tasks }) => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     const sortedRows = tasks
@@ -147,6 +149,13 @@ const TaskAdmin = ({ tasks }) => {
       )
     );
   }, []);
+
+  const handleCreateDriverTask = () => {
+    if (selectedTask) {
+      const endcodedTask = encodeURIComponent(JSON.stringify(selectedTask));
+      router.push(`/dashboard/task/addTask?prefill=${endcodedTask}`);
+    }
+  }
 
   const handleInputChange = (field, value) => {
     setSelectedTask((prev) => {
@@ -375,6 +384,9 @@ const TaskAdmin = ({ tasks }) => {
             }}
           >
             Save
+          </Button>
+          <Button sx={{ color: "#4338CA" }} onClick={handleCreateDriverTask}>
+            Create a driver task
           </Button>
         </DialogActions>
       </Dialog>

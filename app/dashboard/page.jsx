@@ -8,7 +8,6 @@ import { findUserById } from "@/lib/utils";
 
 export default async function Dashboard() {
   const session = await auth();
-  if (!session) redirect("/login");
 
   const teamMember = await findUserById(session.user.id);
   const teamId = teamMember.teamId;

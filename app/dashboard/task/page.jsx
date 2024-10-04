@@ -26,6 +26,7 @@ const Task = async () => {
       updatedAt: true,
       customNotes: true,
       status: true,
+      guestPhone: true,
     },
   });
 
