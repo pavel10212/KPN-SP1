@@ -171,6 +171,13 @@ const CustomTask = ({ tasks, isAdmin }) => {
       minWidth: 150,
       renderCell: (params) => formatDate(params.row.date),
     },
+    {
+      field: "updatedAt",
+      headerName: "Last Updated",
+      flex: 1,
+      minWidth: 150,
+      renderCell: (params) => formatDate(params.row.updatedAt),
+    },
     { field: "status", headerName: "Status", flex: 0.8, minWidth: 100 },
     {
       field: "actions",

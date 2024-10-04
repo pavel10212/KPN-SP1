@@ -134,15 +134,15 @@ const TaskAdmin = ({ tasks }) => {
       prevRows.map((row) =>
         row.id === updatedTask.id
           ? {
-              ...row,
-              ...updatedTask,
-              firstNight: updatedTask.firstNight
-                ? dayjs(updatedTask.firstNight)
-                : null,
-              lastNight: updatedTask.lastNight
-                ? dayjs(updatedTask.lastNight)
-                : null,
-            }
+            ...row,
+            ...updatedTask,
+            firstNight: updatedTask.firstNight
+              ? dayjs(updatedTask.firstNight)
+              : null,
+            lastNight: updatedTask.lastNight
+              ? dayjs(updatedTask.lastNight)
+              : null,
+          }
           : row
       )
     );
@@ -207,6 +207,13 @@ const TaskAdmin = ({ tasks }) => {
       flex: 1,
       minWidth: 150,
       renderCell: (params) => formatDate(params.row.lastNight),
+    },
+    {
+      field: "updatedAt",
+      headerName: "Updated At",
+      flex: 1,
+      minWidth: 150,
+      renderCell: (params) => formatDate(params.row.updatedAt)
     },
     { field: "customNotes", headerName: "Notes", flex: 1, minWidth: 150 },
     { field: "status", headerName: "Status", flex: 0.8, minWidth: 100 },

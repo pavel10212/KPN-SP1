@@ -13,7 +13,7 @@ model Team {
   users        User[]
   bookings     Booking[]
   createdAt    DateTime  @default(now())
-  updatedAt    DateTime?  @updatedAt
+  updatedAt    DateTime?
   api_key      String?
   prop_key     String?
 }
@@ -26,7 +26,7 @@ model CustomTask {
   guestPhone      String?
   location        String?
   date            DateTime
-  updatedAt       DateTime? @updatedAt
+  updatedAt       DateTime?
   taskDescription String?
   status          String
   role            String
@@ -47,7 +47,7 @@ model Booking {
   cleanStatus    String?  @default("To Clean")
   teamId         String   @db.ObjectId
   customNotes    String?
-  updatedAt      DateTime? @updatedAt
+  updatedAt      DateTime?
   status         String?  @default("To Arrive")
   team           Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
 }
