@@ -13,7 +13,7 @@ model Team {
   users        User[]
   bookings     Booking[]
   createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  updatedAt    DateTime?  @updatedAt
   api_key      String?
   prop_key     String?
 }
@@ -26,6 +26,7 @@ model CustomTask {
   guestPhone      String?
   location        String?
   date            DateTime
+  updatedAt       DateTime? @updatedAt
   taskDescription String?
   status          String
   role            String
@@ -46,6 +47,7 @@ model Booking {
   cleanStatus    String?  @default("To Clean")
   teamId         String   @db.ObjectId
   customNotes    String?
+  updatedAt      DateTime? @updatedAt
   status         String?  @default("To Arrive")
   team           Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
 }
@@ -59,7 +61,7 @@ model Notification {
   title     String
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime? @updatedAt
 }
 
 model User {
@@ -75,7 +77,7 @@ model User {
   teamId             String         @db.ObjectId
   team               Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
   createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
+  updatedAt          DateTime?       @updatedAt
   FCMpreferences     Boolean?       @default(false)
   FCMToken           String?        @unique
   Notification       Notification[]
@@ -95,7 +97,7 @@ model Account {
   id_token          String?  @db.String
   session_state     String?
   createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  updatedAt         DateTime? @updatedAt
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])

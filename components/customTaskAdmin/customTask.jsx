@@ -63,18 +63,21 @@ const CustomTask = ({ tasks, isAdmin }) => {
           : updatedTask
       );
 
-      const notification = await fetch(
-        `/api/notificationTabSend/?who=${updatedTask.role}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            title: "Task Updated",
-            message: `Task "${updatedTask.taskTitle}" has been updated`,
-          }),
-        }
-      );
-      if (!notification.ok) throw new Error("Failed to send notification");
+      await sendNotification(updatedTask.role, {
+        title: "Task Updated",
+        message: `Task "${updatedTask.taskTitle}" has been updated`,
+      });
+
+      if (
+        (updatedTask.role === "Maintenance" && updatedTask.status === "Completed") ||
+        (updatedTask.role === "Driver" && updatedTask.status === "Dropped Off")
+      ) {
+        await sendNotification("admin", {
+          title: "Task Completed",
+          message: `${updatedTask.role} task "${updatedTask.taskTitle}" has been ${updatedTask.status.toLowerCase()}`,
+        });
+      }
+
       handleCloseDialog();
       toast.success("Task updated successfully");
     } catch (error) {
@@ -82,6 +85,24 @@ const CustomTask = ({ tasks, isAdmin }) => {
       toast.error("Failed to update task");
     }
   };
+
+  const sendNotification = async (target, { title, message }) => {
+    try {
+      const notification = await fetch(
+        `/api/notificationTabSend/?who=${target}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, message }),
+        }
+      );
+
+      if (!notification.ok) throw new Error(`Failed to send notification to ${target}`);
+    } catch (error) {
+      console.error(`Error sending notification to ${target}:`, error);
+    }
+  };
+
 
   const updateRowData = (updatedTask) => {
     setRows((prevRows) =>
