@@ -101,7 +101,7 @@ const TaskSection = ({ title, children, addTask, isAdminOrCoHost }) => (
             </Button>
           </Link>
           {isAdminOrCoHost && (
-            <Link href="/dashboard/task/CustomTaskHistory">
+            <Link href="/dashboard/task/Task-History">
               <Button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-1 sm:py-2 px-2 sm:px-4 text-xs sm:text-base rounded-lg flex items-center transition duration-300">
                 <MdHistory className="mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">Custom Task History</span>
