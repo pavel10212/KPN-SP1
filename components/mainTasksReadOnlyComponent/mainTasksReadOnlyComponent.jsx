@@ -28,10 +28,7 @@ const MainTasks = ({ tasks }) => {
         firstNight: task.firstNight ? dayjs(task.firstNight) : null,
         lastNight: task.lastNight ? dayjs(task.lastNight) : null,
       }))
-      .filter(
-        (task) =>
-          task.firstNight && task.firstNight.isAfter(dayjs().subtract(5, "day"))
-      )
+      .filter((task) => task.firstNight && task.firstNight.isAfter(dayjs().subtract(5, 'day')))
       .sort((a, b) => a.firstNight.diff(b.firstNight));
     setRows(sortedRows);
   }, [tasks]);
@@ -62,11 +59,11 @@ const MainTasks = ({ tasks }) => {
         prevRows.map((row) =>
           row.id === updatedTask.booking.id
             ? {
-                ...row,
-                ...updatedTask.booking,
-                firstNight: dayjs(updatedTask.booking.firstNight),
-                lastNight: dayjs(updatedTask.booking.lastNight),
-              }
+              ...row,
+              ...updatedTask.booking,
+              firstNight: dayjs(updatedTask.booking.firstNight),
+              lastNight: dayjs(updatedTask.booking.lastNight),
+            }
             : row
         )
       );
@@ -84,17 +81,11 @@ const MainTasks = ({ tasks }) => {
     }));
   };
 
-  const formatDate = (date) =>
-    date ? dayjs(date).format("DD-MM-YYYY HH:mm") : "";
+  const formatDate = (date) => (date ? dayjs(date).format("DD-MM-YYYY HH:mm") : "");
 
   const columns = [
     { field: "roomId", headerName: "Room", flex: 0.5, minWidth: 70 },
-    {
-      field: "guestFirstName",
-      headerName: "First Name",
-      flex: 1,
-      minWidth: 120,
-    },
+    { field: "guestFirstName", headerName: "First Name", flex: 1, minWidth: 120 },
     { field: "guestName", headerName: "Last Name", flex: 1, minWidth: 120 },
     {
       field: "firstNight",
@@ -112,12 +103,7 @@ const MainTasks = ({ tasks }) => {
     },
     { field: "customNotes", headerName: "Notes", flex: 1, minWidth: 150 },
     { field: "status", headerName: "Status", flex: 0.8, minWidth: 100 },
-    {
-      field: "cleanStatus",
-      headerName: "Clean Status",
-      flex: 0.8,
-      minWidth: 100,
-    },
+    { field: "cleanStatus", headerName: "Clean Status", flex: 0.8, minWidth: 100 },
     {
       field: "actions",
       headerName: "Actions",
@@ -128,10 +114,7 @@ const MainTasks = ({ tasks }) => {
         return (
           <Tooltip title={canEdit ? "Edit" : "Cannot edit future tasks"}>
             <span>
-              <IconButton
-                onClick={() => handleOpenDialog(params.row)}
-                disabled={!canEdit}
-              >
+              <IconButton onClick={() => handleOpenDialog(params.row)} disabled={!canEdit}>
                 <EditIcon />
               </IconButton>
             </span>
