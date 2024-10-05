@@ -49,7 +49,7 @@ const Navbar = ({ className }) => {
             </h1>
           </div>
           <div className="flex items-center">
-            <div className="text-sm text-gray-600 mr-4">
+            <div className="text-xs sm:text-sm text-gray-600 mr-4">
               {formatDate(currentDate)}
             </div>
             <Notification />

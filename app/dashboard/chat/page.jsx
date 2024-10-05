@@ -18,7 +18,12 @@ import MessageList from "@/components/Chat/MessageList";
 import MessageInput from "@/components/Chat/MessageInput";
 import ErrorDisplay from "@/components/Chat/ErrorDisplay";
 import LoadingDisplay from "@/components/Chat/LoadingDisplay";
-import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 import { storage } from "@/lib/firebase/firebaseConfig";
 
 const ChatApp = () => {
@@ -131,7 +136,7 @@ const ChatApp = () => {
     await uploadBytes(storageRef, file);
     const imageUrl = await getDownloadURL(storageRef);
     return { imageUrl, storageRef };
-  }
+  };
 
   const handleError = (message, error) => {
     console.error(message, error);
@@ -146,7 +151,7 @@ const ChatApp = () => {
     <div className="flex h-full bg-gray-100">
       <div
         className="flex-1 flex flex-col h-screen"
-        style={{ maxHeight: "calc(100vh - 150px)" }}
+        style={{ maxHeight: "calc(100vh - 137px)" }}
       >
         <Header user={user} teamMembers={teamMembers} />
         <MessageList

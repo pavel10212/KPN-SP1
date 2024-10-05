@@ -33,13 +33,15 @@ const Sidebar = async ({ className }) => {
     {
       title: "Menu",
       list: [
-        ...(user.role !== "Driver" && user.role !== "Maintenance" ? [
-          {
-            title: "Dashboard",
-            path: "/dashboard",
-            icon: <MdDashboard className="text-2xl" />,
-          },
-        ] : []),
+        ...(user.role !== "Driver" && user.role !== "Maintenance"
+          ? [
+              {
+                title: "Dashboard",
+                path: "/dashboard",
+                icon: <MdDashboard className="text-2xl" />,
+              },
+            ]
+          : []),
         {
           title: "Users",
           path: "/dashboard/users",
@@ -57,12 +59,12 @@ const Sidebar = async ({ className }) => {
         },
         ...(user.role !== "Driver" && user.role !== "Maintenance"
           ? [
-            {
-              title: "Bookings",
-              path: "/dashboard/bookings",
-              icon: <MdAttachMoney className="text-2xl" />,
-            },
-          ]
+              {
+                title: "Bookings",
+                path: "/dashboard/bookings",
+                icon: <MdAttachMoney className="text-2xl" />,
+              },
+            ]
           : []),
       ],
     },
@@ -84,7 +86,7 @@ const Sidebar = async ({ className }) => {
   ];
 
   const sidebarContent = (
-    <div className="flex flex-col h-full bg-white shadow-md">
+    <div className="flex flex-col h-full bg-white shadow-md pt-8 lg:pt-2">
       <div className="p-6 flex flex-col items-center border-b border-gray-200">
         <ClientSideImage userId={user.id} userName={user.name} />
         <span className="font-semibold text-gray-800 text-lg">{user.name}</span>
@@ -113,8 +115,7 @@ const Sidebar = async ({ className }) => {
             await signOut({ callbackUrl: "/login" });
           }}
         >
-          <button
-            className="w-full py-2 px-4 bg-red-500 text-white rounded-lg flex items-center justify-center gap-2 hover:bg-red-600 transition duration-300 text-sm">
+          <button className="w-full py-2 px-4 bg-red-500 text-white rounded-lg flex items-center justify-center gap-2 hover:bg-red-600 transition duration-300 text-sm">
             <MdLogout className="text-xl" />
             Logout
           </button>
