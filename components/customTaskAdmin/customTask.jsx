@@ -76,9 +76,8 @@ const CustomTask = ({ tasks, isAdmin }) => {
       ) {
         await sendNotification("admin", {
           title: "Task Completed",
-          message: `${updatedTask.role} task "${
-            updatedTask.taskTitle
-          }" has been ${updatedTask.status.toLowerCase()}`,
+          message: `${updatedTask.role} task "${updatedTask.taskTitle
+            }" has been ${updatedTask.status.toLowerCase()}`,
         });
       }
 
@@ -315,17 +314,17 @@ const CustomTask = ({ tasks, isAdmin }) => {
               <MenuItem value="">Select Status</MenuItem>
               {selectedTask?.role === "Driver"
                 ? ["Assigned", "Picked Up", "Dropped Off"].map((status) => (
-                    <MenuItem key={status} value={status}>
-                      {status}
-                    </MenuItem>
-                  ))
+                  <MenuItem key={status} value={status}>
+                    {status}
+                  </MenuItem>
+                ))
                 : selectedTask?.role === "Maintenance"
-                ? ["Assigned", "In Progress", "Completed"].map((status) => (
+                  ? ["Assigned", "In Progress", "Completed"].map((status) => (
                     <MenuItem key={status} value={status}>
                       {status}
                     </MenuItem>
                   ))
-                : null}
+                  : null}
             </TextField>
           </Box>
         </DialogContent>
