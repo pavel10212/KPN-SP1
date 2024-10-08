@@ -1,5 +1,4 @@
 import * as React from "react";
-import Image from "next/image";
 
 export const EmailTemplate = ({ firstName, role, password, email }) => (
   <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8 font-sans">

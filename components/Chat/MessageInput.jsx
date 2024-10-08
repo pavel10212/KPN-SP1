@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { FiSend, FiImage, FiX } from "react-icons/fi";
 import Image from "next/image";
+import { deleteObject } from "firebase/storage";
 
 const MessageInput = ({ newMessage, setNewMessage, handleSubmit, user, handleImageUpload }) => {
   const [uploadState, setUploadState] = useState({ isUploading: false, previewImage: null, imageStorageRef: null });

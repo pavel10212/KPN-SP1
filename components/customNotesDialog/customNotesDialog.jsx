@@ -21,7 +21,6 @@ const CustomNotesDialog = ({ open, onClose, onSave, initialNotes }) => {
       <DialogTitle>Edit Custom Notes</DialogTitle>
       <DialogContent>
         <TextField
-          autoFocus
           margin="dense"
           label="Custom Notes"
           type="text"
