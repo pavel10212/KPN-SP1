@@ -1,9 +1,21 @@
-import { useState, useRef, useEffect } from 'react';
-import { MdNotifications, MdCheckCircle, MdClose, MdChat } from "react-icons/md";
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
+import { useState, useRef, useEffect } from "react";
+import {
+  MdNotifications,
+  MdCheckCircle,
+  MdClose,
+  MdChat,
+} from "react-icons/md";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import { database } from "@/lib/firebase/firebaseConfig";
-import { collection, query, where, updateDoc, doc, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  updateDoc,
+  doc,
+  onSnapshot,
+} from "firebase/firestore";
 
 dayjs.extend(relativeTime);
 
@@ -19,7 +31,10 @@ const Notification = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target)
+      ) {
         setIsOpen(false);
         setIsMessagesOpen(false);
       }
@@ -32,15 +47,15 @@ const Notification = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await fetch('/api/notification');
+        const response = await fetch("/api/notification");
         if (response.ok) {
           const data = await response.json();
           setNotifications(data);
         } else {
-          console.error('Failed to fetch notifications');
+          console.error("Failed to fetch notifications");
         }
       } catch (error) {
-        console.error('Error fetching notifications:', error);
+        console.error("Error fetching notifications:", error);
       }
     };
     fetchUser();
@@ -61,7 +76,7 @@ const Notification = () => {
     if (isMessagesOpen) {
       setIsMessagesOpen(false);
     }
-  }
+  };
 
   const toggleMessages = () => {
     setIsMessagesOpen(!isMessagesOpen);
@@ -83,20 +98,24 @@ const Notification = () => {
       where("senderId", "!=", user.id)
     );
 
-    const unsub = onSnapshot(unreadMessagesQuery, (snapshot) => {
-      const fetchedMessages = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+    const unsub = onSnapshot(
+      unreadMessagesQuery,
+      (snapshot) => {
+        const fetchedMessages = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
 
-      console.log("Fetched unread messages:", fetchedMessages);
-      setMessages(fetchedMessages);
-      setIsLoading(false);
-    }, (error) => {
-      console.error("Error fetching messages:", error);
-      setError("Failed to load messages: " + error.message);
-      setIsLoading(false);
-    });
+        console.log("Fetched unread messages:", fetchedMessages);
+        setMessages(fetchedMessages);
+        setIsLoading(false);
+      },
+      (error) => {
+        console.error("Error fetching messages:", error);
+        setError("Failed to load messages: " + error.message);
+        setIsLoading(false);
+      }
+    );
 
     return unsub;
   };
@@ -119,22 +138,24 @@ const Notification = () => {
 
   const markAsRead = async (notificationId) => {
     try {
-      const response = await fetch('/api/notification', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/notification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ notificationIds: [notificationId] }),
       });
       if (response.ok) {
-        setNotifications(notifications.map(n =>
-          n.id === notificationId ? { ...n, isRead: true } : n
-        ));
+        setNotifications(
+          notifications.map((n) =>
+            n.id === notificationId ? { ...n, isRead: true } : n
+          )
+        );
       }
     } catch (error) {
-      console.error('Error marking notification as read:', error);
+      console.error("Error marking notification as read:", error);
     }
   };
 
-  const unreadCount = messages.filter(m => !m.isRead).length;
+  const unreadCount = messages.filter((m) => !m.isRead).length;
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -156,9 +177,9 @@ const Notification = () => {
             >
               <MdNotifications size={24} />
             </button>
-            {notifications.filter(n => !n.isRead).length > 0 && (
+            {notifications.filter((n) => !n.isRead).length > 0 && (
               <span className="absolute -top-2 -right-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">
-                {notifications.filter(n => !n.isRead).length}
+                {notifications.filter((n) => !n.isRead).length}
               </span>
             )}
           </div>
@@ -182,10 +203,17 @@ const Notification = () => {
 
       {/* Notifications Dropdown */}
       {isOpen && (
-        <div className="origin-top-right absolute right-0 mt-2 w-96 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden">
-          <div className="py-2" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+        <div className="fixed inset-x-0 top-auto mx-auto mt-2 w-full max-w-xs sm:w-96 sm:absolute sm:right-0 sm:left-auto sm:top-auto rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden z-50">
+          <div
+            className="py-2"
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby="options-menu"
+          >
             <div className="px-4 py-3 bg-gray-50 flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-800">Notifications</h3>
+              <h3 className="text-lg font-semibold text-gray-800">
+                Notifications
+              </h3>
               <button
                 onClick={() => setIsOpen(false)}
                 className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
@@ -193,17 +221,27 @@ const Notification = () => {
                 <MdClose size={20} />
               </button>
             </div>
-            <div className="max-h-96 overflow-y-auto">
+            <div className="max-h-[calc(100vh-10rem)] sm:max-h-96 overflow-y-auto">
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`flex items-start px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200 ${notification.isRead ? 'opacity-70' : ''}`}
+                  className={`flex items-start px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200 ${
+                    notification.isRead ? "opacity-70" : ""
+                  }`}
                 >
                   <div className="flex-grow">
-                    <div className={`font-medium ${notification.isRead ? 'text-gray-600' : 'text-gray-800'}`}>
+                    <div
+                      className={`font-medium ${
+                        notification.isRead ? "text-gray-600" : "text-gray-800"
+                      }`}
+                    >
                       {notification.title}
                     </div>
-                    <div className={`mt-1 text-sm ${notification.isRead ? 'text-gray-500' : 'text-gray-600'}`}>
+                    <div
+                      className={`mt-1 text-sm ${
+                        notification.isRead ? "text-gray-500" : "text-gray-600"
+                      }`}
+                    >
                       {notification.message}
                     </div>
                     <div className="mt-1 text-xs text-gray-400">
@@ -232,8 +270,13 @@ const Notification = () => {
 
       {/* Messages Dropdown */}
       {isMessagesOpen && (
-        <div className="origin-top-right absolute right-0 mt-2 w-96 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden">
-          <div className="py-2" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+        <div className="fixed inset-x-0 top-auto mx-auto mt-2 w-full max-w-xs sm:w-96 sm:absolute sm:right-0 sm:left-auto sm:top-auto rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden z-50">
+          <div
+            className="py-2"
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby="options-menu"
+          >
             <div className="px-4 py-3 bg-gray-50 flex justify-between items-center">
               <h3 className="text-lg font-semibold text-gray-800">Messages</h3>
               <button
@@ -243,15 +286,19 @@ const Notification = () => {
                 <MdClose size={20} />
               </button>
             </div>
-            <div className="max-h-96 overflow-y-auto">
+            <div className="max-h-[calc(100vh-10rem)] sm:max-h-96 overflow-y-auto">
               {messages.map((message) => (
                 <div
                   key={message.id}
                   className="flex items-start px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200"
                 >
                   <div className="flex-grow">
-                    <div className="font-medium text-gray-800">{message.senderName}</div>
-                    <div className="mt-1 text-sm text-gray-600">{message.message}</div>
+                    <div className="font-medium text-gray-800">
+                      {message.senderName}
+                    </div>
+                    <div className="mt-1 text-sm text-gray-600">
+                      {message.message}
+                    </div>
                     <div className="mt-1 text-xs text-gray-400">
                       {dayjs(message.timestamp).fromNow()}
                     </div>
