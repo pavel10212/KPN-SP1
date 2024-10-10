@@ -14,7 +14,6 @@ const CustomTaskHistory = () => {
 
   useEffect(() => {
     fetchTasks();
-    console.log(tasks);
   }, []);
 
   const fetchTasks = async () => {
