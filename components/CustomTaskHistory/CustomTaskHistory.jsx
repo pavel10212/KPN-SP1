@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { MdArrowBack } from "react-icons/md";
 
+
 const CustomTaskHistory = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,6 +14,7 @@ const CustomTaskHistory = () => {
 
   useEffect(() => {
     fetchTasks();
+    console.log(tasks);
   }, []);
 
   const fetchTasks = async () => {
