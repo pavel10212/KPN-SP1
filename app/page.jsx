@@ -125,6 +125,83 @@ const HowItWorks = () => {
     </div>
   );
 };
+const TheTeam = () => {
+  const teamMembers = [
+    {
+      name: "Noe Kieffer",
+      role: "Fullstack/Frontend Developer",
+      image: "/noe.jpg",
+    },
+    {
+      name: "Pavel Ponomarev",
+      role: "Fullstack/Backend Developer",
+      image: "/pavel.jpg",
+    },
+    {
+      name: "Kris Ambrosini",
+      role: "Software Engineer",
+      image: "/kris.png",
+    },
+  ];
+
+  return (
+    <div className="bg-gray-100 py-24">
+      <div className="container mx-auto px-6">
+        <h2 className="text-4xl font-bold text-center mb-16">The Team</h2>
+        <div className="grid md:grid-cols-3 gap-8">
+          {teamMembers.map((member, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-lg shadow-md p-6 text-center"
+            >
+              <div className="w-48 h-48 mx-auto mb-4 relative overflow-hidden">
+                <Image
+                  src={member.image}
+                  alt={`${member.name}'s photo`}
+                  fill
+                  style={{ objectFit: "cover" }}
+                  className="rounded-lg"
+                />
+              </div>
+              <h3 className="text-xl font-bold mb-2">{member.name}</h3>
+              <p className="text-gray-600">{member.role}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Testimonials = () => {
+  const testimonial = {
+    name: "Alex Johnson",
+    role: "Property Manager",
+    company: "Sunset Rentals",
+    quote:
+      "This platform has revolutionized our property management process. It's intuitive, efficient, and has significantly improved our team's productivity.",
+  };
+
+  return (
+    <div className="bg-white py-24">
+      <div className="container mx-auto px-6">
+        <h2 className="text-4xl font-bold text-center mb-16">Testimonials</h2>
+        <div className="max-w-3xl mx-auto bg-gray-100 rounded-lg shadow-lg p-8">
+          <p className="text-xl italic mb-6">"{testimonial.quote}"</p>
+          <div className="flex items-center">
+            <div className="w-16 h-16 bg-gray-300 rounded-full mr-4"></div>
+            <div>
+              <h3 className="text-lg font-bold">{testimonial.name}</h3>
+              <p className="text-gray-600">
+                {testimonial.role}, {testimonial.company}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Footer = () => (
   <footer className="bg-gray-900 text-white py-8">
@@ -146,6 +223,8 @@ export default async function HomePage() {
       <Hero />
       <AboutOurPlatform />
       <HowItWorks />
+      <TheTeam />
+      <Testimonials />
       <Footer />
     </div>
   );
