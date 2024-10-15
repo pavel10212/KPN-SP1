@@ -2,6 +2,9 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import Image from "next/image";
 import Link from "next/link";
+import kris from "@/public/team/kris.png";
+import noe from "@/public/team/noe.jpg"
+import pavel from "@/public/team/pav.jpg"
 
 const Hero = () => (
   <div className="bg-gray-900 text-white py-8 md:py-24">
@@ -10,7 +13,7 @@ const Hero = () => (
       <div className="md:hidden flex justify-center mb-8">
         <div className="w-32 h-32 relative">
           <Image
-            src="/logo5.png"
+            src="/logo2.svg"
             alt="KPN Logo"
             layout="fill"
             objectFit="contain"
@@ -125,22 +128,23 @@ const HowItWorks = () => {
     </div>
   );
 };
+
 const TheTeam = () => {
   const teamMembers = [
     {
       name: "Noe Kieffer",
       role: "Fullstack/Frontend Developer",
-      image: "/noe.jpg",
+      image: noe,
     },
     {
       name: "Pavel Ponomarev",
       role: "Fullstack/Backend Developer",
-      image: "/pavel.jpg",
+      image: pavel,
     },
     {
       name: "Kris Ambrosini",
       role: "Software Engineer",
-      image: "/kris.png",
+      image: kris,
     },
   ];
 
@@ -158,9 +162,8 @@ const TheTeam = () => {
                 <Image
                   src={member.image}
                   alt={`${member.name}'s photo`}
-                  fill
-                  style={{ objectFit: "cover" }}
                   className="rounded-lg"
+                  fill
                 />
               </div>
               <h3 className="text-xl font-bold mb-2">{member.name}</h3>
