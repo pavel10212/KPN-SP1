@@ -3,8 +3,9 @@ import { auth } from "@/auth";
 import Image from "next/image";
 import Link from "next/link";
 import kris from "@/public/team/kris.png";
-import noe from "@/public/team/noe.jpg"
-import pavel from "@/public/team/pav.jpg"
+import noe from "@/public/team/noe.jpg";
+import pavel from "@/public/team/pav.jpg";
+import morgan from "@/public/team/morgan.jpg";
 
 const Hero = () => (
   <div className="bg-gray-900 text-white py-8 md:py-24">
@@ -158,12 +159,13 @@ const TheTeam = () => {
               key={index}
               className="bg-white rounded-lg shadow-md p-6 text-center"
             >
-              <div className="w-48 h-48 mx-auto mb-4 relative overflow-hidden">
+              <div className="w-52 h-52 mx-auto mb-4 relative overflow-hidden">
                 <Image
                   src={member.image}
                   alt={`${member.name}'s photo`}
                   className="rounded-lg"
-                  fill
+                  height={300}
+                  width={300}
                 />
               </div>
               <h3 className="text-xl font-bold mb-2">{member.name}</h3>
@@ -178,11 +180,12 @@ const TheTeam = () => {
 
 const Testimonials = () => {
   const testimonial = {
-    name: "Alex Johnson",
-    role: "Property Manager",
-    company: "Sunset Rentals",
+    name: "Morgan Kieffer",
+    role: "Co-Host at a Property",
+    company: "Mangotreevilla",
     quote:
-      "This platform has revolutionized our property management process. It's intuitive, efficient, and has significantly improved our team's productivity.",
+      "This platform has really helped our property management process. It's intuitive, efficient, and has significantly improved our team's productivity.",
+    imageUrl: morgan,
   };
 
   return (
@@ -192,7 +195,11 @@ const Testimonials = () => {
         <div className="max-w-3xl mx-auto bg-gray-100 rounded-lg shadow-lg p-8">
           <p className="text-xl italic mb-6">"{testimonial.quote}"</p>
           <div className="flex items-center">
-            <div className="w-16 h-16 bg-gray-300 rounded-full mr-4"></div>
+            <Image
+              src={testimonial.imageUrl}
+              alt={testimonial.name}
+              className="w-16 h-16 rounded-full mr-4 object-cover"
+            />
             <div>
               <h3 className="text-lg font-bold">{testimonial.name}</h3>
               <p className="text-gray-600">
