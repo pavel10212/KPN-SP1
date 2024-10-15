@@ -11,12 +11,12 @@ const faqs = [
   {
     question: "How do I add a new team member?",
     answer:
-      "To add a new team member, go to the 'Users' page and click on the 'Add New' button. Fill in the required information and assign the appropriate role.",
+      "Only Admin can add members. To add a new team member, go to the 'Users' page and click on the 'Add New' button. Fill in the required information and assign the appropriate role.",
   },
   {
-    question: "How can I update a booking?",
+    question: "How can I update a task?",
     answer:
-      "Navigate to the 'Bookings' page, find the booking you want to update, and click on the edit icon. Make your changes in the form that appears and save your updates.",
+      "Navigate to the 'Tasks' page, find the booking/task you want to update, and click on the edit icon. Make your changes in the form that appears and save your updates.",
   },
   {
     question: "What's the difference between a Driver and a Maintenance role?",
@@ -26,12 +26,12 @@ const faqs = [
   {
     question: "How do I create a custom task?",
     answer:
-      "Go to the 'Tasks' page and click on 'Add Task'. Fill out the task details, including title, description, assigned role, and due date. Custom tasks can be assigned to specific roles like Driver or Maintenance.",
+      "Only Admin and Co-host can create custom tasks. Go to the 'Tasks' page and click on 'Add Task'. Fill out the task details, including title, description, assigned role, and due date. Custom tasks can be assigned to specific roles like Driver or Maintenance.",
   },
   {
     question: "Can I change my notification preferences?",
     answer:
-      "Yes, you can adjust your notification settings in the 'Settings' page under the 'Notifications' tab. Here you can toggle email and push notifications according to your preferences.",
+      "Yes, you can adjust your notification settings in the 'Settings' page under the 'Notifications' tab. Here you can toggle push notifications according to your preferences.",
   },
 ];
 
