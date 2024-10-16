@@ -11,6 +11,7 @@ import {findUserById} from "@/lib/utils";
 const Task = async () => {
     const session = await auth();
     const user = await findUserById(session.user.id);
+    console.log(user)
     const userTeamId = user.teamId;
 
     const tasks = await prisma.booking.findMany({
@@ -31,11 +32,12 @@ const Task = async () => {
     });
 
     const customTasks = await prisma.customTask.findMany({
-        where: {
-            OR: [
-                {role: user.role},
-                {role: {in: ["admin", "Co-Host"]}}
-            ],
+        where: user.role === "admin" || user.role === "Co-Host" ? {
+            NOT: {
+                status: {in: ["Completed", "Dropped Off"]}
+            }
+        } : {
+            role: user.role,
             NOT: {
                 status: {in: ["Completed", "Dropped Off"]}
             }

@@ -29,9 +29,14 @@ const MainTasks = ({tasks}) => {
         const sortedRows = tasks
             .map((task) => ({
                 ...task,
+                status: task.status || "Booked",
                 firstNight: task.firstNight ? dayjs(task.firstNight) : null,
                 lastNight: task.lastNight ? dayjs(task.lastNight) : null,
             }))
+            .filter(
+                (task) =>
+                    task.firstNight && task.firstNight.isAfter(dayjs().subtract(5, "day"))
+            )
             .sort((a, b) => a.firstNight.diff(b.firstNight));
         setRows(sortedRows);
     }, [tasks]);

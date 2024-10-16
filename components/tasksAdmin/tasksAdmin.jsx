@@ -46,20 +46,30 @@ const TaskAdmin = ({tasks}) => {
     const router = useRouter();
 
     useEffect(() => {
-        const sortedRows = tasks
+        const today = dayjs();
+        const nearFuture = today.add(3, 'day'); // Show check-ins up to 3 days in the future
+        const recentPast = today.subtract(1, 'day'); // Show check-outs from yesterday
+
+        const relevantBookings = tasks
             .map((task) => ({
                 ...task,
-                status: task.status || "Booked",
                 firstNight: task.firstNight ? dayjs(task.firstNight) : null,
                 lastNight: task.lastNight ? dayjs(task.lastNight) : null,
             }))
-            .filter(
-                (task) =>
-                    task.firstNight && task.firstNight.isAfter(dayjs().subtract(5, "day"))
+            .filter((task) =>
+                // Check-ins: Today or in the near future
+                (task.firstNight && task.firstNight.isBetween(today, nearFuture, 'day', '[]')) ||
+                // Check-outs: Yesterday, today, or in the future
+                (task.lastNight && task.lastNight.isAfter(recentPast))
             )
-            .sort((a, b) => a.firstNight.diff(b.firstNight));
-
-        setRows(sortedRows);
+            .sort((a, b) => {
+                // Sort by check-in date first
+                const firstNightDiff = a.firstNight.diff(b.firstNight);
+                if (firstNightDiff !== 0) return firstNightDiff;
+                // If check-in dates are the same, sort by check-out date
+                return a.lastNight.diff(b.lastNight);
+            });
+        setRows(relevantBookings);
     }, [tasks]);
 
     const isDateTodayOrBefore = (date) =>
