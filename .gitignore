@@ -63,6 +63,8 @@ firebase.json
 #npm
 .npmrc
 
+.firebaserc
+
 storage.rules
 
 qodana.yaml
