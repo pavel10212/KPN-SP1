@@ -48,13 +48,6 @@ The scope of Tasks Pro includes:
 - Developing an independent channel manager.
 - Integration with existing chat systems like Line, Messenger, or Instagram.
 
-## 📚 References
-
-- [Lodgify Pricing](https://www.lodgify.com/pricing/)
-- [Guesty Pricing](https://www.guesty.com/pricing/)
-- [Tokeet Pricing](https://www.tokeet.com/pricing.html)
-- [Annual Airbnb Revenue in Bangkok, Thailand](https://airbtics.com/annual-airbnb-revenue-in-bangkok-thailand)
-
 ---
 
 Feel free to explore the repository and contribute to the project! If you have any questions or feedback, please don't hesitate to reach out. 😊
