@@ -1,3 +1,5 @@
+![Tasks Pro Logo](public/logo5.png)
+
 # 🏠 Tasks Pro: A Task Management System for Rental Property Hosts
 
 Welcome to the Tasks Pro GitHub repository! This project is a comprehensive task management platform designed specifically for rental property hosts. It aims to streamline operations, enhance team coordination, and improve guest experiences.
@@ -55,7 +57,6 @@ Meet the talented individuals behind Tasks Pro:
 - [Noe Kieffer](https://github.com/NoeNeoK) - Full Stack/Frontend Developer
 - [Pavel Ponomarev](https://github.com/pavel10212) - Full Stack/Backend Developer
 - [Kris Ambrosini](https://github.com/kris6430187) - Software Engineer
-
 
 ---
 
