@@ -21,7 +21,7 @@ Tasks Pro addresses these challenges by providing a streamlined, efficient, and 
 
 The scope of Tasks Pro includes:
 
-- Integration with channel managers like Beds24 for automatic booking data import.
+- Integration with channel manager Beds24 for automatic booking data import.
 - Role-based access control for tailored dashboards for hosts, co-hosts, drivers, cleaners, and maintenance personnel.
 - A responsive and intuitive user interface developed using Next.js and Tailwind CSS.
 - Real-time task management and communication tools to enhance team coordination.
@@ -47,6 +47,15 @@ The scope of Tasks Pro includes:
 - Live GPS tracking for drivers.
 - Developing an independent channel manager.
 - Integration with existing chat systems like Line, Messenger, or Instagram.
+
+## 👥 Our Team
+
+Meet the talented individuals behind Tasks Pro:
+
+- [Noe Kieffer](https://github.com/NoeNeoK) - Full Stack/Frontend Developer
+- [Pavel Ponomarev](https://github.com/pavel10212) - Full Stack/Backend Developer
+- [Kris Ambrosini](https://github.com/kris6430187) - Software Engineer
+
 
 ---
 
