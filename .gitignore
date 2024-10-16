@@ -52,3 +52,19 @@ certificates
 # JetBrains IDE Config Files
 .idea/
 
+#deepsource
+.deepsource.toml
+
+.eslintrc.json
+
+# Firebase
+firebase.json
+
+#npm
+.npmrc
+
+storage.rules
+
+qodana.yaml
+
+
