@@ -1,72 +1,70 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
-/node_modules
-/.pnp
+# Dependencies
+/node_modules  # Node.js modules, can be reinstalled
+/.pnp  # Plug'n'Play dependency management files
 .pnp.js
-.yarn/install-state.gz
+.yarn/install-state.gz  # Yarn-specific file
 
-pnpm-lock.yaml
-.pnpm-store/
+pnpm-lock.yaml  # pnpm lock file (uncomment if you're using npm or yarn)
+.pnpm-store/  # pnpm store directory
 
-# testing
-/coverage
+# Testing
+/coverage  # Test coverage reports
 
-# next.js
+# Next.js build output
 /.next/
 /out/
 
-# production
+# Production build
 /build
 
-# misc
-.DS_Store
-*.pem
+# Miscellaneous
+.DS_Store  # macOS folder attributes
+*.pem  # SSL/TLS certificate files
 
-# debug
+# Debug logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
-# local env files
-.env*
+# Environment variables
+.env*  # All .env files (contains sensitive information)
 
-# vercel
-.vercel
+# Vercel
+.vercel  # Vercel deployment information
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# TypeScript
+*.tsbuildinfo  # TypeScript incremental build info
+next-env.d.ts  # Next.js TypeScript declarations
 
-# Others
-prismaScheme.txt
+# Project-specific
+prismaScheme.txt  # Prisma database schema (if applicable)
+certificates  # SSL/TLS certificates directory
 
-certificates
-# Sentry Config File
-.env.sentry-build-plugin
+# Sentry
+.env.sentry-build-plugin  # Sentry build configuration
 
-# Qodana Config File
-!/qodana.yaml
+# Qodana
+/qodana.yaml  # Include Qodana configuration (remove ! to ignore)
 
-# JetBrains IDE Config Files
-.idea/
+# JetBrains IDE
+.idea/  # JetBrains IDE settings
 
-#deepsource
-.deepsource.toml
-
-.eslintrc.json
+# Code Quality and Analysis
+.deepsource.toml  # DeepSource configuration
+.eslintrc.json  # ESLint configuration
 
 # Firebase
-firebase.json
+firebase.json  # Firebase configuration
+.firebaserc  # Firebase project configuration
+storage.rules  # Firebase storage rules
 
-#npm
-.npmrc
+# npm
+.npmrc  # npm configuration file
 
-.firebaserc
+# Docker
+.dockerignore  # Docker ignore file (remove if you want to track it)
 
-storage.rules
-
+# Keep Qodana configuration (remove this line to ignore it)
 qodana.yaml
-
-
