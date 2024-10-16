@@ -1,4 +1,4 @@
-![Tasks Pro Logo](public/logo5.png)
+ <img src="public/logo5.png" alt="Tasks Pro Logo" width="200"/>
 
 # 🏠 Tasks Pro: A Task Management System for Rental Property Hosts
 
