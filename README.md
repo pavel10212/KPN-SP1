@@ -1,4 +1,6 @@
- <img src="public/logo5.png" alt="Tasks Pro Logo" width="200"/>
+<div align="center">
+    <img src="public/logo5.png" alt="Tasks Pro Logo" width="200"/>
+</div>
 
 # 🏠 Tasks Pro: A Task Management System for Rental Property Hosts
 
