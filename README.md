@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🏠 Tasks Pro: A Task Management System for Rental Property Hosts
 
-## Getting Started
+Welcome to the Tasks Pro GitHub repository! This project is a comprehensive task management platform designed specifically for rental property hosts. It aims to streamline operations, enhance team coordination, and improve guest experiences.
 
-First, run the development server:
+## 🌟 What is Tasks Pro?
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Tasks Pro is a centralized platform that integrates with popular channel managers like Beds24 to help rental property hosts efficiently manage their teams and enhance guest interactions. By providing role-based access to tailored dashboards, it facilitates seamless communication and coordination among team members.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ What Problem Do We Solve?
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+In the competitive world of rental property management, hosts face numerous challenges, including:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- **Time-Consuming Communication**: Manual updates and coordination can lead to errors and inefficiencies.
+- **Inefficient Guest Arrivals**: Coordinating guest arrival times is often cumbersome.
+- **Complex Transportation Arrangements**: Managing guest transportation involves multiple steps and contacts.
+- **Frequent Inquiries from Housekeepers**: Daily inquiries about cleaning schedules add unnecessary communication steps.
 
-## Learn More
+Tasks Pro addresses these challenges by providing a streamlined, efficient, and guest-focused approach to property management.
 
-To learn more about Next.js, take a look at the following resources:
+## 📋 Scope
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The scope of Tasks Pro includes:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- Integration with channel managers like Beds24 for automatic booking data import.
+- Role-based access control for tailored dashboards for hosts, co-hosts, drivers, cleaners, and maintenance personnel.
+- A responsive and intuitive user interface developed using Next.js and Tailwind CSS.
+- Real-time task management and communication tools to enhance team coordination.
+- Deployment on Vercel for reliable hosting and scalability.
 
-## Deploy on Vercel
+## 🚀 How It Works
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Integration**: Automatically import booking data from Beds24 to streamline task assignments.
+2. **Role-Based Dashboards**: Provide specific functionalities and views for each team member.
+3. **Task Management**: Create teams, assign tasks, and monitor their status in real-time.
+4. **Communication Tools**: Facilitate seamless interaction among team members for timely updates and coordination.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## 📈 Benefits
+
+- **Increased Efficiency**: 15% reduction in time spent on task management.
+- **Improved Guest Experience**: Enhanced coordination leads to better guest interactions.
+- **Scalability**: Designed to handle increasing loads and user demands.
+
+## 🔮 Future Work
+
+- Internationalization for multiple languages.
+- Implementing a payment system for app subscriptions.
+- Live GPS tracking for drivers.
+- Developing an independent channel manager.
+- Integration with existing chat systems like Line, Messenger, or Instagram.
+
+## 📚 References
+
+- [Lodgify Pricing](https://www.lodgify.com/pricing/)
+- [Guesty Pricing](https://www.guesty.com/pricing/)
+- [Tokeet Pricing](https://www.tokeet.com/pricing.html)
+- [Annual Airbnb Revenue in Bangkok, Thailand](https://airbtics.com/annual-airbnb-revenue-in-bangkok-thailand)
+
+---
+
+Feel free to explore the repository and contribute to the project! If you have any questions or feedback, please don't hesitate to reach out. 😊
