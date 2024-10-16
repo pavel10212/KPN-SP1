@@ -1,5 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+
+#Github
+.github
+
 # dependencies
 /node_modules
 /.pnp
@@ -28,7 +32,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
 # local env files
 .env*
 
@@ -71,4 +74,5 @@ storage.rules
 # Qodana Config File
 qodana.yaml
 
-
+#Instrumentation
+instrumentation.js
