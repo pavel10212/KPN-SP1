@@ -1,46 +1,55 @@
 import prisma from "../prismaClient";
-import { NextResponse } from "next/server";
+import {NextResponse} from "next/server";
+import {auth} from "@/auth";
 
 export async function POST(req) {
-  try {
-    const body = await req.json();
-    const {
-      taskTitle,
-      taskDescription,
-      role,
-      guestFirstName,
-      guestName,
-      location,
-      guestPhone,
-      date,
-    } = body.data;
     try {
-      await prisma.customTask.create({
-        data: {
-          role: role,
-          taskTitle: taskTitle,
-          taskDescription: taskDescription,
-          status: "Assigned",
-          guestFirstName: guestFirstName,
-          guestName: guestName,
-          location: location,
-          guestPhone: guestPhone,
-          date: date,
-        },
-      });
-      console.log("Custom task created successfully");
-      return new NextResponse(JSON.stringify({ success: true }), {
-        status: 200,
-      });
+        const session = await auth()
+        const user = await prisma.user.findFirst({
+            where: {
+                id: session.user.id
+            }
+        })
+        const teamId = user.teamId
+        const body = await req.json();
+        const {
+            taskTitle,
+            taskDescription,
+            role,
+            guestFirstName,
+            guestName,
+            location,
+            guestPhone,
+            date,
+        } = body.data;
+        try {
+            await prisma.customTask.create({
+                data: {
+                    role: role,
+                    taskTitle: taskTitle,
+                    taskDescription: taskDescription,
+                    status: "Assigned",
+                    guestFirstName: guestFirstName,
+                    guestName: guestName,
+                    location: location,
+                    guestPhone: guestPhone,
+                    date: date,
+                    teamId: teamId,
+                },
+            });
+            console.log("Custom task created successfully");
+            return new NextResponse(JSON.stringify({success: true}), {
+                status: 200,
+            });
+        } catch (error) {
+            console.error("Error creating custom task:", error);
+            throw error;
+        }
     } catch (error) {
-      console.error("Error creating custom task:", error);
-      throw error;
+        console.log("Internal server error", error);
+        return new NextResponse(
+            JSON.stringify({error: "Internal server error"}),
+            {status: 500}
+        );
     }
-  } catch (error) {
-    console.log("Internal server error", error);
-    return new NextResponse(
-      JSON.stringify({ error: "Internal server error" }),
-      { status: 500 }
-    );
-  }
 }

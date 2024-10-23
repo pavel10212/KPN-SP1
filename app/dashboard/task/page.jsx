@@ -32,15 +32,18 @@ const Task = async () => {
     });
 
     const customTasks = await prisma.customTask.findMany({
-        where: user.role === "admin" || user.role === "Co-Host" ? {
-            NOT: {
-                status: {in: ["Completed", "Dropped Off"]}
-            }
-        } : {
-            role: user.role,
-            NOT: {
-                status: {in: ["Completed", "Dropped Off"]}
-            }
+        where: {
+            teamId: userTeamId,
+            ...(user.role === "admin" || user.role === "Co-Host" ? {
+                NOT: {
+                    status: {in: ["Completed", "Dropped Off"]}
+                }
+            } : {
+                role: user.role,
+                NOT: {
+                    status: {in: ["Completed", "Dropped Off"]}
+                }
+            })
         },
         select: {
             id: true,
